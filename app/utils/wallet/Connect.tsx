@@ -56,9 +56,9 @@ export const ConnectButton = () => {
       onClick={handleOpen}
       className="flex h-max items-center gap-2 rounded-full
      bg-primary px-4 py-1.5 font-semibold text-white shadow-md transition duration-300
-     hover:bg-red-600 sm:px-6 sm:py-2 md:px-8 md:py-3"
+     hover:bg-purple-600 sm:px-6 sm:py-2 md:px-8 md:py-3"
     >
-      <span className="ml-2">Connect</span>
+      <span className="ml-2 whitespace-nowrap">Get Started</span>
       <ArrowRightIcon />
     </button>
   );

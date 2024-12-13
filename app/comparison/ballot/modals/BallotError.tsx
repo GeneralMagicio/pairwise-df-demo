@@ -31,7 +31,7 @@ const BallotError: React.FC<UnlockBallotProps> = ({ onClick }) => {
         <button
           onClick={onClick}
           className="flex w-full items-center justify-center rounded-lg bg-primary px-4
-          py-3 text-white transition duration-300 ease-in-out hover:bg-red-600"
+          py-3 text-white transition duration-300 ease-in-out hover:bg-purple-600"
         >
           Retry ballot update
         </button>

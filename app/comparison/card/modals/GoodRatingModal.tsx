@@ -62,7 +62,7 @@ const GoodRatingModal: FC<IGoodRatingModalProps> = ({ confirm }) => (
 
     <button
       onClick={confirm}
-      className="mb-2 w-full rounded-md bg-primary py-2 text-white transition duration-300 hover:bg-red-600"
+      className="mb-2 w-full rounded-md bg-primary py-2 text-white transition duration-300 hover:bg-purple-600"
     >
       OK
     </button>

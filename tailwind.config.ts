@@ -13,13 +13,13 @@ const config: Config = {
         mxl: ['1,375rem', '2.125rem'],
       },
       colors: {
-        'primary': '#FF0420',
+        'primary': '#7F56D9',
         'op': {
           neutral: {
             300: '#CBD5E0',
           },
           red: {
-            100: '#FFF0F1',
+            100: '#F7F0FF',
           },
         },
         'gray': {
@@ -47,20 +47,20 @@ const config: Config = {
         'status': {
           border: {
             success: '#75E0A7',
-            error: '#FF99A1',
+            error: '#BE99FF',
             expired: '#FEC84B',
           },
           text: {
-            error: '#FF0420',
+            error: '#7504FF',
             expired: '#DC6803',
           },
           bg: {
-            error: '#FEF3F2',
+            error: '#F6F2FE',
             expired: '#FFFAEB',
           },
         },
         'category-tab': {
-          active: '#FFD1D5',
+          active: '#E6D1FF',
           inactive: '#FBFCFE',
         },
         'voting': { // voting status badge

@@ -489,16 +489,9 @@ const AllocationPage = () => {
       <div className="flex flex-col gap-6 p-16">
         {!allocatingBudget && (
           <div className="flex max-w-[72%] flex-col gap-3">
-            <h2 className="text-3xl font-bold"> Round 6: Governance</h2>
+            <h2 className="text-3xl font-bold"> Deep Funding </h2>
             <p className="text-gray-400">
-              Retro Funding 6 will reward contributions to Optimism Governance,
-              including governance infrastructure & tooling, governance
-              analytics, and governance leadership.
-            </p>
-            <p className="mt-4 rounded-xl bg-[#FFFAEB] p-4 text-dark-500">
-              Decide on the budget for this round, and score projects in each
-              category using the Pairwise ranking. You can also choose to
-              delegate your decision to someone on Farcaster.
+            In Deep Funding, most of the work gets done by a public market of allocators, that suggest proposed weights of edges in a graph, which answer the question “what percent of the credit for A belongs to B?”. 
             </p>
           </div>
         )}
@@ -620,7 +613,7 @@ const AllocationPage = () => {
                     </div>
                   )
                 )}
-            {allocatingBudget && (
+            {/* {allocatingBudget && (
               <span className='className="w-fit h-4 self-end text-primary'>
                 {percentageError ? `Error: ${percentageError}` : ''}
               </span>
@@ -652,24 +645,11 @@ const AllocationPage = () => {
                 )
               : (
                   <UpdateBallotButton isBadgeHolderAndNotVoted={(isBadgeholder && !isBGCategoryVoted())} />
-                )}
+                )} */}
           </div>
           {!allocatingBudget && (
             <div className="w-[25%]">
               <ConnectBox
-                onConnectFarcaster={() => {
-                  setIsOpenFarcasterModal(true);
-                }}
-                onConnectTwitter={() => {
-                  setIsOpenXModal(true);
-                }}
-                onConnectWorldID={(isError?: boolean) => {
-                  if (isError) {
-                    setIsWorldIdSignErrorModal(true);
-                    return;
-                  }
-                  setIsWorldIdSignSuccessModal(true);
-                }}
               />
             </div>
           )}

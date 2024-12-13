@@ -36,7 +36,7 @@ const NewWalletModal: React.FC<Props> = ({ onCancel, onSignIn }) => {
         </button>
         <button
           onClick={onSignIn}
-          className="w-full rounded-md bg-primary py-2 text-white hover:bg-red-600"
+          className="w-full rounded-md bg-primary py-2 text-white hover:bg-purple-600"
         >
           Sign in
         </button>

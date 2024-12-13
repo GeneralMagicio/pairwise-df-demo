@@ -15,7 +15,7 @@ const NoSSRModals = dynamic(() => import('./utils/wallet/Modals'), {
 
 const Landing = () => {
   return (
-    <div className="relative w-full bg-[#F2F3F8] bg-river-left-right bg-river bg-no-repeat">
+    <div className="relative w-full bg-[#F2F3F8] bg-river-left-right bg-river bg-no-repeat min-h-screen">
       <NoSSRModals />
       <div className="mx-[120px] w-[90%] space-y-8 pt-4 sm:w-[85%]">
         <div className="sticky top-0 z-[5] flex h-24 w-full items-center justify-between">
@@ -27,10 +27,6 @@ const Landing = () => {
           <ConnectButton />
         </div>
         <LandingPart0 />
-        <LandingPartDelegate />
-        <LandingPart1 />
-        <LandingPart2 />
-        <LandingPart3 />
       </div>
     </div>
   );
