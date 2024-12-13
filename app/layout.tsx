@@ -4,7 +4,6 @@ import { Inter } from 'next/font/google';
 import AppKitProvider from './utils/wallet/provider';
 import FarcasterProvider from '@/app/utils/FarcasterProvider';
 import ShowMobileMessage from './utils/wallet/ShowMobileMessage';
-import { TimeIcon } from '@/public/assets/icon-components/Time';
 import { PHProvider } from './utils/PHProvider';
 import { TwitterProvider } from './utils/TwitterProvider';
 import type { Metadata } from 'next';

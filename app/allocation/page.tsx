@@ -16,14 +16,10 @@ import BudgetAllocation, {
 } from './components/BudgetAllocation';
 import ConnectBox from './components/ConnectBox';
 import { modifyPercentage, RankItem, roundFractions } from './utils';
-import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRight';
-import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
-import { CustomizedSlider } from './components/Slider';
 import {
   categoryIdSlugMap,
   categorySlugIdMap,
   convertCategoryToLabel,
-  formatBudget,
 } from '../comparison/utils/helpers';
 import { useCategories } from '../comparison/utils/data-fetching/categories';
 import WorldIdSignInSuccessModal from './components/WorldIdSignInSuccessModal';
@@ -51,7 +47,7 @@ import AttestationSuccessModal from './[category]/attestation/AttestationSuccess
 import { useSigner } from './[category]/utils';
 import BadgeholderModal from './components/BadgeholderModal';
 import StorageLabel from '../lib/localStorage';
-import { UpdateBallotButton } from './[category]/components/UpdateBallotButton';
+// import { UpdateBallotButton } from './[category]/components/UpdateBallotButton';
 import AskDelegations from '../delegation/farcaster/AskDelegations';
 import XModal from './components/XModal';
 
@@ -491,7 +487,9 @@ const AllocationPage = () => {
           <div className="flex max-w-[72%] flex-col gap-3">
             <h2 className="text-3xl font-bold"> Deep Funding </h2>
             <p className="text-gray-400">
-            In Deep Funding, most of the work gets done by a public market of allocators, that suggest proposed weights of edges in a graph, which answer the question “what percent of the credit for A belongs to B?”. 
+              In Deep Funding, most of the work gets done by a public market of allocators,
+              that suggest proposed weights of edges in a graph,
+              which answer the question “what percent of the credit for A belongs to B?”.
             </p>
           </div>
         )}
@@ -501,47 +499,6 @@ const AllocationPage = () => {
               <h3 className="mb-4 w-full border-b pb-6 text-2xl font-bold">
                 {allocatingBudget ? 'Your budget' : 'Voting'}
               </h3>
-              <div className="flex flex-col justify-between">
-                {allocatingBudget
-                  ? (
-                      <p>
-                        Choose how much OP should be dedicated to this round, or
-                        delegate this decision to someone you trust.
-                      </p>
-                    )
-                  : (
-                      <p>
-                        Score projects in each category doing the Pairwise ranking,
-                        or delegate this decision to someone you trust.
-                      </p>
-                    )}
-                {allocatingBudget && (
-                  <>
-                    <div className="my-6 flex items-center gap-4">
-                      <span> 1.1M </span>
-                      <CustomizedSlider
-                        className="my-2 min-w-[55%]"
-                        value={totalValue / 1_000_000}
-                        onChange={handleSliderChange}
-                        shiftStep={0.1}
-                        step={0.1}
-                        marks
-                        min={1.1}
-                        max={3.5}
-                      />
-                      <span> 3.5M </span>
-                      <div className="w-64 whitespace-nowrap rounded-md border bg-gray-50 py-2 text-center text-sm text-gray-500">
-                        {formatBudget(totalValue)}
-                        {' '}
-                        OP
-                      </div>
-                    </div>
-                    <p className="text-gray-400">
-                      Next, decide how much OP should go to each category
-                    </p>
-                  </>
-                )}
-              </div>
             </div>
             {categoriesLoading
               ? (
@@ -613,44 +570,10 @@ const AllocationPage = () => {
                     </div>
                   )
                 )}
-            {/* {allocatingBudget && (
-              <span className='className="w-fit h-4 self-end text-primary'>
-                {percentageError ? `Error: ${percentageError}` : ''}
-              </span>
-            )}
-            {allocatingBudget
-              ? (
-                  <div className="flex justify-between">
-                    <button
-                      className="flex items-center justify-center gap-3 rounded-lg border bg-gray-50 px-4 py-2 font-semibold text-gray-700"
-                      onClick={() => {
-                        posthog.capture('Back to categories');
-                        setAllocatingBudget(false);
-                      }}
-                    >
-                      <ArrowLeft2Icon />
-                      Back to Categories
-                    </button>
-                    <button
-                      className="flex items-center justify-center gap-3 rounded-lg bg-primary px-10 py-2 font-semibold text-white"
-                      onClick={() => {
-                        posthog.capture('Submit votes');
-                        handleSubmitVote();
-                      }}
-                    >
-                      Submit Vote
-                      <ArrowRightIcon size={20} />
-                    </button>
-                  </div>
-                )
-              : (
-                  <UpdateBallotButton isBadgeHolderAndNotVoted={(isBadgeholder && !isBGCategoryVoted())} />
-                )} */}
           </div>
           {!allocatingBudget && (
             <div className="w-[25%]">
-              <ConnectBox
-              />
+              <ConnectBox />
             </div>
           )}
         </div>

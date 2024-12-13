@@ -14,6 +14,8 @@ import { Rating } from '../card/Rating';
 import UndoButton from '../card/UndoButton';
 import VoteButton from '../card/VoteButton';
 import Modals from '@/app/utils/wallet/Modals';
+import SkipButton from '../card/Skip';
+import Slider from '@mui/material/Slider';
 import {
   getPairwisePairsForProject,
   useGetPairwisePairs,
@@ -46,6 +48,7 @@ export default function Home() {
   const { address, chainId } = useAccount();
   const wallet = useActiveWallet();
 
+  const [value, setValue] = React.useState<number>(0);
   const [rating1, setRating1] = useState<number | null>(null);
   const [rating2, setRating2] = useState<number | null>(null);
   const [project1, setProject1] = useState<IProject>();
@@ -107,6 +110,31 @@ export default function Home() {
     },
   });
 
+  const handleSkip = async () => {
+    if (!wallet) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    setCoiLoading1(true);
+    setCoiLoading2(true);
+    try {
+      await vote({
+        data: {
+          project1Id: project1!.id,
+          project2Id: project2!.id,
+          project1Stars: null,
+          project2Stars: null,
+          pickedId: null,
+        },
+      });
+    }
+    catch (e) {
+      setCoiLoading1(false);
+      setCoiLoading2(false);
+    }
+  };
+
   useEffect(() => {
     if (bypassPrevProgress && data) {
       setProgress(data.progress);
@@ -162,11 +190,11 @@ export default function Home() {
     // observe if first rated project is rated good >= 4
     if (
       (rating1
-      && rating1 >= 4
+      && rating1 >= 80
       && rating2 === initialRating2
       && rating1 !== initialRating1)
       || (rating2
-      && rating2 >= 4
+      && rating2 >= 80
       && rating1 === initialRating1
       && rating2 !== initialRating2)
     ) {
@@ -251,6 +279,8 @@ export default function Home() {
     }
     setCoiLoading1(false);
   };
+
+
 
   const showCoI1 = () => {
     if (!wallet) {
@@ -357,8 +387,6 @@ export default function Home() {
 
     if (data?.votedPairs === 0) return;
     setRevertingBack(true);
-    setCoi1(false);
-    setCoi2(false);
     await undo();
     setRevertingBack(false);
   };
@@ -405,6 +433,10 @@ export default function Home() {
     );
 
     return storedData[`${chainId}_${address}`] || {};
+  }
+
+  function handleChange() {
+
   }
 
   useEffect(() => {
@@ -578,9 +610,9 @@ export default function Home() {
           )}
 
       {!isInitialVisit && (
-        <footer className="sticky bottom-0 z-50 flex w-full items-center justify-around gap-4 bg-white py-8 shadow-inner">
-          <div className="flex flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
-            <Rating
+        <footer className="sticky bottom-0 z-50 flex flex-col w-full items-center justify-around gap-4 bg-white py-8 shadow-inner">
+          <div className="flex flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8 w-1/2">
+            {/* <Rating
               value={rating1 || 0}
               onChange={(value) => {
                 !wallet ? setShowLoginModal(true) : setRating1(value);
@@ -596,31 +628,34 @@ export default function Home() {
             <ConflictButton
               onClick={showCoI1}
               disabled={coiLoading1 || isAnyModalOpen()}
+            /> */}
+            <Slider
+              sx={{color: '#7F56D9' }}
+              value={value}
+              min={-100}
+              step={1}
+              max={100}
+              getAriaValueText={(value: number)=>`${Math.abs(value)}`}
+              valueLabelFormat={(value: number)=>`${Math.abs(value)}`}
+              onChange={handleChange}
+              valueLabelDisplay="auto"
+              aria-labelledby="non-linear-slider"
             />
           </div>
-          <div className="absolute z-[1]">
+          <div className="flex flex-row gap-x-11">
             <UndoButton
               disabled={data?.votedPairs === 0 || isAnyModalOpen()}
               onClick={handleUndo}
             />
-          </div>
-          <div className="flex flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
-            <Rating
-              value={rating2 || 0}
-              onChange={(value) => {
-                !wallet ? setShowLoginModal(true) : setRating2(value);
-              }}
-              disabled={coiLoading2 || isAnyModalOpen()}
-            />
-            <VoteButton
-              onClick={() =>
-                !checkLowRatedProjectSelected(project2.id)
-                && handleVote(project2.id)}
-              disabled={coiLoading2 || isAnyModalOpen()}
-            />
-            <ConflictButton
-              onClick={showCoI2}
-              disabled={coiLoading2 || isAnyModalOpen()}
+            {/* Next Button */}
+            <button
+              className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+              onClick={() => {}}
+            >
+              Next
+            </button>
+            <SkipButton
+              onClick={handleSkip}
             />
           </div>
         </footer>
