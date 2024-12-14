@@ -41,6 +41,16 @@ import { ProjectCardAI } from '../card/ProjectCardAI';
 import EmailLoginModal from '@/app/allocation/components/EOA/EmailLoginModal';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
+import {styled} from '@mui/material/styles';
+
+const CustomSlider = styled(Slider)({
+  '& .MuiSlider-valueLabel': {
+    color: '#000000',
+    backgroundColor: 'transparent',
+    border: '1px solid #EAECF0',
+  },
+});
+
 
 export default function Home() {
   const { category } = useParams() ?? {};
@@ -71,14 +81,12 @@ export default function Home() {
   const [sectionExpanded1, setSectionExpanded1] = useState({
     repos: true,
     pricing: true,
-    grants: true,
     impact: true,
     testimonials: true,
   });
   const [sectionExpanded2, setSectionExpanded2] = useState({
     repos: true,
     pricing: true,
-    grants: true,
     impact: true,
     testimonials: true,
   });
@@ -521,9 +529,7 @@ export default function Home() {
       <HeaderRF6
         progress={progress * 100}
         category={convertCategoryToLabel(category! as JWTPayload['category'])}
-        question={`Which project had the greatest impact on the ${convertCategoryToLabel(
-          category! as JWTPayload['category']
-        )} ?`}
+        question={`Which dependency deserves more weight?`}
         isFirstSelection={isInitialVisit}
       />
       {isInitialVisit
@@ -611,7 +617,7 @@ export default function Home() {
 
       {!isInitialVisit && (
         <footer className="sticky bottom-0 z-50 flex flex-col w-full items-center justify-around gap-4 bg-white py-8 shadow-inner">
-          <div className="flex flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8 w-1/2">
+          <div className="flex flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8 w-3/4">
             {/* <Rating
               value={rating1 || 0}
               onChange={(value) => {
@@ -629,7 +635,10 @@ export default function Home() {
               onClick={showCoI1}
               disabled={coiLoading1 || isAnyModalOpen()}
             /> */}
-            <Slider
+            <div className='text-ellipsis w-1/5'>{project1.name}</div>
+            <div>100</div>
+            <div className='w-1/2'>
+            <CustomSlider
               sx={{color: '#7F56D9' }}
               value={value}
               min={-100}
@@ -641,6 +650,9 @@ export default function Home() {
               valueLabelDisplay="auto"
               aria-labelledby="non-linear-slider"
             />
+            </div>
+            <div>100</div>
+            <div className='text-ellipsis w-1/5'>{project2.name}</div>
           </div>
           <div className="flex flex-row gap-x-11">
             <UndoButton

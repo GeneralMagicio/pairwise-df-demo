@@ -25,7 +25,6 @@ enum ProjectSection {
   TESTIMONIALS = 'testimonials',
   IMPACT = 'impact',
   PRICING = 'pricing',
-  GRANTS = 'grants',
 }
 
 interface CollapsibleProps {
@@ -48,7 +47,6 @@ const ProjectSectionTitles = {
   [ProjectSection.TESTIMONIALS]: 'Testimonials',
   [ProjectSection.IMPACT]: 'Impact statement',
   [ProjectSection.PRICING]: 'Pricing model',
-  [ProjectSection.GRANTS]: 'Grants and investment',
 };
 
 const Section: FC<CollapsibleProps> = ({
@@ -507,61 +505,6 @@ export const ProjectCard: React.FC<Props> = ({
                       <NoneBox />
                     )}
               </div>
-            </Section>
-            <Section
-              id={`grants-${name}`}
-              setExpanded={hnadleExpanded(ProjectSection.GRANTS)}
-              onClick={handleSectionClick(
-                ProjectSection.GRANTS,
-                !sectionExpanded[ProjectSection.GRANTS]
-              )}
-              expanded={sectionExpanded[ProjectSection.GRANTS]}
-              title={ProjectSectionTitles[ProjectSection.GRANTS]}
-            >
-              {project.grantsAndFunding.grants?.length
-              || project.grantsAndFunding.retroFunding?.length
-              || project.grantsAndFunding.ventureFunding?.length
-                ? (
-                    <div className="space-y-2">
-                      {project.grantsAndFunding.grants?.map((grant, index) => (
-                        <GrantBox
-                          key={`grant_${index}`}
-                          type="grant"
-                          description={grant.details}
-                          link={grant.link}
-                          amount={grant.amount}
-                          date={grant.date}
-                          title={grant.grant ?? ''}
-                        />
-                      ))}
-                      {project.grantsAndFunding.retroFunding?.map(funding => (
-                        <GrantBox
-                          key={funding.details}
-                          type="retro_funding"
-                          description={null}
-                          round={funding.details}
-                          link={null}
-                          amount={funding.amount}
-                          date={funding.date}
-                          title="Retro Funding"
-                        />
-                      ))}
-                      {project.grantsAndFunding.ventureFunding?.map(funding => (
-                        <GrantBox
-                          key={funding.details}
-                          type="investment"
-                          description={funding.details}
-                          link={null}
-                          amount={funding.amount}
-                          date={funding.year}
-                          title="Investment"
-                        />
-                      ))}
-                    </div>
-                  )
-                : (
-                    <NoneBox />
-                  )}
             </Section>
           </div>
         </div>

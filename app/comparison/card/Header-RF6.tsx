@@ -166,38 +166,53 @@ const HeaderRF6: FC<HeaderProps> = ({
         )}
       </Modal>
 
-      <div className="relative z-40 w-full border-b bg-white">
-        <div className="flex items-center justify-between px-6 py-4 md:px-12 lg:px-4">
-          {!isFirstSelection && (
+      <div className="relative z-40 w-full flex flex-row justify-between gap-10 border-b bg-white">
+      {!isFirstSelection && (
             <div onClick={() => router.push('/allocation')} className="flex cursor-pointer items-center">
               <PwLogo />
             </div>
           )}
-          {question && (
-            <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
-              <h2 className="text-center text-sm font-semibold">{question}</h2>
-            </div>
-          )}
-          <div className="flex items-center gap-4">
-            {category && (
+        <div className="flex flex-grow items-center justify-start px-6 py-4 md:px-12 lg:px-4">
+          
+
+          {category && (
               <span className="rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
                 {category}
               </span>
             )}
+          <div className="flex items-center gap-4">
+
+          {question && (
+            <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
+              <h2 className="text-center text-xl font-semibold">{question}</h2>
+            </div>
+          )}
             <div
               className={`${
                 category ? 'hidden 2xl:flex' : 'flex'
               } items-center gap-4`}
             >
-              {activeBadges.length > 0 && (
+              {/* {activeBadges.length > 0 && (
                 <button
                   onClick={() => setIsBadgesModalOpen(true)}
                   className="mr-3 flex items-center"
                 >
                   <ActiveBadges activeBadges={activeBadges} />
                 </button>
-              )}
-              <ConnectButton />
+              )} */}
+              
+            </div>
+
+            
+          </div>
+
+        </div>
+        <div className='my-auto mx-2'>
+        <ConnectButton />
+              
+
+              </div>
+              <div className='my-auto mx-2'>
               <button
                 className="flex items-center justify-center gap-2 rounded-lg border border-gray-200 p-2 text-sm font-semibold"
                 onClick={() => window.open(PAIRWISE_REPORT_URL, '_blank')}
@@ -205,9 +220,9 @@ const HeaderRF6: FC<HeaderProps> = ({
                 Report an issue
                 <ThinExternalLinkIcon />
               </button>
-            </div>
-
-            <Dropdown customClass={category ? '2xl:hidden' : 'hidden'}>
+              </div>
+        {/* <div className='my-auto'> */}
+        {/* <Dropdown customClass={category ? '2xl:hidden' : 'hidden'}>
               <div className="flex flex-col gap-2">
                 {activeBadges.length > 0 && (
                   <>
@@ -246,9 +261,8 @@ const HeaderRF6: FC<HeaderProps> = ({
                   <span className="font-semibold text-primary"> Log out </span>
                 </button>
               </div>
-            </Dropdown>
-          </div>
-        </div>
+            </Dropdown> */}
+            {/* </div> */}
 
         {category && (
           <div
