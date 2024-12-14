@@ -264,20 +264,25 @@ const HeaderRF6: FC<HeaderProps> = ({
             </Dropdown> */}
             {/* </div> */}
 
-        {category && (
+        
+      </div>
+      {category && (
           <div
-            className={`h-2 bg-red-100 ${
+            className={`w-full h-1.5 bg-gray-100 ${
               isBarFixed ? 'fixed left-0 top-0 z-50 w-full' : ''
             }`}
           >
             <div
-              className="h-full bg-primary"
+              className="relative h-full bg-primary"
               style={{ width: `${progress}%` }}
             >
+
+            <div className='absolute bg-white text-[#344054] border-gray-border shadow-tooltip-shadow py-2 px-3 rounded-md right-0 top-0 z-50 -translate-y-1/2'>
+              {progress?.toFixed(2)}%
+            </div>
             </div>
           </div>
         )}
-      </div>
     </>
   );
 };

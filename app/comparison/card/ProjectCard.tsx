@@ -242,28 +242,25 @@ export const ProjectCard: React.FC<Props> = ({
         <div ref={parentRef} className="h-[78vh] gap-10 overflow-y-auto">
           <div className="mr-4">
             {/* Cover Image and Profile Avatar */}
-            <div className="relative h-40">
-              <Image
-                src={project.projectCoverImageUrl}
-                unoptimized
-                alt="Banner"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg"
-              />
+            <div className="relative h-auto flex flex-row">
               <Image
                 src={project.profileAvatarUrl}
                 unoptimized
                 alt={project.name}
                 width={80}
                 height={80}
-                className="absolute -bottom-8 left-4 z-[4] rounded-md"
+                className="rounded-md"
               />
+              <h1
+                    className={`text-3xl m-2 text-center font-semibold ${styles.oneLineClamp}`}
+                  >
+                    {project.name}
+                  </h1>
             </div>
             {/* Sticky Title Section */}
-            <div
+            {/* <div
               ref={titleRef}
-              className={`mb-4 mt-16 transition-all ${
+              className={`mb-4 mt-2 transition-all ${
                 isSticky
                   ? 'sticky left-0 top-0 z-30 w-full rounded-lg border border-gray-200 bg-gray-100 p-4 shadow-md'
                   : ''
@@ -304,21 +301,7 @@ export const ProjectCard: React.FC<Props> = ({
                   )}
                 </div>
               </div>
-            </div>
-            <div className="my-8 flex items-center gap-3">
-              <Switch
-                onColor="#FF0420"
-                offColor="#E0E2EB"
-                height={25}
-                width={50}
-                checkedIcon={false}
-                uncheckedIcon={false}
-                onChange={setAi}
-                checked={aiMode}
-              />
-              <p className="font-medium"> AI Summary </p>
-              <StarsIcon />
-            </div>
+            </div> */}
             <ProjectDescription description={project.description} />
             {project.socialLinks && (
               <div className="mb-6 flex flex-wrap gap-x-6 gap-y-2 text-slate-600">
@@ -346,7 +329,7 @@ export const ProjectCard: React.FC<Props> = ({
                 )}
               </div>
             )}
-            {project.team?.length && (
+            {/* {project.team?.length && (
               <div className="mb-6 w-full">
                 <Team
                   team={(project.team || [])
@@ -357,7 +340,12 @@ export const ProjectCard: React.FC<Props> = ({
                     }))}
                 />
               </div>
-            )}
+            )} */}
+
+            <div className="grid grid-cols-3 gap-4 py-2.5 px-3 bg-gray-100">
+              <div>01</div>
+              <div>09</div>
+            </div>
             <Section
               id={`repos-${name}`}
               setExpanded={hnadleExpanded(ProjectSection.REPOS)}
@@ -404,7 +392,7 @@ export const ProjectCard: React.FC<Props> = ({
                     <NoneBox />
                   )}
             </Section>
-            <Section
+            {/* <Section
               id={`testimonials-${name}`}
               setExpanded={hnadleExpanded(ProjectSection.TESTIMONIALS)}
               expanded={sectionExpanded[ProjectSection.TESTIMONIALS]}
@@ -430,8 +418,8 @@ export const ProjectCard: React.FC<Props> = ({
                   />
                 )}
               </div>
-            </Section>
-            <Section
+            </Section> */}
+            {/* <Section
               id={`impact-${name}`}
               setExpanded={hnadleExpanded(ProjectSection.IMPACT)}
               expanded={sectionExpanded[ProjectSection.IMPACT]}
@@ -480,8 +468,8 @@ export const ProjectCard: React.FC<Props> = ({
                 : (
                     <NoneBox />
                   )}
-            </Section>
-            <Section
+            </Section> */}
+            {/* <Section
               id={`pricing-${name}`}
               setExpanded={hnadleExpanded(ProjectSection.PRICING)}
               onClick={handleSectionClick(
@@ -505,7 +493,7 @@ export const ProjectCard: React.FC<Props> = ({
                       <NoneBox />
                     )}
               </div>
-            </Section>
+            </Section> */}
           </div>
         </div>
       </div>

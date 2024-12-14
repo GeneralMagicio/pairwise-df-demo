@@ -443,9 +443,13 @@ export default function Home() {
     return storedData[`${chainId}_${address}`] || {};
   }
 
-  function handleChange() {
-
-  }
+  const handleChange = (_event: Event, newValue: number | number[]) => {
+    if (typeof newValue === 'number') {
+      setValue(newValue);
+      setRating1(newValue+100);
+      setRating2(100-value);
+    }
+  };
 
   useEffect(() => {
     const personalWalletId = localStorage.getItem(
@@ -637,7 +641,7 @@ export default function Home() {
             /> */}
             <div className='text-ellipsis w-1/5'>{project1.name}</div>
             <div>100</div>
-            <div className='w-1/2'>
+            <div className='w-1/2 mt-5 relative'>
             <CustomSlider
               sx={{color: '#7F56D9' }}
               value={value}
@@ -650,6 +654,8 @@ export default function Home() {
               valueLabelDisplay="auto"
               aria-labelledby="non-linear-slider"
             />
+            <div className='absolute h-9 w-0 left-[calc(50%-1px)] top-0 border-2 border-dashed border-primary'/>
+
             </div>
             <div>100</div>
             <div className='text-ellipsis w-1/5'>{project2.name}</div>
