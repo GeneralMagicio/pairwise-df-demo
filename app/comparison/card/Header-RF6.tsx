@@ -4,13 +4,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import { ConnectButton } from '@/app/utils/wallet/Connect';
 import { PwLogo } from '@/public/assets/icon-components/PairwiseLogo';
 import { ThinExternalLinkIcon } from '@/public/assets/icon-components/ThinExternalLink';
-import ActiveBadges, { BadgesEnum, IActiveBadge } from './ActiveBadges';
+import { BadgesEnum, IActiveBadge } from './ActiveBadges';
 import Modal from '../../utils/Modal';
 import BadgesModal from './modals/BadgesModal';
-import Dropdown from './DropDown';
-import { shortenWalletAddress } from '@/app/comparison/utils/helpers';
 import { useAuth } from '@/app/utils/wallet/AuthProvider';
-import { PowerIcon } from '@/public/assets/icon-components/Power';
 import { useGetPublicBadges } from '@/app/utils/getBadges';
 import DelegationsModal from './modals/DelegationsModal';
 import { useGetDelegationStatus } from '@/app/utils/getConnectionStatus';
@@ -166,27 +163,26 @@ const HeaderRF6: FC<HeaderProps> = ({
         )}
       </Modal>
 
-      <div className="relative z-40 w-full flex flex-row justify-between gap-10 border-b bg-white">
-      {!isFirstSelection && (
-            <div onClick={() => router.push('/allocation')} className="flex cursor-pointer items-center">
-              <PwLogo />
-            </div>
-          )}
-        <div className="flex flex-grow items-center justify-start px-6 py-4 md:px-12 lg:px-4">
-          
+      <div className="relative z-40 flex w-full flex-row justify-between gap-10 border-b bg-white">
+        {!isFirstSelection && (
+          <div onClick={() => router.push('/allocation')} className="flex cursor-pointer items-center">
+            <PwLogo />
+          </div>
+        )}
+        <div className="flex grow items-center justify-start px-6 py-4 md:px-12 lg:px-4">
 
           {category && (
-              <span className="rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
-                {category}
-              </span>
-            )}
+            <span className="rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
+              {category}
+            </span>
+          )}
           <div className="flex items-center gap-4">
 
-          {question && (
-            <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
-              <h2 className="text-center text-xl font-semibold">{question}</h2>
-            </div>
-          )}
+            {question && (
+              <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
+                <h2 className="text-center text-xl font-semibold">{question}</h2>
+              </div>
+            )}
             <div
               className={`${
                 category ? 'hidden 2xl:flex' : 'flex'
@@ -200,27 +196,25 @@ const HeaderRF6: FC<HeaderProps> = ({
                   <ActiveBadges activeBadges={activeBadges} />
                 </button>
               )} */}
-              
+
             </div>
 
-            
           </div>
 
         </div>
-        <div className='my-auto mx-2'>
-        <ConnectButton />
-              
+        <div className="mx-2 my-auto">
+          <ConnectButton />
 
-              </div>
-              <div className='my-auto mx-2'>
-              <button
-                className="flex items-center justify-center gap-2 rounded-lg border border-gray-200 p-2 text-sm font-semibold"
-                onClick={() => window.open(PAIRWISE_REPORT_URL, '_blank')}
-              >
-                Report an issue
-                <ThinExternalLinkIcon />
-              </button>
-              </div>
+        </div>
+        <div className="mx-2 my-auto">
+          <button
+            className="flex items-center justify-center gap-2 rounded-lg border border-gray-200 p-2 text-sm font-semibold"
+            onClick={() => window.open(PAIRWISE_REPORT_URL, '_blank')}
+          >
+            Report an issue
+            <ThinExternalLinkIcon />
+          </button>
+        </div>
         {/* <div className='my-auto'> */}
         {/* <Dropdown customClass={category ? '2xl:hidden' : 'hidden'}>
               <div className="flex flex-col gap-2">
@@ -262,27 +256,27 @@ const HeaderRF6: FC<HeaderProps> = ({
                 </button>
               </div>
             </Dropdown> */}
-            {/* </div> */}
+        {/* </div> */}
 
-        
       </div>
       {category && (
+        <div
+          className={`h-1.5 w-full bg-gray-100 ${
+            isBarFixed ? 'fixed left-0 top-0 z-50 w-full' : ''
+          }`}
+        >
           <div
-            className={`w-full h-1.5 bg-gray-100 ${
-              isBarFixed ? 'fixed left-0 top-0 z-50 w-full' : ''
-            }`}
+            className="relative h-full bg-primary"
+            style={{ width: `${progress}%` }}
           >
-            <div
-              className="relative h-full bg-primary"
-              style={{ width: `${progress}%` }}
-            >
 
-            <div className='absolute bg-white text-[#344054] border-gray-border shadow-tooltip-shadow py-2 px-3 rounded-md right-0 top-0 z-50 -translate-y-1/2'>
-              {progress?.toFixed(2)}%
-            </div>
+            <div className="shadow-tooltip-shadow absolute right-0 top-0 z-50 -translate-y-1/2 rounded-md border-gray-border bg-white px-3 py-2 text-[#344054]">
+              {progress?.toFixed(2)}
+              %
             </div>
           </div>
-        )}
+        </div>
+      )}
     </>
   );
 };

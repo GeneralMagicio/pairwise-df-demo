@@ -73,7 +73,7 @@ const config: Config = {
         sans: ['"Inter var", sans-serif'],
       },
       boxShadow: {
-        'tooltip-shadow':'box-shadow: 0px 4px 6px -2px #10182808,box-shadow: 0px 12px 16px -4px #10182814',
+        'tooltip-shadow': 'box-shadow: 0px 4px 6px -2px #10182808,box-shadow: 0px 12px 16px -4px #10182814',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

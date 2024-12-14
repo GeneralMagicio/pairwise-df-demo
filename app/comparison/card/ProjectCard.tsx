@@ -1,22 +1,15 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import Switch from 'react-switch';
 import { useCollapse } from 'react-collapsed';
 import { ExternalLink } from './ExternalLink';
 import GithubBox from './GithubBox';
 import SimpleInfoBox from './SimpleInfoBox';
-import QABox from './QABox';
-import GrantBox from './GrantBox';
-import Team from './Team';
 import { ProjectMetadata } from '../utils/types';
 import { ArrowUpIcon } from '@/public/assets/icon-components/ArrowUp';
 import ConflictOfInterestModal from './modals/CoIModal';
 import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
 import CoILoadingModal from './modals/CoILoading';
 import ProjectDescription from './ProjectDescription';
-import { StarsIcon } from '@/public/assets/icon-components/Stars';
-import { convertCategoryToLabel } from '../utils/helpers';
-import { JWTPayload } from '@/app/utils/wallet/types';
 import styles from '@/app/styles/Project.module.css';
 import { ContractBox } from './modals/ContractBox';
 
@@ -242,7 +235,7 @@ export const ProjectCard: React.FC<Props> = ({
         <div ref={parentRef} className="h-[78vh] gap-10 overflow-y-auto">
           <div className="mr-4">
             {/* Cover Image and Profile Avatar */}
-            <div className="relative h-auto flex flex-row">
+            <div className="relative flex h-auto flex-row">
               <Image
                 src={project.profileAvatarUrl}
                 unoptimized
@@ -252,10 +245,10 @@ export const ProjectCard: React.FC<Props> = ({
                 className="rounded-md"
               />
               <h1
-                    className={`text-3xl m-2 text-center font-semibold ${styles.oneLineClamp}`}
-                  >
-                    {project.name}
-                  </h1>
+                className={`m-2 text-center text-3xl font-semibold ${styles.oneLineClamp}`}
+              >
+                {project.name}
+              </h1>
             </div>
             {/* Sticky Title Section */}
             {/* <div
@@ -342,7 +335,7 @@ export const ProjectCard: React.FC<Props> = ({
               </div>
             )} */}
 
-            <div className="grid grid-cols-3 gap-4 py-2.5 px-3 bg-gray-100">
+            <div className="grid grid-cols-3 gap-4 bg-gray-100 px-3 py-2.5">
               <div>01</div>
               <div>09</div>
             </div>

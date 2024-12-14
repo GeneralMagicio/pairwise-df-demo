@@ -6,16 +6,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useActiveWallet } from 'thirdweb/react';
 import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
+import Slider from '@mui/material/Slider';
+import { styled } from '@mui/material/styles';
 import { JWTPayload } from '@/app/utils/wallet/types';
 import { AutoScrollAction, ProjectCard } from '../card/ProjectCard';
-import ConflictButton from '../card/CoIButton';
 import HeaderRF6 from '../card/Header-RF6';
-import { Rating } from '../card/Rating';
 import UndoButton from '../card/UndoButton';
-import VoteButton from '../card/VoteButton';
 import Modals from '@/app/utils/wallet/Modals';
 import SkipButton from '../card/Skip';
-import Slider from '@mui/material/Slider';
 import {
   getPairwisePairsForProject,
   useGetPairwisePairs,
@@ -41,7 +39,6 @@ import { ProjectCardAI } from '../card/ProjectCardAI';
 import EmailLoginModal from '@/app/allocation/components/EOA/EmailLoginModal';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
-import {styled} from '@mui/material/styles';
 
 const CustomSlider = styled(Slider)({
   '& .MuiSlider-valueLabel': {
@@ -50,7 +47,6 @@ const CustomSlider = styled(Slider)({
     border: '1px solid #EAECF0',
   },
 });
-
 
 export default function Home() {
   const { category } = useParams() ?? {};
@@ -288,8 +284,6 @@ export default function Home() {
     setCoiLoading1(false);
   };
 
-
-
   const showCoI1 = () => {
     if (!wallet) {
       setShowLoginModal(true);
@@ -446,8 +440,8 @@ export default function Home() {
   const handleChange = (_event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
       setValue(newValue);
-      setRating1(newValue+100);
-      setRating2(100-value);
+      setRating1(newValue + 100);
+      setRating2(100 - value);
     }
   };
 
@@ -533,7 +527,7 @@ export default function Home() {
       <HeaderRF6
         progress={progress * 100}
         category={convertCategoryToLabel(category! as JWTPayload['category'])}
-        question={`Which dependency deserves more weight?`}
+        question="Which dependency deserves more weight?"
         isFirstSelection={isInitialVisit}
       />
       {isInitialVisit
@@ -620,8 +614,8 @@ export default function Home() {
           )}
 
       {!isInitialVisit && (
-        <footer className="sticky bottom-0 z-50 flex flex-col w-full items-center justify-around gap-4 bg-white py-8 shadow-inner">
-          <div className="flex flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8 w-3/4">
+        <footer className="sticky bottom-0 z-50 flex w-full flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner">
+          <div className="flex w-3/4 flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
             {/* <Rating
               value={rating1 || 0}
               onChange={(value) => {
@@ -639,26 +633,26 @@ export default function Home() {
               onClick={showCoI1}
               disabled={coiLoading1 || isAnyModalOpen()}
             /> */}
-            <div className='text-ellipsis w-1/5'>{project1.name}</div>
+            <div className="w-1/5 text-ellipsis">{project1.name}</div>
             <div>100</div>
-            <div className='w-1/2 mt-5 relative'>
-            <CustomSlider
-              sx={{color: '#7F56D9' }}
-              value={value}
-              min={-100}
-              step={1}
-              max={100}
-              getAriaValueText={(value: number)=>`${Math.abs(value)}`}
-              valueLabelFormat={(value: number)=>`${Math.abs(value)}`}
-              onChange={handleChange}
-              valueLabelDisplay="auto"
-              aria-labelledby="non-linear-slider"
-            />
-            <div className='absolute h-9 w-0 left-[calc(50%-1px)] top-0 border-2 border-dashed border-primary'/>
+            <div className="relative mt-5 w-1/2">
+              <CustomSlider
+                sx={{ color: '#7F56D9' }}
+                value={value}
+                min={-100}
+                step={1}
+                max={100}
+                getAriaValueText={(value: number) => `${Math.abs(value)}`}
+                valueLabelFormat={(value: number) => `${Math.abs(value)}`}
+                onChange={handleChange}
+                valueLabelDisplay="auto"
+                aria-labelledby="non-linear-slider"
+              />
+              <div className="absolute left-[calc(50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
 
             </div>
             <div>100</div>
-            <div className='text-ellipsis w-1/5'>{project2.name}</div>
+            <div className="w-1/5 text-ellipsis">{project2.name}</div>
           </div>
           <div className="flex flex-row gap-x-11">
             <UndoButton
