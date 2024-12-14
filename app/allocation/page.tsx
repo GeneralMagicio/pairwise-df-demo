@@ -11,9 +11,6 @@ import Modal from '../utils/Modal';
 import EmailLoginModal from './components/EOA/EmailLoginModal';
 
 import CategoryAllocation from './components/CategoryAllocation';
-import BudgetAllocation, {
-  BudgetCategory,
-} from './components/BudgetAllocation';
 import ConnectBox from './components/ConnectBox';
 import { modifyPercentage, RankItem, roundFractions } from './utils';
 import {
@@ -51,13 +48,6 @@ import StorageLabel from '../lib/localStorage';
 import AskDelegations from '../delegation/farcaster/AskDelegations';
 import XModal from './components/XModal';
 
-const budgetCategory: BudgetCategory = {
-  id: -1,
-  name: 'Budget',
-  description:
-    'Choose how much OP should be dedicated to this round, or delegate this decision to someone you trust.',
-  imageSrc: '/assets/images/budget-card.svg',
-};
 
 enum DelegationState {
   Initial,
@@ -97,7 +87,7 @@ const AllocationPage = () => {
   const [isWorldIdSignSuccessModal, setIsWorldIdSignSuccessModal]
     = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [allocatingBudget, setAllocatingBudget] = useState(false);
+  // const [allocatingBudget, setAllocatingBudget] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null
   );
@@ -171,7 +161,6 @@ const AllocationPage = () => {
   const handleAttestationModalClose = () => {
     if (attestationState === AttestationState.Success) {
       setAttestationState(AttestationState.Initial);
-      setAllocatingBudget(false);
     }
     if (attestationState === AttestationState.Error) {
       setAttestationState(AttestationState.Initial);
@@ -183,7 +172,6 @@ const AllocationPage = () => {
       setShowLoginModal(true);
       return;
     }
-    setAllocatingBudget(true);
   };
 
   const handleLock = (id: RankItem['id']) => () => {
@@ -383,7 +371,6 @@ const AllocationPage = () => {
             link={attestationLink}
             onClose={() => {
               setAttestationState(AttestationState.Initial);
-              setAllocatingBudget(false);
             }}
           />
         )}
@@ -483,21 +470,19 @@ const AllocationPage = () => {
         }}
       />
       <div className="flex flex-col gap-6 p-16">
-        {!allocatingBudget && (
-          <div className="flex max-w-[72%] flex-col gap-3">
-            <h2 className="text-3xl font-bold"> Deep Funding </h2>
-            <p className="text-gray-400">
-              In Deep Funding, most of the work gets done by a public market of allocators,
-              that suggest proposed weights of edges in a graph,
-              which answer the question “what percent of the credit for A belongs to B?”.
-            </p>
-          </div>
-        )}
-        <div className={`flex ${allocatingBudget ? 'justify-center' : 'justify-between'} gap-4`}>
+        <div className="flex max-w-[72%] flex-col gap-3">
+          <h2 className="text-3xl font-bold"> Deep Funding </h2>
+          <p className="text-gray-400">
+            In Deep Funding, most of the work gets done by a public market of allocators,
+            that suggest proposed weights of edges in a graph,
+            which answer the question “what percent of the credit for A belongs to B?”.
+          </p>
+        </div>
+        <div className="flex justify-between gap-4">
           <div className="flex w-[72%] flex-col gap-6 rounded-xl border p-6">
             <div>
               <h3 className="mb-4 w-full border-b pb-6 text-2xl font-bold">
-                {allocatingBudget ? 'Your budget' : 'Voting'}
+                Voting
               </h3>
             </div>
             {categoriesLoading
@@ -510,26 +495,7 @@ const AllocationPage = () => {
                   categories
                   && categories.length > 0 && (
                     <div className="flex flex-col gap-4">
-                      {!allocatingBudget && (
-                        <BudgetAllocation
-                          {...budgetCategory}
-                          progress={dbudgetProgress}
-                          attestationLink={categoryRankings?.attestationLink || null}
-                          delegations={budgetDelegateToYou?.length || 0}
-                          loading={delegationsLoading}
-                          isBadgeholder={isBadgeholder}
-                          bhCategory={category}
-                          isBHCategoryAtessted={isBHCategoryAtessted()}
-                          categorySlug={category}
-                          onDelegate={() => {
-                            setCategoryToDelegate(budgetCategory);
-                            setDelegationState(DelegationState.DelegationMethod);
-                          }}
-                          onScore={handleVoteBudget}
-                          onEdit={handleVoteBudget}
-                          username={budgetDelegateFromYou?.metadata?.username}
-                        />
-                      )}
+
                       {categories.map((cat) => {
                         const rank = categoriesRanking?.find(
                           el => el.id === cat.id
@@ -540,9 +506,7 @@ const AllocationPage = () => {
                             key={cat.name}
                             locked={rank?.locked || false}
                             delegations={getColNumOfDelegations(cat.id)}
-                            allocatingBudget={allocatingBudget}
                             allocationPercentage={rank?.percentage || 0}
-                            allocationBudget={rank?.budget || 0}
                             loading={delegationsLoading}
                             isBadgeholder={isBadgeholder}
                             bhCategory={category}
@@ -571,11 +535,10 @@ const AllocationPage = () => {
                   )
                 )}
           </div>
-          {!allocatingBudget && (
-            <div className="w-[25%]">
-              <ConnectBox />
-            </div>
-          )}
+
+          <div className="w-[25%]">
+            <ConnectBox />
+          </div>
         </div>
       </div>
     </div>

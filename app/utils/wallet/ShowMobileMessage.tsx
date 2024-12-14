@@ -7,7 +7,7 @@ export default function ShowMobileMessage({
   children: ReactNode
 }>) {
   return (
-    <div className="relative h-screen w-screen">
+    <div className="relative h-screen w-full">
       <div className="flex h-full flex-col items-center justify-center gap-4 px-4 sm:hidden">
         <div className="absolute top-0 aspect-[2/1] w-full">
           <Image className="object-cover" fill src="/assets/images/mobile-header.svg" alt="" />

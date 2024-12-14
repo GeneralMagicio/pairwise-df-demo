@@ -17,7 +17,6 @@ import DelegatedCategory from './ProgressCards/DelegatedCategory';
 import PendingCategory from './ProgressCards/PendingCategory';
 import {
   categoryIdSlugMap,
-  formatBudget,
 } from '@/app/comparison/utils/helpers';
 
 // Image source map for collections
@@ -29,8 +28,6 @@ const collectionsImageSrc = new Map<number, string>([
 
 interface CategoryAllocationProps extends TCategory {
   allocationPercentage: number
-  allocatingBudget: boolean
-  allocationBudget: number
   locked: boolean
   delegations: number
   loading: boolean
@@ -48,13 +45,11 @@ interface CategoryAllocationProps extends TCategory {
 
 const CategoryAllocation: FC<CategoryAllocationProps> = ({
   id,
-  allocatingBudget,
   name,
   description,
   projectCount,
   progress,
   allocationPercentage,
-  allocationBudget,
   locked,
   attestationLink,
   delegations,
@@ -83,6 +78,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
     const { floatValue } = values;
     return floatValue === undefined || (floatValue >= 0 && floatValue <= 100);
   };
+  const allocatingBudget = false;
 
   const handleInputChange = debounce((value: number) => {
     onPercentageChange(roundFractions(value, 2));
@@ -149,7 +145,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         />
       </div>
 
-      <div className="flex w-[36%] items-center justify-center gap-2 border-l border-gray-200 2xl:w-[26%]">
+      <div className="flex w-[36%] items-center justify-center gap-2 2xl:w-[26%]">
         <div className="flex w-4/5 items-start justify-center">
           {allocatingBudget
             ? (
@@ -184,13 +180,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
                         +
                       </button>
                     </div>
-                    <div className="flex justify-center rounded-md bg-gray-100 px-4 py-0.5 text-sm text-gray-600">
-                      <p className="text-xs font-medium">
-                        {formatBudget(allocationBudget)}
-                        {' '}
-                        OP
-                      </p>
-                    </div>
+
                   </div>
                   <button
                     onClick={onLockClick}

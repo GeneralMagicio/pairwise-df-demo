@@ -270,7 +270,7 @@ const HeaderRF6: FC<HeaderProps> = ({
             style={{ width: `${progress}%` }}
           >
 
-            <div className="shadow-tooltip-shadow absolute right-0 top-0 z-50 -translate-y-1/2 rounded-md border-gray-border bg-white px-3 py-2 text-[#344054]">
+            <div className={`${!isBarFixed ? 'shadow-tooltip-shadow absolute right-0 top-0 z-50 -translate-y-1/2 rounded-md border-gray-border bg-white px-3 py-2 text-[#344054]' : 'hidden'}`}>
               {progress?.toFixed(2)}
               %
             </div>

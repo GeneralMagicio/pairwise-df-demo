@@ -196,6 +196,12 @@ export const ProjectCard: React.FC<Props> = ({
     }
   }, [action, name, sectionExpanded, render]);
 
+  const infoTabs = [
+    {
+      src: '',
+      text: '',
+    },
+  ];
   const scrollToTop = () => {
     if (divRef.current) {
       divRef.current.scrollTop = 0;
@@ -233,7 +239,7 @@ export const ProjectCard: React.FC<Props> = ({
     }`}
       >
         <div ref={parentRef} className="h-[78vh] gap-10 overflow-y-auto">
-          <div className="mr-4">
+          <div className="mr-4 flex flex-col gap-6">
             {/* Cover Image and Profile Avatar */}
             <div className="relative flex h-auto flex-row">
               <Image
@@ -335,9 +341,15 @@ export const ProjectCard: React.FC<Props> = ({
               </div>
             )} */}
 
-            <div className="grid grid-cols-3 gap-4 bg-gray-100 px-3 py-2.5">
-              <div>01</div>
-              <div>09</div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
+                <Image src="/assets/images/time.svg" width={16} height={16} alt="time" />
+                <div>10 months old</div>
+              </div>
+              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
+                <Image src="/assets/images/contributor.svg" width={16} height={16} alt="time" />
+                <div>10 contributors</div>
+              </div>
             </div>
             <Section
               id={`repos-${name}`}
