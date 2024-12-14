@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, useMemo } from 'react';
-import { useDisconnect, useAccount } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { usePathname, useRouter } from 'next/navigation';
 import { ConnectButton } from '@/app/utils/wallet/Connect';
 import { PwLogo } from '@/public/assets/icon-components/PairwiseLogo';
@@ -7,7 +7,6 @@ import { ThinExternalLinkIcon } from '@/public/assets/icon-components/ThinExtern
 import { BadgesEnum, IActiveBadge } from './ActiveBadges';
 import Modal from '../../utils/Modal';
 import BadgesModal from './modals/BadgesModal';
-import { useAuth } from '@/app/utils/wallet/AuthProvider';
 import { useGetPublicBadges } from '@/app/utils/getBadges';
 import DelegationsModal from './modals/DelegationsModal';
 import { useGetDelegationStatus } from '@/app/utils/getConnectionStatus';
@@ -31,8 +30,6 @@ const HeaderRF6: FC<HeaderProps> = ({
 }) => {
   const path = usePathname();
   const router = useRouter();
-  const { disconnectAsync } = useDisconnect();
-  const { signOut, loginAddress } = useAuth();
   const { data: badges } = useGetPublicBadges();
   const { data: delegates } = useGetDelegationStatus();
   const { address, chainId } = useAccount();
@@ -90,11 +87,6 @@ const HeaderRF6: FC<HeaderProps> = ({
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
-  const logout = async () => {
-    await disconnectAsync();
-    signOut();
-  };
 
   useEffect(() => {
     if (!category || !chainId || !delegates) return;
@@ -204,7 +196,6 @@ const HeaderRF6: FC<HeaderProps> = ({
         </div>
         <div className="mx-2 my-auto">
           <ConnectButton />
-
         </div>
         <div className="mx-2 my-auto">
           <button

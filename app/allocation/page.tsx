@@ -48,7 +48,6 @@ import StorageLabel from '../lib/localStorage';
 import AskDelegations from '../delegation/farcaster/AskDelegations';
 import XModal from './components/XModal';
 
-
 enum DelegationState {
   Initial,
   DelegationMethod,
@@ -73,15 +72,12 @@ const AllocationPage = () => {
 
   const colDelegationToYou = delegations?.toYou?.collections;
   const colDelegationFromYou = delegations?.fromYou?.collections;
-  const budgetDelegateToYou = delegations?.toYou?.budget;
-  const budgetDelegateFromYou = delegations?.fromYou?.budget;
 
   const [attestationState, setAttestationState] = useState(AttestationState.Initial);
   const [attestationLink, setAttestationLink] = useState<string>();
   const [closingDesibled, setClosingDesibled] = useState(false);
 
   const [totalValue, setTotalValue] = useState(categoryRankings?.budget || 0);
-  const [percentageError, setPercentageError] = useState<string>();
   const [isOpenFarcasterModal, setIsOpenFarcasterModal] = useState(false);
   const [isOpenXModal, setIsOpenXModal] = useState(false);
   const [isWorldIdSignSuccessModal, setIsWorldIdSignSuccessModal]
@@ -167,12 +163,12 @@ const AllocationPage = () => {
     }
   };
 
-  const handleVoteBudget = () => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-  };
+  // const handleVoteBudget = () => {
+  //   if (!wallet) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+  // };
 
   const handleLock = (id: RankItem['id']) => () => {
     try {
@@ -184,10 +180,9 @@ const AllocationPage = () => {
         locked: !currValue.locked,
       });
       setCategoriesRanking(newRanking);
-      setPercentageError(undefined);
     }
     catch (e: any) {
-      setPercentageError(e.msg);
+      console.error(e);
     }
   };
 
@@ -202,23 +197,9 @@ const AllocationPage = () => {
         budget: currValue.budget * (percentage / currValue.percentage),
       });
       setCategoriesRanking(newRanking);
-      setPercentageError(undefined);
     }
     catch (e: any) {
       console.log(e);
-      setPercentageError(e.msg);
-    }
-  };
-
-  const handleSliderChange = (_event: Event, newValue: number | number[]) => {
-    if (typeof newValue === 'number') {
-      setTotalValue(newValue * 1_000_000);
-      setCategoriesRanking(
-        categoriesRanking?.map(el => ({
-          ...el,
-          budget: el.budget * (newValue / (totalValue / 1_000_000)),
-        }))
-      );
     }
   };
 

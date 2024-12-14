@@ -30,7 +30,6 @@ import { IProject } from '../utils/types';
 import { mockProject1, mockProject2 } from '../card/mockData';
 import IntroView from './IntroView';
 import Spinner from '../../components/Spinner';
-import LowRateModal from '../card/modals/LowRateModal';
 import PostRatingModal from '../card/modals/PostRatingModal';
 import GoodRatingModal from '../card/modals/GoodRatingModal';
 import RevertLoadingModal from '../card/modals/RevertLoadingModal';
@@ -66,12 +65,8 @@ export default function Home() {
   const [lastAction, setLastAction] = useState<AutoScrollAction>();
 
   const [revertingBack, setRevertingBack] = useState(false);
-  const [showLowRateModal, setShowLowRateModal] = useState(false);
   const [showPostRatingModal, setShowPostRatingModal] = useState(false);
   const [showGoodRatingModal, setShowGoodRatingModal] = useState(false);
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
-    null
-  );
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
   const [sectionExpanded1, setSectionExpanded1] = useState({
@@ -253,8 +248,7 @@ export default function Home() {
   };
 
   const isAnyModalOpen = () =>
-    showLowRateModal
-    || revertingBack
+    revertingBack
     || showPostRatingModal
     || showGoodRatingModal;
 
@@ -284,13 +278,13 @@ export default function Home() {
     setCoiLoading1(false);
   };
 
-  const showCoI1 = () => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-    setCoi1(true);
-  };
+  // const showCoI1 = () => {
+  //   if (!wallet) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+  //   setCoi1(true);
+  // };
 
   const confirmCoI2 = async (id1: number, id2: number) => {
     await markProjectCoI({ data: { pid: id2 } });
@@ -309,13 +303,13 @@ export default function Home() {
     setCoiLoading2(false);
   };
 
-  const showCoI2 = () => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-    setCoi2(true);
-  };
+  // const showCoI2 = () => {
+  //   if (!wallet) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+  //   setCoi2(true);
+  // };
 
   const setUserAsVisited = () => {
     if (!wallet) {
@@ -330,56 +324,50 @@ export default function Home() {
     setIsInitialVisit(false);
   };
 
-  const checkLowRatedProjectSelected = (chosenId: number): boolean => {
-    const isLowRatedProjectSelected = (
-      selectedId: number,
-      ratingA: number | null | undefined,
-      ratingB: number | null | undefined
-    ) =>
-      chosenId === selectedId && (!ratingA || (ratingB && ratingA < ratingB));
-
-    if (!rating1 || !rating2) return false;
-
-    if (
-      isLowRatedProjectSelected(project1!.id, rating1, rating2)
-      || isLowRatedProjectSelected(project2!.id, rating2, rating1)
-    ) {
-      setSelectedProjectId(chosenId);
-      setShowLowRateModal(true);
-      return true;
-    }
-
-    return false;
-  };
-
-  const handleVote = async (chosenId: number) => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-
-    setCoiLoading1(true);
-    setCoiLoading2(true);
-    try {
-      await vote({
-        data: {
-          project1Id: project1!.id,
-          project2Id: project2!.id,
-          project1Stars: rating1 ?? null,
-          project2Stars: rating2 ?? null,
-          pickedId: chosenId,
-        },
-      });
-
-      if (getGetStarted().goodRating && !getGetStarted().postRating) {
-        updateGetStarted({ postRating: true });
-      }
-    }
-    catch (e) {
-      setCoiLoading1(false);
-      setCoiLoading2(false);
-    }
-  };
+  // const checkLowRatedProjectSelected = (chosenId: number): boolean => {
+  //   const isLowRatedProjectSelected = (
+  //     selectedId: number,
+  //     ratingA: number | null | undefined,
+  //     ratingB: number | null | undefined
+  //   ) =>
+  //     chosenId === selectedId && (!ratingA || (ratingB && ratingA < ratingB));
+  //   if (!rating1 || !rating2) return false;
+  //   if (
+  //     isLowRatedProjectSelected(project1!.id, rating1, rating2)
+  //     || isLowRatedProjectSelected(project2!.id, rating2, rating1)
+  //   ) {
+  //     setSelectedProjectId(chosenId);
+  //     setShowLowRateModal(true);
+  //     return true;
+  //   }
+  //   return false;
+  // };
+  // const handleVote = async (chosenId: number) => {
+  //   if (!wallet) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+  //   setCoiLoading1(true);
+  //   setCoiLoading2(true);
+  //   try {
+  //     await vote({
+  //       data: {
+  //         project1Id: project1!.id,
+  //         project2Id: project2!.id,
+  //         project1Stars: rating1 ?? null,
+  //         project2Stars: rating2 ?? null,
+  //         pickedId: chosenId,
+  //       },
+  //     });
+  //     if (getGetStarted().goodRating && !getGetStarted().postRating) {
+  //       updateGetStarted({ postRating: true });
+  //     }
+  //   }
+  //   catch (e) {
+  //     setCoiLoading1(false);
+  //     setCoiLoading2(false);
+  //   }
+  // };
 
   const handleUndo = async () => {
     if (!wallet) {
@@ -468,8 +456,7 @@ export default function Home() {
       <Modals />
       <Modal
         isOpen={
-          showLowRateModal
-          || revertingBack
+          revertingBack
           || showPostRatingModal
           || showGoodRatingModal
           || showFinishModal
@@ -477,7 +464,7 @@ export default function Home() {
         onClose={() => {}}
       >
         {revertingBack && <RevertLoadingModal />}
-        {showLowRateModal && (
+        {/* {showLowRateModal && (
           <LowRateModal
             proceedWithSelection={async () => {
               await handleVote(selectedProjectId!);
@@ -485,7 +472,7 @@ export default function Home() {
             }}
             cancelSelection={() => setShowLowRateModal(false)}
           />
-        )}
+        )} */}
         {showPostRatingModal && (
           <PostRatingModal
             confirm={() => {

@@ -59,7 +59,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   bhCategory,
   categorySlug,
   isBHCategoryAtessted,
-  onDelegate,
   onScore,
   onEdit,
   onLockClick,
@@ -119,10 +118,8 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         return (
           <PendingCategory
             onScore={onScore}
-            onDelegate={onDelegate}
             progress={progress}
             isAutoConnecting={isAutoConnecting}
-            delegations={delegations}
             isBadgeholder={isBadgeholder}
             bhCategory={bhCategory}
             categorySlug={categorySlug}

@@ -1,9 +1,7 @@
 type TPendingCategoryProps = {
   onScore: () => void
-  onDelegate: () => void
   progress: string
   isAutoConnecting: boolean
-  delegations?: number
   isBadgeholder: boolean
   bhCategory: string
   categorySlug: string
@@ -12,9 +10,7 @@ type TPendingCategoryProps = {
 
 const PendingCategory = ({
   onScore,
-  onDelegate,
   isAutoConnecting,
-  delegations,
   progress,
   isBadgeholder,
   bhCategory,

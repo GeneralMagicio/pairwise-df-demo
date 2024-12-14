@@ -137,38 +137,34 @@ export const ProjectCard: React.FC<Props> = ({
   setSectionExpanded,
   key1,
   key2,
-  aiMode,
-  setAi,
 }) => {
   const [render, setRender] = useState(0);
-  const [isSticky, setIsSticky] = useState(false);
-
-  const titleRef = useRef<HTMLDivElement>(null);
+  // const titleRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const parentElement = parentRef.current;
+    // const parentElement = parentRef.current;
 
-    const handleScroll = () => {
-      if (parentRef.current && titleRef.current) {
-        const rect = titleRef.current.getBoundingClientRect()?.top;
-        const offset = parentRef.current.getBoundingClientRect()?.top;
-        setIsSticky(rect <= offset && rect >= -offset);
-      }
-    };
+    // const handleScroll = () => {
+    //   if (parentRef.current && titleRef.current) {
+    //     const rect = titleRef.current.getBoundingClientRect()?.top;
+    //     const offset = parentRef.current.getBoundingClientRect()?.top;
+    //     // setIsSticky(rect <= offset && rect >= -offset);
+    //   }
+    // };
 
-    if (parentElement) {
-      parentElement.addEventListener('scroll', handleScroll);
-    }
+    // if (parentElement) {
+    //   parentElement.addEventListener('scroll', handleScroll);
+    // }
 
     setRender(1);
 
-    return () => {
-      if (parentElement) {
-        parentElement.removeEventListener('scroll', handleScroll);
-      }
-    };
+    // return () => {
+    //   if (parentElement) {
+    //     parentElement.removeEventListener('scroll', handleScroll);
+    //   }
+    // };
   }, []);
 
   useEffect(() => {
@@ -196,12 +192,12 @@ export const ProjectCard: React.FC<Props> = ({
     }
   }, [action, name, sectionExpanded, render]);
 
-  const infoTabs = [
-    {
-      src: '',
-      text: '',
-    },
-  ];
+  // const infoTabs = [
+  //   {
+  //     src: '',
+  //     text: '',
+  //   },
+  // ];
   const scrollToTop = () => {
     if (divRef.current) {
       divRef.current.scrollTop = 0;
