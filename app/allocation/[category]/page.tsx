@@ -317,15 +317,6 @@ const RankingPage = () => {
 
   useEffect(() => {
     if (ranking) setProjects(ranking?.ranking);
-
-    // if (!categoryRankings?.budget) return;
-
-    // const categoryShare
-    //   = categoryRankings?.ranking?.find(
-    //     categoryRanking => categoryRanking.projectId === category
-    //   )?.share || 0;
-
-    // setAllocationBudget(categoryRankings?.budget * categoryShare);
   }, [ranking]);
 
   useEffect(() => {
