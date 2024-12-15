@@ -122,8 +122,8 @@ export default function Home() {
         data: {
           project1Id: project1!.id,
           project2Id: project2!.id,
-          project1Val: null,
-          project2Val: null,
+          project1Val: 0,
+          project2Val: 0,
           pickedId: null,
         },
       });
@@ -357,8 +357,8 @@ export default function Home() {
         data: {
           project1Id: project1!.id,
           project2Id: project2!.id,
-          project1Val: rating1 ?? null,
-          project2Val: rating2 ?? null,
+          project1Val: rating1 ?? 0,
+          project2Val: rating2 ?? 0,
           pickedId: chosenId,
         },
       });
