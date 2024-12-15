@@ -3389,8 +3389,7 @@ export type CollectionProgressStatus =
   | 'WIP'
   | 'Filtered'
   | 'Filtering'
-  | 'Pending'
-  | 'Delegated';
+  | 'Pending';
 
 export enum CollectionProgressStatusEnum {
   Attested = 'Attested',
@@ -3400,5 +3399,4 @@ export enum CollectionProgressStatusEnum {
   Filtered = 'Filtered',
   Filtering = 'Filtering',
   Pending = 'Pending',
-  Delegated = 'Delegated',
 }

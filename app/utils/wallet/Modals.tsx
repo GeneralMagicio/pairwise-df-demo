@@ -1,28 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import React from 'react';
 import { useAccount } from 'wagmi';
-import { IDKitWidget, ISuccessResult, useIDKit, VerificationLevel } from '@worldcoin/idkit';
 import Modal from '../Modal';
 import ConnectLoading from './modals/ConnectLoading';
-import BadgeHolderModal from './modals/NotBhModal';
 import SignInWithWallet from './modals/SignInModal';
 import { LogginToPwBackendState, useAuth } from './AuthProvider';
 import NewWalletModal from './modals/NewWalletModal';
-import WorldIdSignInSuccessModal from '@/app/allocation/components/WorldIdSignInSuccessModal';
-import FarcasterModal from '@/app/allocation/components/FarcasterModal';
-import { useWorldSignIn } from '../getConnectionStatus';
-import { actionId, appId } from '@/app/lib/constants';
 
 export default function Modals() {
-  const path = usePathname();
-  const router = useRouter();
   const { address } = useAccount();
-  const [isOpenFarcasterModal, setIsOpenFarcasterModal] = useState(false);
-  const [isWorldIdSignSuccessModal, setIsWorldIdSignSuccessModal]
-    = useState(false);
-  const [isWorldIdSignErrorModal, setIsWorldIdSignErrorModal] = useState(false);
   const {
     loggedToPw,
     loginInProgress,
@@ -30,22 +17,10 @@ export default function Modals() {
     setLoginAddress,
     doLoginFlow,
     signOut,
-    loggedToAgora,
   } = useAuth();
 
-  const { open: isOpen } = useIDKit();
-
-  const { mutateAsync: worldIdSignIn } = useWorldSignIn();
-
-  const handleVerify = async (proof: ISuccessResult) => {
-    return (await worldIdSignIn(proof));
-  };
-
-  const bhOpen = typeof loggedToAgora === 'object'
-    && loggedToPw === LogginToPwBackendState.LoggedIn && path === '/' && !isOpenFarcasterModal && !isWorldIdSignSuccessModal && !isOpen && !isWorldIdSignErrorModal;
-
   const signInModalOpen
-    = !!address && (loggedToAgora === 'error' || loggedToPw === LogginToPwBackendState.Error);
+    = !!address && loggedToPw === LogginToPwBackendState.Error;
 
   const handleNewWalletCancel = () => {
     setLoginAddress({ ...loginAddress, confirmed: true });
@@ -63,68 +38,6 @@ export default function Modals() {
   return (
 
     <>
-
-      {isWorldIdSignSuccessModal && (
-        <WorldIdSignInSuccessModal
-          isOpen={isWorldIdSignSuccessModal}
-          onClose={() => {
-            setIsWorldIdSignSuccessModal(false);
-          }}
-        />
-      )}
-      {isWorldIdSignErrorModal && (
-        <WorldIdSignInSuccessModal
-          isOpen={isWorldIdSignErrorModal}
-          onClose={() => {
-            setIsWorldIdSignErrorModal(false);
-          }}
-          isError
-        />
-      )}
-      <IDKitWidget
-        app_id={appId}
-        action={actionId}
-        onSuccess={() => {
-          setIsWorldIdSignSuccessModal(true);
-        }}
-        handleVerify={handleVerify}
-        onError={() => {
-          setIsWorldIdSignErrorModal(true);
-        }}
-        verification_level={VerificationLevel.Device}
-      >
-        {({ open }) => (
-          <>
-            <Modal
-              isOpen={bhOpen}
-              onClose={() => {
-                router.push('/allocation');
-              }}
-            >
-              {bhOpen
-              && (
-                <BadgeHolderModal
-                  open={() => {
-                    open();
-                  }}
-                  onConnectFarcaster={() => {
-                    setIsOpenFarcasterModal(true);
-                  }}
-
-                />
-              )}
-            </Modal>
-          </>
-        )}
-      </IDKitWidget>
-      {isOpenFarcasterModal && (
-        <FarcasterModal
-          isOpen={isOpenFarcasterModal}
-          onClose={() => {
-            setIsOpenFarcasterModal(false);
-          }}
-        />
-      )}
       <Modal
         isOpen={
           loginAddress.value !== address || loginAddress.confirmed === false

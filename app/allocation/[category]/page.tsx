@@ -27,17 +27,11 @@ import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRight';
 import { modifyPercentage, RankItem } from '../utils';
 import Modal from '@/app/utils/Modal';
-import AttestationSuccessModal from './attestation/AttestationSuccessModal';
-import AttestationLoading from './attestation/AttestationLoading';
-import AttestationError from './attestation/AttestationError';
-import { attest, AttestationState, VotingHasEnded } from './attestation';
 import { useSigner } from './utils';
 import {
   useMarkCoi,
   useUnmarkCoi,
 } from '@/app/comparison/utils/data-fetching/coi';
-import AskDelegations from '@/app/delegation/farcaster/AskDelegations';
-import { getJWTData } from '@/app/utils/wallet/agora-login';
 import EmailLoginModal from '../components/EOA/EmailLoginModal';
 
 const RankingPage = () => {
@@ -50,10 +44,6 @@ const RankingPage = () => {
   const category = categorySlugIdMap.get((params?.category as string) || '');
 
   // const [search, setSearch] = useState<string>("");
-  const [attestationState, setAttestationState] = useState(
-    AttestationState.Initial
-  );
-  const [attestationLink, setAttestationLink] = useState<string>();
   const [checkedItems, setCheckedItems] = useState<number[]>([]);
   const [projects, setProjects] = useState<IProjectRanking[] | null>(null);
   const [totalShareError, setTotalShareError] = useState<string | null>(null);
@@ -71,8 +61,6 @@ const RankingPage = () => {
     = useUpdateProjectRanking(category);
   const { mutateAsync: markProjectCoI } = useMarkCoi();
   const { mutateAsync: unmarkProjectCoI } = useUnmarkCoi();
-
-  const { isBadgeholder } = getJWTData();
 
   // const handleBulkSelection = () => {
   //   if (!nonCoIProjects) return;
@@ -298,34 +286,7 @@ const RankingPage = () => {
       return;
     }
 
-    if (!VotingHasEnded) {
-      await attest({
-        ranking: {
-          id: ranking.id,
-          name: ranking.name,
-          ranking: projects.map(el => ({
-            RF6Id: el.project.RF6Id,
-            share: el.share,
-          })),
-        },
-        setAttestationLink,
-        setAttestationState,
-        signer,
-        wallet,
-      });
-    }
-
     setIsSubmitting(false);
-  };
-
-  const handleAttestationModalClose = () => {
-    if (attestationState === AttestationState.Success || attestationState == AttestationState.FarcasterDelegate) {
-      router.push('/allocation');
-      setAttestationState(AttestationState.Initial);
-    }
-    else if (attestationState === AttestationState.Error) {
-      setAttestationState(AttestationState.Initial);
-    }
   };
 
   useEffect(() => {
@@ -399,45 +360,6 @@ const RankingPage = () => {
 
   return (
     <div>
-      <Modal
-        isOpen={attestationState !== AttestationState.Initial}
-        onClose={handleAttestationModalClose}
-        showCloseButton={
-          attestationState !== AttestationState.FarcasterDelegate
-        }
-      >
-        {attestationState === AttestationState.FarcasterDelegate
-        && attestationLink && (
-          <AskDelegations
-            categoryName={params?.category as string}
-            link={attestationLink}
-            onClose={() => {
-              if (isBadgeholder) {
-                setAttestationState(AttestationState.Success);
-              }
-              else {
-                handleAttestationModalClose();
-                setAttestationState(AttestationState.Initial);
-              }
-            }}
-            isBadgeHolder={isBadgeholder}
-          />
-        )}
-        {attestationState === AttestationState.Success && attestationLink && (
-          <AttestationSuccessModal
-            link={attestationLink}
-            onClose={() => {
-              handleAttestationModalClose();
-            }}
-          />
-        )}
-        {attestationState === AttestationState.Loading && (
-          <AttestationLoading />
-        )}
-        {attestationState === AttestationState.Error && (
-          <AttestationError onClick={submitVotes} />
-        )}
-      </Modal>
       <Modal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}

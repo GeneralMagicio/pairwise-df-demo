@@ -13,7 +13,6 @@ import { UnlockIcon } from '@/public/assets/icon-components/Unlock';
 import { LockIcon } from '@/public/assets/icon-components/Lock';
 import Loading from '@/app/components/Loading';
 import VotedCategory from './ProgressCards/VotedCategory';
-import DelegatedCategory from './ProgressCards/DelegatedCategory';
 import PendingCategory from './ProgressCards/PendingCategory';
 import {
   categoryIdSlugMap,
@@ -54,7 +53,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   attestationLink,
   delegations,
   loading,
-  username,
   isBadgeholder,
   bhCategory,
   categorySlug,
@@ -68,7 +66,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
 
   const hrefLink
     = progress === CollectionProgressStatusEnum.Finished
-    || progress === CollectionProgressStatusEnum.Delegated
     || progress === CollectionProgressStatusEnum.Attested
       ? `/allocation/${categoryIdSlugMap.get(id)}`
       : `/comparison/${categoryIdSlugMap.get(id)}`;
@@ -94,14 +91,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   const renderProgressState = () => {
     if (loading) return <Loading />;
     switch (progress) {
-      case CollectionProgressStatusEnum.Delegated:
-        return (
-          <DelegatedCategory
-            id={id}
-            isAutoConnecting={isAutoConnecting}
-            username={username}
-          />
-        );
       case CollectionProgressStatusEnum.Attested:
         return (
           <VotedCategory
@@ -138,7 +127,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
           description={description}
           projectCount={projectCount}
           hrefLink={hrefLink}
-          isDelegated={progress === CollectionProgressStatusEnum.Delegated}
+          isDelegated={false}
         />
       </div>
 
