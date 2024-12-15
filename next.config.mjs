@@ -5,6 +5,7 @@ const nextConfig = {
           "icons.llamao.fi",
           "storage.googleapis.com",
           "cdn.charmverse.io",
+          'avatars.githubusercontent.com',
         ],
       },
       experimental: {

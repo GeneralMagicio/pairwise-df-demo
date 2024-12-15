@@ -19,11 +19,11 @@ import {
 } from '@/app/comparison/utils/helpers';
 
 // Image source map for collections
-const collectionsImageSrc = new Map<number, string>([
-  [1, '/assets/images/category-it.svg'],
-  [2, '/assets/images/category-gra.svg'],
-  [3, '/assets/images/category-gl.svg'],
-]);
+// const collectionsImageSrc = new Map<number, string>([
+//   [1, '/assets/images/category-it.svg'],
+//   [2, '/assets/images/category-gra.svg'],
+//   [3, '/assets/images/category-gl.svg'],
+// ]);
 
 interface CategoryAllocationProps extends TCategory {
   allocationPercentage: number
@@ -33,6 +33,7 @@ interface CategoryAllocationProps extends TCategory {
   username?: string
   isBadgeholder: boolean
   bhCategory: string
+  image: string
   isBHCategoryAtessted: boolean
   categorySlug: string
   onDelegate: () => void
@@ -47,6 +48,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   name,
   description,
   projectCount,
+  image,
   progress,
   allocationPercentage,
   locked,
@@ -121,7 +123,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   return (
     <div className="flex justify-between rounded-lg border bg-gray-50 p-4">
       <div className="flex w-[64%] space-x-4 2xl:w-[74%]">
-        <ImageContainer src={collectionsImageSrc.get(id) || ''} alt={name} />
+        <ImageContainer src={image} alt={name} />
         <ProjectInfo
           name={name}
           description={description}

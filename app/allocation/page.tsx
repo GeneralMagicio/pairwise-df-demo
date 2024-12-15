@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import HeaderRF6 from '../comparison/card/Header-RF6';
 import Modal from '../utils/Modal';
-import EmailLoginModal from './components/EOA/EmailLoginModal';
-
 import CategoryAllocation from './components/CategoryAllocation';
 import ConnectBox from './components/ConnectBox';
 import { modifyPercentage, RankItem, roundFractions } from './utils';
@@ -122,17 +120,6 @@ const AllocationPage = () => {
 
   return (
     <div>
-      <Modal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        showCloseButton={!closingDesibled}
-      >
-        <EmailLoginModal
-          closeModal={() => setShowLoginModal(false)}
-          setCloseModalDisabled={setClosingDesibled}
-          selectedCategoryId={selectedCategoryId}
-        />
-      </Modal>
 
       <HeaderRF6 />
 
@@ -171,6 +158,7 @@ const AllocationPage = () => {
                           <CategoryAllocation
                             {...cat}
                             key={cat.name}
+                            image={cat.image}
                             locked={rank?.locked || false}
                             delegations={0}
                             allocationPercentage={rank?.percentage || 0}

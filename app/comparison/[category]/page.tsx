@@ -35,7 +35,6 @@ import GoodRatingModal from '../card/modals/GoodRatingModal';
 import RevertLoadingModal from '../card/modals/RevertLoadingModal';
 import StorageLabel from '@/app/lib/localStorage';
 import { ProjectCardAI } from '../card/ProjectCardAI';
-import EmailLoginModal from '@/app/allocation/components/EOA/EmailLoginModal';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
 
@@ -501,18 +500,6 @@ export default function Home() {
             )}
           />
         )}
-      </Modal>
-
-      <Modal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        showCloseButton={!closingDesibled}
-      >
-        <EmailLoginModal
-          closeModal={() => setShowLoginModal(false)}
-          setCloseModalDisabled={setClosingDesibled}
-          selectedCategoryId={cid}
-        />
       </Modal>
 
       <HeaderRF6

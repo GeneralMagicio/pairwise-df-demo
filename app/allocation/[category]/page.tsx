@@ -26,13 +26,11 @@ import {
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRight';
 import { modifyPercentage, RankItem } from '../utils';
-import Modal from '@/app/utils/Modal';
 import { useSigner } from './utils';
 import {
   useMarkCoi,
   useUnmarkCoi,
 } from '@/app/comparison/utils/data-fetching/coi';
-import EmailLoginModal from '../components/EOA/EmailLoginModal';
 
 const RankingPage = () => {
   const params = useParams();
@@ -360,17 +358,6 @@ const RankingPage = () => {
 
   return (
     <div>
-      <Modal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        showCloseButton={!closingDesibled}
-      >
-        <EmailLoginModal
-          closeModal={() => setShowLoginModal(false)}
-          setCloseModalDisabled={setClosingDesibled}
-          selectedCategoryId={category}
-        />
-      </Modal>
       <HeaderRF6 />
       <div className="flex flex-col justify-between gap-4 px-6 py-16 lg:px-20 xl:px-52 2xl:px-72">
         <div className="flex flex-col gap-6 rounded-xl border border-gray-200 px-6 py-10">
