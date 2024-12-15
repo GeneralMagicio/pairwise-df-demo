@@ -73,6 +73,7 @@ const RankingPage = () => {
   const { mutateAsync: unmarkProjectCoI } = useUnmarkCoi();
 
   const { isBadgeholder } = getJWTData();
+  console.log(projects);
 
   // const handleBulkSelection = () => {
   //   if (!nonCoIProjects) return;
@@ -362,18 +363,10 @@ const RankingPage = () => {
     }
   }, [projects, lockedItems, checkedItems]);
 
-  // useEffect(() => {
-  //   if (ranking) setProjects(ranking?.ranking);
-
-  //   if (!categoryRankings?.budget) return;
-
-  //   const categoryShare
-  //     = categoryRankings?.ranking?.find(
-  //       categoryRanking => categoryRanking.projectId === category
-  //     )?.share || 0;
-
-  //   setAllocationBudget(categoryRankings?.budget * categoryShare);
-  // }, [ranking]);
+  useEffect(() => {
+    console.log;
+    if (ranking) setProjects(ranking?.ranking);
+  }, [ranking]);
 
   useEffect(() => {
     if (!nonCoIProjects) return;
