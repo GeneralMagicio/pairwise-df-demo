@@ -51,16 +51,16 @@ const Section: FC<CollapsibleProps> = ({
   );
 };
 
-function smoothScrollToElement(elementId: string) {
-  const element = document.getElementById(elementId);
+// function smoothScrollToElement(elementId: string) {
+//   const element = document.getElementById(elementId);
 
-  if (element) {
-    element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
-  }
-}
+//   if (element) {
+//     element.scrollIntoView({
+//       behavior: 'smooth',
+//       block: 'start',
+//     });
+//   }
+// }
 
 interface Props {
   metadata: ProjectMetadata & IProject
@@ -69,13 +69,13 @@ interface Props {
   setAi: () => void
 }
 
-const NoneBox: FC = () => (
-  <div className="space-y-2">
-    <div className="max-w-full rounded-lg border border-gray-200 bg-gray-50 p-2">
-      None
-    </div>
-  </div>
-);
+// const NoneBox: FC = () => (
+//   <div className="space-y-2">
+//     <div className="max-w-full rounded-lg border border-gray-200 bg-gray-50 p-2">
+//       None
+//     </div>
+//   </div>
+// );
 
 export const ProjectCard: React.FC<Props> = ({
   metadata,

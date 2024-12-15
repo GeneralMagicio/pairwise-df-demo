@@ -28,8 +28,8 @@ function calculateAge(createdAt: string): number {
   return Math.floor(years);
 }
 
-const GithubBox: FC<Props> = ({ commit_count, contributors_to_repo_count, days_with_commits_count, first_commit_time,
-  fork_count, last_commit_time, star_count, github_url, watcher_count, artifact_name, created_at,
+const GithubBox: FC<Props> = ({ contributors_to_repo_count,
+  fork_count, star_count, github_url, artifact_name, created_at,
 }) => {
   // const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
 

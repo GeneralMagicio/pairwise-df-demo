@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { redirect, useParams } from 'next/navigation';
-import { useQueryClient } from '@tanstack/react-query';
+// import { useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
 import Slider from '@mui/material/Slider';
@@ -22,10 +22,10 @@ import {
   useUpdateProjectVote,
 } from '../utils/data-fetching/vote';
 import { getBiggerNumber, usePrevious } from '@/app/utils/methods';
-import { useMarkCoi } from '../utils/data-fetching/coi';
+// import { useMarkCoi } from '../utils/data-fetching/coi';
 import Modal from '@/app/utils/Modal';
 import { IProject } from '../utils/types';
-import { mockProject1, mockProject2 } from '../card/mockData';
+// import { mockProject1, mockProject2 } from '../card/mockData';
 import Spinner from '../../components/Spinner';
 import PostRatingModal from '../card/modals/PostRatingModal';
 import GoodRatingModal from '../card/modals/GoodRatingModal';
@@ -44,7 +44,7 @@ const CustomSlider = styled(Slider)({
 
 export default function Home() {
   const { category } = useParams() ?? {};
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const { address, chainId } = useAccount();
   // const wallet = useActiveWallet();
 
@@ -88,7 +88,7 @@ export default function Home() {
   const { data, isLoading } = useGetPairwisePairs(cid);
   const prevProgress = usePrevious(progress);
 
-  const { mutateAsync: markProjectCoI } = useMarkCoi();
+  // const { mutateAsync: markProjectCoI } = useMarkCoi();
   const { mutateAsync: vote } = useUpdateProjectVote({ categoryId: cid });
   const { mutateAsync: undo } = useUpdateProjectUndo({
     categoryId: cid,
@@ -143,10 +143,10 @@ export default function Home() {
     if (data.pairs.length === 0) {
       setShowFinishModal(true);
 
-      if (!project1 || !project2) {
-        setProject1(mockProject1);
-        setProject2(mockProject2);
-      }
+      // if (!project1 || !project2) {
+      //   setProject1(mockProject1);
+      //   setProject2(mockProject2);
+      // }
       return;
     }
     setProject1(data.pairs[0][0]);

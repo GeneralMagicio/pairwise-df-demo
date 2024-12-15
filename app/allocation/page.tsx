@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import HeaderRF6 from '../comparison/card/Header-RF6';
-import Modal from '../utils/Modal';
+// import Modal from '../utils/Modal';
 import CategoryAllocation from './components/CategoryAllocation';
 import ConnectBox from './components/ConnectBox';
 import { modifyPercentage, RankItem, roundFractions } from './utils';
@@ -19,7 +19,6 @@ import {
   useCategoryRankings,
 } from '@/app/comparison/utils/data-fetching/ranking';
 
-
 const AllocationPage = () => {
   const router = useRouter();
 
@@ -27,12 +26,12 @@ const AllocationPage = () => {
 
   const { data: categoryRankings } = useCategoryRankings();
 
-  const [closingDesibled, setClosingDesibled] = useState(false);
+  // const [closingDesibled, setClosingDesibled] = useState(false);
 
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
-  );
+  // const [showLoginModal, setShowLoginModal] = useState(false);
+  // const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+  //   null
+  // );
   const [categoriesRanking, setCategoriesRanking] = useState<RankItem[]>();
   const [dbudgetProgress, setDbudgetProgress]
     = useState<CollectionProgressStatusEnum>(
@@ -79,12 +78,12 @@ const AllocationPage = () => {
 
   const handleScoreProjects = (id: RankItem['id']) => () => {
     console.log(id);
-    setSelectedCategoryId(id);
+    // setSelectedCategoryId(id);
     router.push(`/comparison/${categoryIdSlugMap.get(id)}`);
   };
 
   const handleEdit = (id: RankItem['id']) => {
-    setSelectedCategoryId(id);
+    // setSelectedCategoryId(id);
     router.push(`/allocation/${categoryIdSlugMap.get(id)}`);
   };
 
@@ -164,7 +163,7 @@ const AllocationPage = () => {
                             allocationPercentage={rank?.percentage || 0}
                             loading={false}
                             isBadgeholder={false}
-                            bhCategory={''}
+                            bhCategory=""
                             isBHCategoryAtessted={false}
                             categorySlug={categoryIdSlugMap.get(cat.id)!}
                             onDelegate={() => {}}
