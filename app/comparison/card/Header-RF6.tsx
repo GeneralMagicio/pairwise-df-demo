@@ -157,7 +157,7 @@ const HeaderRF6: FC<HeaderProps> = ({
 
       <div className="relative z-40 flex w-full flex-row justify-between gap-10 border-b bg-white">
         {!isFirstSelection && (
-          <div onClick={() => router.push('/allocation')} className="flex cursor-pointer items-center">
+          <div onClick={() => router.push('/allocation')} className="m-3 flex cursor-pointer items-center">
             <PwLogo />
           </div>
         )}

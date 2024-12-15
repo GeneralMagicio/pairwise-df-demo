@@ -346,6 +346,34 @@ export const ProjectCard: React.FC<Props> = ({
                 <Image src="/assets/images/contributor.svg" width={16} height={16} alt="time" />
                 <div>10 contributors</div>
               </div>
+              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
+                <Image src="/assets/images/trusted-contributer.svg" width={16} height={16} alt="time" />
+                <div>5 trusted contributors</div>
+              </div>
+              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
+                <Image src="/assets/images/contributor.svg" width={16} height={16} alt="time" />
+                <div>10 contributors last 6mo</div>
+              </div>
+              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
+                <Image src="/assets/images/fork.svg" width={16} height={16} alt="time" />
+                <div>100 forks</div>
+              </div>
+              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
+                <Image src="/assets/images/trusted-fork.svg" width={16} height={16} alt="time" />
+                <div>10 trusted forks</div>
+              </div>
+              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
+                <Image src="/assets/images/project-star.svg" width={16} height={16} alt="time" />
+                <div>100 stars</div>
+              </div>
+              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
+                <Image src="/assets/images/trusted-stars.svg" width={16} height={16} alt="time" />
+                <div>10 trusted stars</div>
+              </div>
+              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
+                <Image src="/assets/images/open-source.svg" width={16} height={16} alt="time" />
+                <div>Open source</div>
+              </div>
             </div>
             <Section
               id={`repos-${name}`}

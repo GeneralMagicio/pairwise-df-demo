@@ -2,12 +2,12 @@ import { JWTPayload } from '@/app/utils/wallet/types';
 
 export const convertCategoryNameToId = (category: JWTPayload['category']) => {
   switch (category) {
-    case 'GOVERNANCE_LEADERSHIP':
-      return 1;
-    case 'GOVERNANCE_INFRA_AND_TOOLING':
-      return 2;
-    case 'GOVERNANCE_ANALYTICS':
-      return 3;
+    case 'web3.js':
+      return 38;
+    case 'account-abstraction':
+      return 39;
+    case 'remix-project':
+      return 40;
     default:
       throw new Error(`Invalid category name: ${category}`);
   }
@@ -15,32 +15,32 @@ export const convertCategoryNameToId = (category: JWTPayload['category']) => {
 
 export const convertCategoryToLabel = (category: JWTPayload['category']) => {
   const labels = {
-    GOVERNANCE_LEADERSHIP: 'Governance Leadership',
-    GOVERNANCE_INFRA_AND_TOOLING: 'Governance Infrastructure & Tooling',
-    GOVERNANCE_ANALYTICS: 'Governance Analytics',
+    'web3.js': 'Web3.js',
+    'account-abstraction': 'Account Abstraction',
+    'remix-project': 'Remix Project',
   };
 
-  if (!(category in labels)) throw new Error ('Invalid category name');
+  if (!(category in labels)) return '';
 
   return labels[category];
 };
 
 export const categoryIdSlugMap = new Map([
-  [1, 'GOVERNANCE_LEADERSHIP'],
-  [2, 'GOVERNANCE_INFRA_AND_TOOLING'],
-  [3, 'GOVERNANCE_ANALYTICS'],
+  [38, 'web3.js'],
+  [39, 'account-abstraction'],
+  [40, 'remix-project'],
 ]);
 
 export const categoryIdTitleMap = new Map([
-  [1, 'Governance Leadership'],
-  [2, 'Governance Infrastructure & Tooling'],
-  [3, 'Governance Analytics'],
+  [38, 'web3.js'],
+  [39, 'Account Abstraction'],
+  [40, 'Remix Project'],
 ]);
 
 export const categorySlugIdMap = new Map([
-  ['GOVERNANCE_LEADERSHIP', 1],
-  ['GOVERNANCE_INFRA_AND_TOOLING', 2],
-  ['GOVERNANCE_ANALYTICS', 3],
+  ['web3.js', 38],
+  ['account-abstraction', 39],
+  ['remix-project', 40],
 ]);
 
 // export const getCategoryCount = (category: JWTPayload['category']) => {

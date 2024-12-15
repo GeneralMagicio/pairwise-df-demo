@@ -12,18 +12,13 @@ import Spinner from '@/app/components/Spinner';
 import {
   categorySlugIdMap,
   categoryIdTitleMap,
-  formatBudget,
 } from '../../comparison/utils/helpers';
-import { Checkbox } from '@/app/utils/Checkbox';
-import { LockIcon } from '@/public/assets/icon-components/Lock';
-import { UnlockIcon } from '@/public/assets/icon-components/Unlock';
 import NotFoundComponent from '@/app/components/404';
 import {
   useProjectsRankingByCategoryId,
   useUpdateProjectRanking,
-  useCategoryRankings,
+  // useCategoryRankings,
 } from '@/app/comparison/utils/data-fetching/ranking';
-import { CheckIcon } from '@/public/assets/icon-components/Check';
 import {
   CollectionProgressStatusEnum,
   IProjectRanking,
@@ -45,20 +40,6 @@ import AskDelegations from '@/app/delegation/farcaster/AskDelegations';
 import { getJWTData } from '@/app/utils/wallet/agora-login';
 import EmailLoginModal from '../components/EOA/EmailLoginModal';
 
-enum VotingStatus {
-  VOTED,
-  READY_TO_SUBMIT,
-}
-
-const votingStatusMap = {
-  [VotingStatus.VOTED]: {
-    text: 'Voted',
-  },
-  [VotingStatus.READY_TO_SUBMIT]: {
-    text: 'Ready to submit',
-  },
-};
-
 const RankingPage = () => {
   const params = useParams();
   const router = useRouter();
@@ -77,16 +58,14 @@ const RankingPage = () => {
   const [projects, setProjects] = useState<IProjectRanking[] | null>(null);
   const [totalShareError, setTotalShareError] = useState<string | null>(null);
   const [lockedItems, setLockedItems] = useState<number[]>([]);
-  const [isLocked, setIsLocked] = useState(false);
-  const [isUnlocked, setIsUnlocked] = useState(false);
-  const [allocationBudget, setAllocationBudget] = useState<number>(0);
+  // const [allocationBudget, setAllocationBudget] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [nonCoIProjects, setNonCoIProjects] = useState<IProjectRanking[]>([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [closingDesibled, setClosingDesibled] = useState(false);
 
-  const { data: categoryRankings, isLoading: rankingLoading }
-    = useCategoryRankings();
+  // const { data: categoryRankings, isLoading: rankingLoading }
+  //   = useCategoryRankings();
   const { data: ranking, isLoading } = useProjectsRankingByCategoryId(category);
   const { mutateAsync: updateProjectRanking }
     = useUpdateProjectRanking(category);
@@ -95,18 +74,18 @@ const RankingPage = () => {
 
   const { isBadgeholder } = getJWTData();
 
-  const handleBulkSelection = () => {
-    if (!nonCoIProjects) return;
+  // const handleBulkSelection = () => {
+  //   if (!nonCoIProjects) return;
 
-    setTotalShareError(null);
+  //   setTotalShareError(null);
 
-    if (checkedItems.length === nonCoIProjects.length) {
-      setCheckedItems([]);
-    }
-    else {
-      setCheckedItems(nonCoIProjects.map(project => project.projectId));
-    }
-  };
+  //   if (checkedItems.length === nonCoIProjects.length) {
+  //     setCheckedItems([]);
+  //   }
+  //   else {
+  //     setCheckedItems(nonCoIProjects.map(project => project.projectId));
+  //   }
+  // };
 
   const handleVote = useCallback(
     debounce((id: number, share: number) => {
@@ -119,7 +98,6 @@ const RankingPage = () => {
           id: project.projectId,
           percentage: project.share * 100,
           locked: lockedItems.includes(project.projectId),
-          budget: categoryRankings?.budget || 0,
         })) as RankItem[];
 
         const newValue = values.find(el => el.id === id);
@@ -169,7 +147,7 @@ const RankingPage = () => {
         window.scrollTo(0, document.body.scrollHeight);
       }
     }, 300),
-    [projects, lockedItems, categoryRankings]
+    [projects, lockedItems]
   );
 
   const handleLocck = (id: number) => {
@@ -251,48 +229,48 @@ const RankingPage = () => {
     );
   };
 
-  const lockSelection = () => {
-    if (!nonCoIProjects) return;
+  // const lockSelection = () => {
+  //   if (!nonCoIProjects) return;
 
-    if (
-      checkedItems.length > nonCoIProjects?.length - 2
-      || lockedItems.length >= nonCoIProjects?.length - 2
-    ) {
-      setTotalShareError('At least two projects must be unlocked');
-      window.scrollTo(0, document.body.scrollHeight);
-      return;
-    }
+  //   if (
+  //     checkedItems.length > nonCoIProjects?.length - 2
+  //     || lockedItems.length >= nonCoIProjects?.length - 2
+  //   ) {
+  //     setTotalShareError('At least two projects must be unlocked');
+  //     window.scrollTo(0, document.body.scrollHeight);
+  //     return;
+  //   }
 
-    const lockedProjects = checkedItems.filter(
-      checkedId => !lockedItems.includes(checkedId)
-    );
-    posthog.capture('Lock selection');
+  //   const lockedProjects = checkedItems.filter(
+  //     checkedId => !lockedItems.includes(checkedId)
+  //   );
+  //   posthog.capture('Lock selection');
 
-    setLockedItems([...lockedItems, ...lockedProjects]);
-    setCheckedItems([]);
-  };
+  //   setLockedItems([...lockedItems, ...lockedProjects]);
+  //   setCheckedItems([]);
+  // };
 
-  const unlockSelection = () => {
-    if (!projects) return;
+  // const unlockSelection = () => {
+  //   if (!projects) return;
 
-    const unlockedProjects = checkedItems.filter(checkedId =>
-      lockedItems.includes(checkedId)
-    );
+  //   const unlockedProjects = checkedItems.filter(checkedId =>
+  //     lockedItems.includes(checkedId)
+  //   );
 
-    setLockedItems(
-      lockedItems.filter(lockedId => !unlockedProjects.includes(lockedId))
-    );
-    setCheckedItems([]);
-  };
+  //   setLockedItems(
+  //     lockedItems.filter(lockedId => !unlockedProjects.includes(lockedId))
+  //   );
+  //   setCheckedItems([]);
+  // };
 
-  const selectItem = (id: number) => {
-    if (checkedItems.includes(id)) {
-      setCheckedItems(checkedItems.filter(checkedId => checkedId !== id));
-    }
-    else {
-      setCheckedItems([...checkedItems, id]);
-    }
-  };
+  // const selectItem = (id: number) => {
+  //   if (checkedItems.includes(id)) {
+  //     setCheckedItems(checkedItems.filter(checkedId => checkedId !== id));
+  //   }
+  //   else {
+  //     setCheckedItems([...checkedItems, id]);
+  //   }
+  // };
 
   const submitVotes = async () => {
     if (!wallet) {
@@ -352,8 +330,8 @@ const RankingPage = () => {
 
   useEffect(() => {
     if (!projects || projects.length === 0) {
-      setIsLocked(false);
-      setIsUnlocked(true);
+      // setIsLocked(false);
+      // setIsUnlocked(true);
       return;
     }
 
@@ -367,35 +345,35 @@ const RankingPage = () => {
     const someUnlocked = checkedItems.some(id => !lockedItems.includes(id));
 
     if (allLocked || checkedLocked) {
-      setIsLocked(true);
-      setIsUnlocked(false);
+      // setIsLocked(true);
+      // setIsUnlocked(false);
     }
     else if (noneLocked || checkedUnlocked) {
-      setIsLocked(false);
-      setIsUnlocked(true);
+      // setIsLocked(false);
+      // setIsUnlocked(true);
     }
     else if (someLocked || someUnlocked) {
-      setIsLocked(true);
-      setIsUnlocked(true);
+      // setIsLocked(true);
+      // setIsUnlocked(true);
     }
     else {
-      setIsLocked(false);
-      setIsUnlocked(false);
+      // setIsLocked(false);
+      // setIsUnlocked(false);
     }
   }, [projects, lockedItems, checkedItems]);
 
-  useEffect(() => {
-    if (ranking) setProjects(ranking?.ranking);
+  // useEffect(() => {
+  //   if (ranking) setProjects(ranking?.ranking);
 
-    if (!categoryRankings?.budget) return;
+  //   if (!categoryRankings?.budget) return;
 
-    const categoryShare
-      = categoryRankings?.ranking?.find(
-        categoryRanking => categoryRanking.projectId === category
-      )?.share || 0;
+  //   const categoryShare
+  //     = categoryRankings?.ranking?.find(
+  //       categoryRanking => categoryRanking.projectId === category
+  //     )?.share || 0;
 
-    setAllocationBudget(categoryRankings?.budget * categoryShare);
-  }, [ranking]);
+  //   setAllocationBudget(categoryRankings?.budget * categoryShare);
+  // }, [ranking]);
 
   useEffect(() => {
     if (!nonCoIProjects) return;
@@ -473,97 +451,30 @@ const RankingPage = () => {
       </Modal>
       <HeaderRF6 />
       <div className="flex flex-col justify-between gap-4 px-6 py-16 lg:px-20 xl:px-52 2xl:px-72">
-        <p className="mb-4 text-2xl font-semibold text-gray-700">
-          Edit your votes
-        </p>
         <div className="flex flex-col gap-6 rounded-xl border border-gray-200 px-6 py-10">
           <div className="flex items-start justify-between">
             <div className="flex flex-col gap-2">
+              <p className="text-base text-gray-400">Edit your votes</p>
               <p className="text-2xl font-semibold text-gray-700">
                 {categoryIdTitleMap.get(category)}
-              </p>
-              <p className="text-sm font-normal text-gray-600">
-                OP calculations in this ballot are based on your budget of
                 {' '}
-                {rankingLoading
-                  ? (
-                      <span className="text-gray-400">...</span>
-                    )
-                  : (
-                      <span className="underline">
-                        {formatBudget(allocationBudget)}
-                      </span>
-                    )}
+                results
               </p>
-            </div>
-            <div className="flex items-center justify-center gap-2 rounded-2xl border border-voting-border bg-voting-bg px-3 py-1 text-xs text-voting-text">
-              {votingStatusMap[VotingStatus.READY_TO_SUBMIT].text}
-              <CheckIcon size={18} />
             </div>
           </div>
           {/* <SearchBar search={search} setSearch={setSearch} /> */}
           <div className="flex items-center justify-between rounded-lg bg-gray-100 px-4 py-3 lg:px-8">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-end gap-4">
               <div className="flex items-center justify-center gap-2">
-                <Checkbox
-                  onChange={() => handleBulkSelection()}
-                  checked={
-                    !!nonCoIProjects?.length
-                    && checkedItems.length === nonCoIProjects?.length
-                  }
-                  disabled={
-                    (ranking
-                    && ranking.progress
-                    !== CollectionProgressStatusEnum.Finished
-                    && ranking.progress
-                    !== CollectionProgressStatusEnum.Attested)
-                    || !nonCoIProjects?.length
-                    || isLoading
-                  }
-                />
-                <p className="text-sm text-gray-600">Select all</p>
+                <p className="text-sm text-gray-600">Node</p>
               </div>
-              <div className="h-6 border-r border-gray-200"></div>
-              <div className="flex items-center justify-center gap-2">
-                <p className="text-sm text-gray-600">
-                  {checkedItems.length}
-                  {' '}
-                  items selected
-                </p>
-              </div>
-              {!!projects?.length && (
-                <>
-                  <div className="h-6 border-r border-gray-200" />
-                  {isLocked && (
-                    <button
-                      className="flex items-center justify-center gap-2"
-                      onClick={unlockSelection}
-                    >
-                      <UnlockIcon />
-                      <p className="text-sm text-gray-600">Unlock selection</p>
-                    </button>
-                  )}
-                  {isLocked && isUnlocked && (
-                    <div className="h-6 border-r border-gray-200" />
-                  )}
-                  {isUnlocked && (
-                    <button
-                      className="flex items-center justify-center gap-2"
-                      onClick={lockSelection}
-                    >
-                      <LockIcon />
-                      <p className="text-sm text-gray-600">Lock selection</p>
-                    </button>
-                  )}
-                </>
-              )}
             </div>
             <div className="flex gap-4">
               <p className="text-sm font-medium text-gray-400">
-                {lockedItems.length}
-                {' '}
-                items locked
+                Weighted Degree
               </p>
+              <div className="h-6 w-0 border border-op-neutral-300" />
+              <p className="text-sm font-medium text-gray-400">Level</p>
             </div>
           </div>
           {isLoading
@@ -591,12 +502,11 @@ const RankingPage = () => {
                               <RankingRow
                                 key={project.projectId}
                                 index={index}
-                                budget={allocationBudget * project.share}
+                                // budget={allocationBudget * project.share}
                                 project={project}
-                                selected={checkedItems.includes(project.projectId)}
                                 locked={lockedItems.includes(project.projectId)}
                                 onLock={handleLocck}
-                                onSelect={selectItem}
+                                // onSelect={selectItem}
                                 onVote={handleVote}
                                 coi={project.coi}
                                 onToggleCOI={markCOI}
@@ -615,12 +525,12 @@ const RankingPage = () => {
                                   <RankingRow
                                     key={project.projectId}
                                     index={index}
-                                    budget={allocationBudget * project.share}
+                                    // budget={allocationBudget * project.share}
                                     project={project}
-                                    selected={checkedItems.includes(project.projectId)}
+                                    // selected={checkedItems.includes(project.projectId)}
                                     locked={lockedItems.includes(project.projectId)}
                                     onLock={handleLocck}
-                                    onSelect={selectItem}
+                                    // onSelect={selectItem}
                                     onVote={handleVote}
                                     coi={project.coi}
                                     onToggleCOI={unmarkCOI}

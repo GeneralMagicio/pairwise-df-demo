@@ -122,11 +122,14 @@ export default function Home() {
         data: {
           project1Id: project1!.id,
           project2Id: project2!.id,
-          project1Stars: null,
-          project2Stars: null,
+          project1Val: null,
+          project2Val: null,
           pickedId: null,
         },
       });
+      setValue(0);
+      setRating1(0);
+      setRating2(0);
     }
     catch (e) {
       setCoiLoading1(false);
@@ -342,32 +345,33 @@ export default function Home() {
   //   }
   //   return false;
   // };
-  // const handleVote = async (chosenId: number) => {
-  //   if (!wallet) {
-  //     setShowLoginModal(true);
-  //     return;
-  //   }
-  //   setCoiLoading1(true);
-  //   setCoiLoading2(true);
-  //   try {
-  //     await vote({
-  //       data: {
-  //         project1Id: project1!.id,
-  //         project2Id: project2!.id,
-  //         project1Stars: rating1 ?? null,
-  //         project2Stars: rating2 ?? null,
-  //         pickedId: chosenId,
-  //       },
-  //     });
-  //     if (getGetStarted().goodRating && !getGetStarted().postRating) {
-  //       updateGetStarted({ postRating: true });
-  //     }
-  //   }
-  //   catch (e) {
-  //     setCoiLoading1(false);
-  //     setCoiLoading2(false);
-  //   }
-  // };
+  const handleVote = async (chosenId: number) => {
+    if (!wallet) {
+      setShowLoginModal(true);
+      return;
+    }
+    setCoiLoading1(true);
+    setCoiLoading2(true);
+    try {
+      await vote({
+        data: {
+          project1Id: project1!.id,
+          project2Id: project2!.id,
+          project1Val: rating1 ?? null,
+          project2Val: rating2 ?? null,
+          pickedId: chosenId,
+        },
+      });
+      setValue(0);
+      if (getGetStarted().goodRating && !getGetStarted().postRating) {
+        updateGetStarted({ postRating: true });
+      }
+    }
+    catch (e) {
+      setCoiLoading1(false);
+      setCoiLoading2(false);
+    }
+  };
 
   const handleUndo = async () => {
     if (!wallet) {
@@ -428,8 +432,8 @@ export default function Home() {
   const handleChange = (_event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
       setValue(newValue);
-      setRating1(newValue + 100);
-      setRating2(100 - value);
+      setRating1(-newValue);
+      setRating2(newValue);
     }
   };
 
@@ -649,7 +653,7 @@ export default function Home() {
             {/* Next Button */}
             <button
               className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-              onClick={() => {}}
+              onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
             >
               Next
             </button>

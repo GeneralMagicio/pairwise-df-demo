@@ -210,6 +210,7 @@ const AllocationPage = () => {
   };
 
   const handleScoreProjects = (id: RankItem['id']) => () => {
+    console.log(id);
     posthog.capture('Start voting', {
       category: categoryIdSlugMap.get(id),
     });
