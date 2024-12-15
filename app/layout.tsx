@@ -4,7 +4,6 @@ import { Inter } from 'next/font/google';
 import AppKitProvider from './utils/wallet/provider';
 import FarcasterProvider from '@/app/utils/FarcasterProvider';
 import ShowMobileMessage from './utils/wallet/ShowMobileMessage';
-import { TimeIcon } from '@/public/assets/icon-components/Time';
 import { PHProvider } from './utils/PHProvider';
 import { TwitterProvider } from './utils/TwitterProvider';
 import type { Metadata } from 'next';
@@ -41,10 +40,10 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <div className="flex items-center justify-center gap-4 bg-primary p-2 font-medium text-white">
+        {/* <div className="flex items-center justify-center gap-4 bg-primary p-2 font-medium text-white">
           <TimeIcon fill="#fff" />
           <p> Voting on RF6 has ended, but you can explore the app and see the experience. </p>
-        </div>
+        </div> */}
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-N8LG5FMQ"

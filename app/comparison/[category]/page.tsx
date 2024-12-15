@@ -6,14 +6,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useActiveWallet } from 'thirdweb/react';
 import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
+import Slider from '@mui/material/Slider';
+import { styled } from '@mui/material/styles';
 import { JWTPayload } from '@/app/utils/wallet/types';
 import { AutoScrollAction, ProjectCard } from '../card/ProjectCard';
-import ConflictButton from '../card/CoIButton';
 import HeaderRF6 from '../card/Header-RF6';
-import { Rating } from '../card/Rating';
 import UndoButton from '../card/UndoButton';
-import VoteButton from '../card/VoteButton';
 import Modals from '@/app/utils/wallet/Modals';
+import SkipButton from '../card/Skip';
 import {
   getPairwisePairsForProject,
   useGetPairwisePairs,
@@ -30,7 +30,6 @@ import { IProject } from '../utils/types';
 import { mockProject1, mockProject2 } from '../card/mockData';
 import IntroView from './IntroView';
 import Spinner from '../../components/Spinner';
-import LowRateModal from '../card/modals/LowRateModal';
 import PostRatingModal from '../card/modals/PostRatingModal';
 import GoodRatingModal from '../card/modals/GoodRatingModal';
 import RevertLoadingModal from '../card/modals/RevertLoadingModal';
@@ -40,12 +39,21 @@ import EmailLoginModal from '@/app/allocation/components/EOA/EmailLoginModal';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
 
+const CustomSlider = styled(Slider)({
+  '& .MuiSlider-valueLabel': {
+    color: '#000000',
+    backgroundColor: 'transparent',
+    border: '1px solid #EAECF0',
+  },
+});
+
 export default function Home() {
   const { category } = useParams() ?? {};
   const queryClient = useQueryClient();
   const { address, chainId } = useAccount();
   const wallet = useActiveWallet();
 
+  const [value, setValue] = React.useState<number>(0);
   const [rating1, setRating1] = useState<number | null>(null);
   const [rating2, setRating2] = useState<number | null>(null);
   const [project1, setProject1] = useState<IProject>();
@@ -57,25 +65,19 @@ export default function Home() {
   const [lastAction, setLastAction] = useState<AutoScrollAction>();
 
   const [revertingBack, setRevertingBack] = useState(false);
-  const [showLowRateModal, setShowLowRateModal] = useState(false);
   const [showPostRatingModal, setShowPostRatingModal] = useState(false);
   const [showGoodRatingModal, setShowGoodRatingModal] = useState(false);
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
-    null
-  );
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
   const [sectionExpanded1, setSectionExpanded1] = useState({
     repos: true,
     pricing: true,
-    grants: true,
     impact: true,
     testimonials: true,
   });
   const [sectionExpanded2, setSectionExpanded2] = useState({
     repos: true,
     pricing: true,
-    grants: true,
     impact: true,
     testimonials: true,
   });
@@ -106,6 +108,34 @@ export default function Home() {
       setBypassPrevProgress(true);
     },
   });
+
+  const handleSkip = async () => {
+    if (!wallet) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    setCoiLoading1(true);
+    setCoiLoading2(true);
+    try {
+      await vote({
+        data: {
+          project1Id: project1!.id,
+          project2Id: project2!.id,
+          project1Val: 0,
+          project2Val: 0,
+          pickedId: null,
+        },
+      });
+      setValue(0);
+      setRating1(0);
+      setRating2(0);
+    }
+    catch (e) {
+      setCoiLoading1(false);
+      setCoiLoading2(false);
+    }
+  };
 
   useEffect(() => {
     if (bypassPrevProgress && data) {
@@ -162,11 +192,11 @@ export default function Home() {
     // observe if first rated project is rated good >= 4
     if (
       (rating1
-      && rating1 >= 4
+      && rating1 >= 80
       && rating2 === initialRating2
       && rating1 !== initialRating1)
       || (rating2
-      && rating2 >= 4
+      && rating2 >= 80
       && rating1 === initialRating1
       && rating2 !== initialRating2)
     ) {
@@ -221,8 +251,7 @@ export default function Home() {
   };
 
   const isAnyModalOpen = () =>
-    showLowRateModal
-    || revertingBack
+    revertingBack
     || showPostRatingModal
     || showGoodRatingModal;
 
@@ -252,13 +281,13 @@ export default function Home() {
     setCoiLoading1(false);
   };
 
-  const showCoI1 = () => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-    setCoi1(true);
-  };
+  // const showCoI1 = () => {
+  //   if (!wallet) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+  //   setCoi1(true);
+  // };
 
   const confirmCoI2 = async (id1: number, id2: number) => {
     await markProjectCoI({ data: { pid: id2 } });
@@ -277,13 +306,13 @@ export default function Home() {
     setCoiLoading2(false);
   };
 
-  const showCoI2 = () => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-    setCoi2(true);
-  };
+  // const showCoI2 = () => {
+  //   if (!wallet) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+  //   setCoi2(true);
+  // };
 
   const setUserAsVisited = () => {
     if (!wallet) {
@@ -298,34 +327,29 @@ export default function Home() {
     setIsInitialVisit(false);
   };
 
-  const checkLowRatedProjectSelected = (chosenId: number): boolean => {
-    const isLowRatedProjectSelected = (
-      selectedId: number,
-      ratingA: number | null | undefined,
-      ratingB: number | null | undefined
-    ) =>
-      chosenId === selectedId && (!ratingA || (ratingB && ratingA < ratingB));
-
-    if (!rating1 || !rating2) return false;
-
-    if (
-      isLowRatedProjectSelected(project1!.id, rating1, rating2)
-      || isLowRatedProjectSelected(project2!.id, rating2, rating1)
-    ) {
-      setSelectedProjectId(chosenId);
-      setShowLowRateModal(true);
-      return true;
-    }
-
-    return false;
-  };
-
+  // const checkLowRatedProjectSelected = (chosenId: number): boolean => {
+  //   const isLowRatedProjectSelected = (
+  //     selectedId: number,
+  //     ratingA: number | null | undefined,
+  //     ratingB: number | null | undefined
+  //   ) =>
+  //     chosenId === selectedId && (!ratingA || (ratingB && ratingA < ratingB));
+  //   if (!rating1 || !rating2) return false;
+  //   if (
+  //     isLowRatedProjectSelected(project1!.id, rating1, rating2)
+  //     || isLowRatedProjectSelected(project2!.id, rating2, rating1)
+  //   ) {
+  //     setSelectedProjectId(chosenId);
+  //     setShowLowRateModal(true);
+  //     return true;
+  //   }
+  //   return false;
+  // };
   const handleVote = async (chosenId: number) => {
     if (!wallet) {
       setShowLoginModal(true);
       return;
     }
-
     setCoiLoading1(true);
     setCoiLoading2(true);
     try {
@@ -333,12 +357,12 @@ export default function Home() {
         data: {
           project1Id: project1!.id,
           project2Id: project2!.id,
-          project1Stars: rating1 ?? null,
-          project2Stars: rating2 ?? null,
+          project1Val: rating1 ?? 0,
+          project2Val: rating2 ?? 0,
           pickedId: chosenId,
         },
       });
-
+      setValue(0);
       if (getGetStarted().goodRating && !getGetStarted().postRating) {
         updateGetStarted({ postRating: true });
       }
@@ -357,8 +381,6 @@ export default function Home() {
 
     if (data?.votedPairs === 0) return;
     setRevertingBack(true);
-    setCoi1(false);
-    setCoi2(false);
     await undo();
     setRevertingBack(false);
   };
@@ -407,6 +429,14 @@ export default function Home() {
     return storedData[`${chainId}_${address}`] || {};
   }
 
+  const handleChange = (_event: Event, newValue: number | number[]) => {
+    if (typeof newValue === 'number') {
+      setValue(newValue);
+      setRating1(-newValue);
+      setRating2(newValue);
+    }
+  };
+
   useEffect(() => {
     const personalWalletId = localStorage.getItem(
       StorageLabel.LAST_CONNECT_PERSONAL_WALLET_ID
@@ -430,8 +460,7 @@ export default function Home() {
       <Modals />
       <Modal
         isOpen={
-          showLowRateModal
-          || revertingBack
+          revertingBack
           || showPostRatingModal
           || showGoodRatingModal
           || showFinishModal
@@ -439,7 +468,7 @@ export default function Home() {
         onClose={() => {}}
       >
         {revertingBack && <RevertLoadingModal />}
-        {showLowRateModal && (
+        {/* {showLowRateModal && (
           <LowRateModal
             proceedWithSelection={async () => {
               await handleVote(selectedProjectId!);
@@ -447,7 +476,7 @@ export default function Home() {
             }}
             cancelSelection={() => setShowLowRateModal(false)}
           />
-        )}
+        )} */}
         {showPostRatingModal && (
           <PostRatingModal
             confirm={() => {
@@ -489,9 +518,7 @@ export default function Home() {
       <HeaderRF6
         progress={progress * 100}
         category={convertCategoryToLabel(category! as JWTPayload['category'])}
-        question={`Which project had the greatest impact on the ${convertCategoryToLabel(
-          category! as JWTPayload['category']
-        )} ?`}
+        question="Which dependency deserves more weight?"
         isFirstSelection={isInitialVisit}
       />
       {isInitialVisit
@@ -578,9 +605,9 @@ export default function Home() {
           )}
 
       {!isInitialVisit && (
-        <footer className="sticky bottom-0 z-50 flex w-full items-center justify-around gap-4 bg-white py-8 shadow-inner">
-          <div className="flex flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
-            <Rating
+        <footer className="sticky bottom-0 z-50 flex w-full flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner">
+          <div className="flex w-3/4 flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
+            {/* <Rating
               value={rating1 || 0}
               onChange={(value) => {
                 !wallet ? setShowLoginModal(true) : setRating1(value);
@@ -596,31 +623,42 @@ export default function Home() {
             <ConflictButton
               onClick={showCoI1}
               disabled={coiLoading1 || isAnyModalOpen()}
-            />
+            /> */}
+            <div className="w-1/5 text-ellipsis">{project1.name}</div>
+            <div>100</div>
+            <div className="relative mt-5 w-1/2">
+              <CustomSlider
+                sx={{ color: '#7F56D9' }}
+                value={value}
+                min={-100}
+                step={1}
+                max={100}
+                getAriaValueText={(value: number) => `${Math.abs(value)}`}
+                valueLabelFormat={(value: number) => `${Math.abs(value)}`}
+                onChange={handleChange}
+                valueLabelDisplay="auto"
+                aria-labelledby="non-linear-slider"
+              />
+              <div className="absolute left-[calc(50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
+
+            </div>
+            <div>100</div>
+            <div className="w-1/5 text-ellipsis">{project2.name}</div>
           </div>
-          <div className="absolute z-[1]">
+          <div className="flex flex-row gap-x-11">
             <UndoButton
               disabled={data?.votedPairs === 0 || isAnyModalOpen()}
               onClick={handleUndo}
             />
-          </div>
-          <div className="flex flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
-            <Rating
-              value={rating2 || 0}
-              onChange={(value) => {
-                !wallet ? setShowLoginModal(true) : setRating2(value);
-              }}
-              disabled={coiLoading2 || isAnyModalOpen()}
-            />
-            <VoteButton
-              onClick={() =>
-                !checkLowRatedProjectSelected(project2.id)
-                && handleVote(project2.id)}
-              disabled={coiLoading2 || isAnyModalOpen()}
-            />
-            <ConflictButton
-              onClick={showCoI2}
-              disabled={coiLoading2 || isAnyModalOpen()}
+            {/* Next Button */}
+            <button
+              className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+              onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
+            >
+              Next
+            </button>
+            <SkipButton
+              onClick={handleSkip}
             />
           </div>
         </footer>

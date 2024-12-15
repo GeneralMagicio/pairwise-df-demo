@@ -47,7 +47,6 @@ const BudgetAllocation: React.FC<IBudgetAllocationProps> = ({
   categorySlug,
   onScore,
   onEdit,
-  onDelegate,
 }) => {
   const { isAutoConnecting } = useAuth();
   const posthog = usePostHog();
@@ -83,14 +82,7 @@ const BudgetAllocation: React.FC<IBudgetAllocationProps> = ({
               });
               onScore();
             }}
-            onDelegate={() => {
-              posthog.capture('Start Voting', {
-                category: name,
-              });
-              onDelegate();
-            }}
             progress={progress}
-            delegations={delegations}
             isAutoConnecting={isAutoConnecting}
             isBadgeholder={isBadgeholder}
             bhCategory={bhCategory}

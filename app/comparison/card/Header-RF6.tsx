@@ -1,16 +1,12 @@
 import React, { FC, useState, useEffect, useMemo } from 'react';
-import { useDisconnect, useAccount } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { usePathname, useRouter } from 'next/navigation';
 import { ConnectButton } from '@/app/utils/wallet/Connect';
 import { PwLogo } from '@/public/assets/icon-components/PairwiseLogo';
 import { ThinExternalLinkIcon } from '@/public/assets/icon-components/ThinExternalLink';
-import ActiveBadges, { BadgesEnum, IActiveBadge } from './ActiveBadges';
+import { BadgesEnum, IActiveBadge } from './ActiveBadges';
 import Modal from '../../utils/Modal';
 import BadgesModal from './modals/BadgesModal';
-import Dropdown from './DropDown';
-import { shortenWalletAddress } from '@/app/comparison/utils/helpers';
-import { useAuth } from '@/app/utils/wallet/AuthProvider';
-import { PowerIcon } from '@/public/assets/icon-components/Power';
 import { useGetPublicBadges } from '@/app/utils/getBadges';
 import DelegationsModal from './modals/DelegationsModal';
 import { useGetDelegationStatus } from '@/app/utils/getConnectionStatus';
@@ -34,8 +30,6 @@ const HeaderRF6: FC<HeaderProps> = ({
 }) => {
   const path = usePathname();
   const router = useRouter();
-  const { disconnectAsync } = useDisconnect();
-  const { signOut, loginAddress } = useAuth();
   const { data: badges } = useGetPublicBadges();
   const { data: delegates } = useGetDelegationStatus();
   const { address, chainId } = useAccount();
@@ -93,11 +87,6 @@ const HeaderRF6: FC<HeaderProps> = ({
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
-  const logout = async () => {
-    await disconnectAsync();
-    signOut();
-  };
 
   useEffect(() => {
     if (!category || !chainId || !delegates) return;
@@ -166,48 +155,59 @@ const HeaderRF6: FC<HeaderProps> = ({
         )}
       </Modal>
 
-      <div className="relative z-40 w-full border-b bg-white">
-        <div className="flex items-center justify-between px-6 py-4 md:px-12 lg:px-4">
-          {!isFirstSelection && (
-            <div onClick={() => router.push('/allocation')} className="flex cursor-pointer items-center">
-              <PwLogo />
-            </div>
-          )}
-          {question && (
-            <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
-              <h2 className="text-center text-sm font-semibold">{question}</h2>
-            </div>
+      <div className="relative z-40 flex w-full flex-row justify-between gap-10 border-b bg-white">
+        {!isFirstSelection && (
+          <div onClick={() => router.push('/allocation')} className="m-3 flex cursor-pointer items-center">
+            <PwLogo />
+          </div>
+        )}
+        <div className="flex grow items-center justify-start px-6 py-4 md:px-12 lg:px-4">
+
+          {category && (
+            <span className="rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
+              {category}
+            </span>
           )}
           <div className="flex items-center gap-4">
-            {category && (
-              <span className="rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
-                {category}
-              </span>
+
+            {question && (
+              <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
+                <h2 className="text-center text-xl font-semibold">{question}</h2>
+              </div>
             )}
             <div
               className={`${
                 category ? 'hidden 2xl:flex' : 'flex'
               } items-center gap-4`}
             >
-              {activeBadges.length > 0 && (
+              {/* {activeBadges.length > 0 && (
                 <button
                   onClick={() => setIsBadgesModalOpen(true)}
                   className="mr-3 flex items-center"
                 >
                   <ActiveBadges activeBadges={activeBadges} />
                 </button>
-              )}
-              <ConnectButton />
-              <button
-                className="flex items-center justify-center gap-2 rounded-lg border border-gray-200 p-2 text-sm font-semibold"
-                onClick={() => window.open(PAIRWISE_REPORT_URL, '_blank')}
-              >
-                Report an issue
-                <ThinExternalLinkIcon />
-              </button>
+              )} */}
+
             </div>
 
-            <Dropdown customClass={category ? '2xl:hidden' : 'hidden'}>
+          </div>
+
+        </div>
+        <div className="mx-2 my-auto">
+          <ConnectButton />
+        </div>
+        <div className="mx-2 my-auto">
+          <button
+            className="flex items-center justify-center gap-2 rounded-lg border border-gray-200 p-2 text-sm font-semibold"
+            onClick={() => window.open(PAIRWISE_REPORT_URL, '_blank')}
+          >
+            Report an issue
+            <ThinExternalLinkIcon />
+          </button>
+        </div>
+        {/* <div className='my-auto'> */}
+        {/* <Dropdown customClass={category ? '2xl:hidden' : 'hidden'}>
               <div className="flex flex-col gap-2">
                 {activeBadges.length > 0 && (
                   <>
@@ -246,24 +246,28 @@ const HeaderRF6: FC<HeaderProps> = ({
                   <span className="font-semibold text-primary"> Log out </span>
                 </button>
               </div>
-            </Dropdown>
-          </div>
-        </div>
+            </Dropdown> */}
+        {/* </div> */}
 
-        {category && (
+      </div>
+      {category && (
+        <div
+          className={`h-1.5 w-full bg-gray-100 ${
+            isBarFixed ? 'fixed left-0 top-0 z-50 w-full' : ''
+          }`}
+        >
           <div
-            className={`h-2 bg-red-100 ${
-              isBarFixed ? 'fixed left-0 top-0 z-50 w-full' : ''
-            }`}
+            className="relative h-full bg-primary"
+            style={{ width: `${progress}%` }}
           >
-            <div
-              className="h-full bg-primary"
-              style={{ width: `${progress}%` }}
-            >
+
+            <div className={`${!isBarFixed ? 'shadow-tooltip-shadow absolute right-0 top-0 z-50 -translate-y-1/2 rounded-md border-gray-border bg-white px-3 py-2 text-[#344054]' : 'hidden'}`}>
+              {progress?.toFixed(2)}
+              %
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 };

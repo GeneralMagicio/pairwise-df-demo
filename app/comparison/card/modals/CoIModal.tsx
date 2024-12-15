@@ -26,7 +26,7 @@ const ConflictOfInterestModal: FC<Props> = ({ onDeclareConflict, onCancel }) => 
 
       <button
         onClick={onDeclareConflict}
-        className="mb-2 w-full rounded-md bg-red-500 py-2 text-white transition duration-300 hover:bg-red-600"
+        className="mb-2 w-full rounded-md bg-red-500 py-2 text-white transition duration-300 hover:bg-purple-600"
       >
         Mark this project as conflict of interest
       </button>

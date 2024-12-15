@@ -1,11 +1,7 @@
-import { UserColabGroupIcon } from '@/public/assets/icon-components/UserColabGroup';
-
 type TPendingCategoryProps = {
   onScore: () => void
-  onDelegate: () => void
   progress: string
   isAutoConnecting: boolean
-  delegations?: number
   isBadgeholder: boolean
   bhCategory: string
   categorySlug: string
@@ -14,9 +10,7 @@ type TPendingCategoryProps = {
 
 const PendingCategory = ({
   onScore,
-  onDelegate,
   isAutoConnecting,
-  delegations,
   progress,
   isBadgeholder,
   bhCategory,
@@ -28,7 +22,7 @@ const PendingCategory = ({
       <div className="flex w-full items-center justify-between">
         <button
           onClick={onScore}
-          className={`whitespace-nowrap rounded-md py-3 text-sm font-medium ${
+          className={`flex w-full items-center justify-center gap-2 rounded-md border py-3 font-semibold ${
             isAutoConnecting || (isBadgeholder && bhCategory !== categorySlug && !isBHCategoryAtessted)
               ? 'border bg-gray-300 text-gray-600'
               : 'bg-primary text-white'
@@ -41,30 +35,7 @@ const PendingCategory = ({
         >
           Vote
         </button>
-        <button
-          onClick={onDelegate}
-          className={`w-[48%] rounded-md border py-3 text-sm font-medium ${
-            isAutoConnecting ? 'bg-gray-300 text-gray-600' : 'text-gray-700'
-          } ${isBadgeholder && bhCategory === categorySlug ? 'hidden' : ''}`}
-          disabled={isAutoConnecting}
-        >
-          Delegate
-        </button>
       </div>
-      {!!delegations && (
-        <div className="flex w-full items-center justify-center gap-2 rounded-full bg-[#FFE6D5] p-1">
-          <UserColabGroupIcon />
-          <p className="text-xs font-medium text-gray-400">
-            <strong className="text-dark-500">
-              {delegations > 1
-                ? delegations + ' people'
-                : delegations + ' person'}
-            </strong>
-            {' '}
-            delegated to you
-          </p>
-        </div>
-      )}
       {(progress === 'WIP' || progress === 'Finished')
       && !(isBadgeholder && bhCategory !== categorySlug && !isBHCategoryAtessted) && (
         <div className="flex w-full justify-center gap-2 rounded-xl border border-[#FFA15A] bg-[#FFF7ED] py-1">

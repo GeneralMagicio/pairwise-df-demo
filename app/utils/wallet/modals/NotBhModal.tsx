@@ -180,7 +180,7 @@ const BadgeHolderModal: React.FC<BhModalProps> = ({ onConnectFarcaster, open }) 
                   onClick={() => {
                     router.push('/allocation');
                   }}
-                  className="m-auto w-3/5 rounded-md bg-primary px-4 py-2 text-white hover:bg-red-600"
+                  className="m-auto w-3/5 rounded-md bg-primary px-4 py-2 text-white hover:bg-purple-600"
                 >
                   Continue →
                 </button>
