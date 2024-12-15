@@ -3,19 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { redirect, useParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { useActiveWallet } from 'thirdweb/react';
 import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import { JWTPayload } from '@/app/utils/wallet/types';
-import { AutoScrollAction, ProjectCard } from '../card/ProjectCard';
+import { ProjectCard } from '../card/ProjectCard';
 import HeaderRF6 from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
 import Modals from '@/app/utils/wallet/Modals';
 import SkipButton from '../card/Skip';
 import {
-  getPairwisePairsForProject,
   useGetPairwisePairs,
 } from '../utils/data-fetching/pair';
 import { categorySlugIdMap, convertCategoryToLabel } from '../utils/helpers';
@@ -28,13 +26,11 @@ import { useMarkCoi } from '../utils/data-fetching/coi';
 import Modal from '@/app/utils/Modal';
 import { IProject } from '../utils/types';
 import { mockProject1, mockProject2 } from '../card/mockData';
-import IntroView from './IntroView';
 import Spinner from '../../components/Spinner';
 import PostRatingModal from '../card/modals/PostRatingModal';
 import GoodRatingModal from '../card/modals/GoodRatingModal';
 import RevertLoadingModal from '../card/modals/RevertLoadingModal';
 import StorageLabel from '@/app/lib/localStorage';
-import { ProjectCardAI } from '../card/ProjectCardAI';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
 
@@ -50,44 +46,42 @@ export default function Home() {
   const { category } = useParams() ?? {};
   const queryClient = useQueryClient();
   const { address, chainId } = useAccount();
-  const wallet = useActiveWallet();
+  // const wallet = useActiveWallet();
 
   const [value, setValue] = React.useState<number>(0);
   const [rating1, setRating1] = useState<number | null>(null);
   const [rating2, setRating2] = useState<number | null>(null);
   const [project1, setProject1] = useState<IProject>();
   const [project2, setProject2] = useState<IProject>();
-  const [coiLoading1, setCoiLoading1] = useState(false);
-  const [coiLoading2, setCoiLoading2] = useState(false);
+  // const [coiLoading1, setCoiLoading1] = useState(false);
+  // const [coiLoading2, setCoiLoading2] = useState(false);
   const [bypassPrevProgress, setBypassPrevProgress] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [lastAction, setLastAction] = useState<AutoScrollAction>();
+  // const [lastAction, setLastAction] = useState<AutoScrollAction>();
 
   const [revertingBack, setRevertingBack] = useState(false);
   const [showPostRatingModal, setShowPostRatingModal] = useState(false);
   const [showGoodRatingModal, setShowGoodRatingModal] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  // const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
-  const [sectionExpanded1, setSectionExpanded1] = useState({
-    repos: true,
-    pricing: true,
-    impact: true,
-    testimonials: true,
-  });
-  const [sectionExpanded2, setSectionExpanded2] = useState({
-    repos: true,
-    pricing: true,
-    impact: true,
-    testimonials: true,
-  });
+  // const [sectionExpanded1, setSectionExpanded1] = useState({
+  //   repos: true,
+  //   pricing: true,
+  //   impact: true,
+  //   testimonials: true,
+  // });
+  // const [sectionExpanded2, setSectionExpanded2] = useState({
+  //   repos: true,
+  //   pricing: true,
+  //   impact: true,
+  //   testimonials: true,
+  // });
 
   const [temp, setTemp] = useState(0);
-  const [coi1, setCoi1] = useState(false);
-  const [coi2, setCoi2] = useState(false);
+  // const [coi1, setCoi1] = useState(false);
+  // const [coi2, setCoi2] = useState(false);
   const [aiMode1, setAiMode1] = useState(false);
   const [aiMode2, setAiMode2] = useState(false);
-  const [isInitialVisit, setIsInitialVisit] = useState(true);
-  const [closingDesibled, setClosingDesibled] = useState(false);
   const posthog = usePostHog();
 
   const cid = categorySlugIdMap.get((category as string) || '');
@@ -109,13 +103,6 @@ export default function Home() {
   });
 
   const handleSkip = async () => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-
-    setCoiLoading1(true);
-    setCoiLoading2(true);
     try {
       await vote({
         data: {
@@ -131,8 +118,7 @@ export default function Home() {
       setRating2(0);
     }
     catch (e) {
-      setCoiLoading1(false);
-      setCoiLoading2(false);
+      console.error(e);
     }
   };
 
@@ -145,12 +131,6 @@ export default function Home() {
       setProgress(getBiggerNumber(prevProgress, data?.progress));
     }
   }, [data]);
-
-  useEffect(() => {
-    setLastAction(undefined);
-    setCoiLoading1(false);
-    setCoiLoading2(false);
-  }, [project1, project2]);
 
   useEffect(() => {
     if (!data || !data.pairs?.length) return;
@@ -203,40 +183,6 @@ export default function Home() {
     }
   }, [rating1, rating2]);
 
-  useEffect(() => {
-    const getVisitKey = () => `has_visited_${chainId}_${address}`;
-
-    const checkFirstTimeVisit = () => {
-      if (address && chainId) {
-        const visitKey = getVisitKey();
-        const hasVisited = localStorage.getItem(visitKey) === 'true';
-        setIsInitialVisit(!hasVisited);
-      }
-    };
-
-    const markAsVisited = () => {
-      if (address && chainId) {
-        localStorage.setItem(getVisitKey(), 'true');
-      }
-      setIsInitialVisit(false);
-    };
-
-    if (data?.votedPairs) {
-      markAsVisited();
-    }
-    else {
-      checkFirstTimeVisit();
-      // show the post rating modal if the user has already rated the projects
-      if (getGetStarted().postRating) {
-        setShowPostRatingModal(false);
-      }
-      // show the good rating modal if the user has already rated the projects
-      if (getGetStarted().goodRating) {
-        setShowGoodRatingModal(false);
-      }
-    }
-  }, [address, chainId, data?.votedPairs]);
-
   const toggleAiMode = () => {
     if (!aiMode1) {
       posthog.capture('AI Summary', {
@@ -246,39 +192,12 @@ export default function Home() {
     }
     setAiMode1(!aiMode1);
     setAiMode2(!aiMode2);
-    setLastAction(undefined);
   };
 
   const isAnyModalOpen = () =>
     revertingBack
     || showPostRatingModal
     || showGoodRatingModal;
-
-  const dispatchAction
-    = (initiator: AutoScrollAction['initiator']) =>
-      (
-        section: AutoScrollAction['section'],
-        action: AutoScrollAction['action']
-      ) => {
-        setLastAction({ section, initiator, action });
-      };
-
-  const confirmCoI1 = async (id1: number, id2: number) => {
-    await markProjectCoI({ data: { pid: id1 } });
-    setCoi1(false);
-    setCoiLoading1(true);
-    try {
-      const pair = await getPairwisePairsForProject(cid, id2);
-      setProject1(pair.pairs[0].find(project => project.id !== id2)!);
-      setRating1(pair.pairs[0].find(project => project.id !== id2)!.rating);
-    }
-    catch (e) {
-      queryClient.refetchQueries({
-        queryKey: ['pairwise-pairs', cid],
-      });
-    }
-    setCoiLoading1(false);
-  };
 
   // const showCoI1 = () => {
   //   if (!wallet) {
@@ -288,23 +207,6 @@ export default function Home() {
   //   setCoi1(true);
   // };
 
-  const confirmCoI2 = async (id1: number, id2: number) => {
-    await markProjectCoI({ data: { pid: id2 } });
-    setCoi2(false);
-    setCoiLoading2(true);
-    try {
-      const pair = await getPairwisePairsForProject(cid, id1);
-      setProject2(pair.pairs[0].find(project => project.id !== id1)!);
-      setRating2(pair.pairs[0].find(project => project.id !== id1)!.rating);
-    }
-    catch (e) {
-      queryClient.refetchQueries({
-        queryKey: ['pairwise-pairs', cid],
-      });
-    }
-    setCoiLoading2(false);
-  };
-
   // const showCoI2 = () => {
   //   if (!wallet) {
   //     setShowLoginModal(true);
@@ -312,19 +214,6 @@ export default function Home() {
   //   }
   //   setCoi2(true);
   // };
-
-  const setUserAsVisited = () => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-
-    if (address && chainId) {
-      const hasVisitedKey = `has_visited_${chainId}_${address}`;
-      localStorage.setItem(hasVisitedKey, 'true');
-    }
-    setIsInitialVisit(false);
-  };
 
   // const checkLowRatedProjectSelected = (chosenId: number): boolean => {
   //   const isLowRatedProjectSelected = (
@@ -345,12 +234,6 @@ export default function Home() {
   //   return false;
   // };
   const handleVote = async (chosenId: number) => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-    setCoiLoading1(true);
-    setCoiLoading2(true);
     try {
       await vote({
         data: {
@@ -367,17 +250,11 @@ export default function Home() {
       }
     }
     catch (e) {
-      setCoiLoading1(false);
-      setCoiLoading2(false);
+      console.error(e);
     }
   };
 
   const handleUndo = async () => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-
     if (data?.votedPairs === 0) return;
     setRevertingBack(true);
     await undo();
@@ -435,16 +312,6 @@ export default function Home() {
       setRating2(newValue);
     }
   };
-
-  useEffect(() => {
-    const personalWalletId = localStorage.getItem(
-      StorageLabel.LAST_CONNECT_PERSONAL_WALLET_ID
-    );
-
-    if (!personalWalletId) {
-      setShowLoginModal(true);
-    }
-  }, [cid]);
 
   if (isLoading) return <Spinner />;
 
@@ -505,93 +372,32 @@ export default function Home() {
       <HeaderRF6
         progress={progress * 100}
         category={convertCategoryToLabel(category! as JWTPayload['category'])}
-        question="Which dependency deserves more weight?"
-        isFirstSelection={isInitialVisit}
+        question="Which dependency deserves more credit?"
+        isFirstSelection={false}
       />
-      {isInitialVisit
-        ? (
-            <IntroView setUserAsVisited={setUserAsVisited} />
-          )
-        : (
-            <div className="relative flex w-full items-center justify-between gap-8 px-8 py-2">
-              <div className="relative w-[49%]">
-                {aiMode1
-                  ? (
-                      <ProjectCardAI
-                        key={project1.RF6Id}
-                        aiMode={aiMode1}
-                        setAi={toggleAiMode}
-                        key1={project1.RF6Id}
-                        key2={project2.RF6Id}
-                        coiLoading={coiLoading1}
-                        summaryData={project1.aiSummary}
-                        coi={coi1}
-                        project={{ ...project1.metadata, ...project1 } as any}
-                        onCoICancel={() => setCoi1(false)}
-                        onCoIConfirm={() => confirmCoI1(project1.id, project2.id)}
-                      />
-                    )
-                  : (
-                      <ProjectCard
-                        key={project1.RF6Id}
-                        aiMode={aiMode1}
-                        setAi={toggleAiMode}
-                        sectionExpanded={sectionExpanded1}
-                        setSectionExpanded={setSectionExpanded1}
-                        name="card1"
-                        action={lastAction}
-                        dispatchAction={dispatchAction('card1')}
-                        key1={project1.RF6Id}
-                        key2={project2.RF6Id}
-                        coiLoading={coiLoading2}
-                        coi={coi1}
-                        project={{ ...project1.metadata, ...project1 } as any}
-                        onCoICancel={() => setCoi1(false)}
-                        onCoIConfirm={() => confirmCoI1(project1.id, project2.id)}
-                      />
-                    )}
-              </div>
-              <div className="relative w-[49%]">
-                {aiMode2
-                  ? (
-                      <ProjectCardAI
-                        key={project2.RF6Id}
-                        aiMode={aiMode2}
-                        setAi={toggleAiMode}
-                        key1={project2.RF6Id}
-                        key2={project1.RF6Id}
-                        coiLoading={coiLoading2}
-                        coi={coi2}
-                        summaryData={project2.aiSummary}
-                        onCoICancel={() => setCoi2(false)}
-                        onCoIConfirm={() => confirmCoI2(project1.id, project2.id)}
-                        project={{ ...project2.metadata, ...project2 } as any}
-                      />
-                    )
-                  : (
-                      <ProjectCard
-                        key={project2.RF6Id}
-                        aiMode={aiMode2}
-                        setAi={toggleAiMode}
-                        sectionExpanded={sectionExpanded2}
-                        setSectionExpanded={setSectionExpanded2}
-                        name="card2"
-                        action={lastAction}
-                        dispatchAction={dispatchAction('card2')}
-                        key1={project2.RF6Id}
-                        key2={project1.RF6Id}
-                        coiLoading={coiLoading2}
-                        coi={coi2}
-                        onCoICancel={() => setCoi2(false)}
-                        onCoIConfirm={() => confirmCoI2(project1.id, project2.id)}
-                        project={{ ...project2.metadata, ...project2 } as any}
-                      />
-                    )}
-              </div>
-            </div>
-          )}
 
-      {!isInitialVisit && (
+      <div className="relative flex w-full items-center justify-between gap-8 px-8 py-2">
+        <div className="relative w-[49%]">
+          <ProjectCard
+            key={project1.RF6Id}
+            aiMode={aiMode1}
+            setAi={toggleAiMode}
+            name="card1"
+            metadata={{ ...project1.metadata, ...project1 } as any}
+          />
+        </div>
+        <div className="relative w-[49%]">
+          <ProjectCard
+            key={project2.RF6Id}
+            aiMode={aiMode2}
+            setAi={toggleAiMode}
+            name="card2"
+            metadata={{ ...project2.metadata, ...project2 } as any}
+          />
+        </div>
+      </div>
+
+      {
         <footer className="sticky bottom-0 z-50 flex w-full flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner">
           <div className="flex w-3/4 flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
             {/* <Rating
@@ -649,7 +455,7 @@ export default function Home() {
             />
           </div>
         </footer>
-      )}
+      }
     </div>
   );
 }

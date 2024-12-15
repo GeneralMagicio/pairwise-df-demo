@@ -172,7 +172,7 @@ const HeaderRF6: FC<HeaderProps> = ({
 
             {question && (
               <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
-                <h2 className="text-center text-xl font-semibold">{question}</h2>
+                <h2 className="text-center text-lg font-semibold">{question}</h2>
               </div>
             )}
             <div
