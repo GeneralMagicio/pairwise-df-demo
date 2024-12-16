@@ -299,7 +299,7 @@ export default function Home() {
   if (!project1 || !project2 || !data) return <div>No data</div>;
 
   return (
-    <div>
+    <div className="relative min-h-screen">
       <Modals />
       <Modal
         isOpen={
@@ -335,7 +335,7 @@ export default function Home() {
         isFirstSelection={false}
       />
 
-      <div className="relative flex w-full items-center justify-between gap-8 px-8 py-2">
+      <div className="relative flex w-full items-center justify-between gap-8 px-8 pt-2">
         <div className="relative w-[49%]">
           <ProjectCard
             key={project1.RF6Id}
@@ -356,10 +356,9 @@ export default function Home() {
         </div>
       </div>
 
-      {
-        <footer className="sticky bottom-0 z-50 flex w-full flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner">
-          <div className="flex w-3/4 flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
-            {/* <Rating
+      <footer className="absolute bottom-0 z-50 flex w-full flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner sl:py-2">
+        <div className="flex w-3/4 flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
+          {/* <Rating
               value={rating1 || 0}
               onChange={(value) => {
                 !wallet ? setShowLoginModal(true) : setRating1(value);
@@ -394,28 +393,28 @@ export default function Home() {
               />
               <div className="absolute left-[calc(50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
 
-            </div>
-            <div>100</div>
-            <div className="w-1/5 text-ellipsis">{project2.name}</div>
           </div>
-          <div className="flex flex-row gap-x-11">
-            <UndoButton
-              disabled={data?.votedPairs === 0 || isAnyModalOpen()}
-              onClick={handleUndo}
-            />
-            {/* Next Button */}
-            <button
-              className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-              onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
-            >
-              Next
-            </button>
-            <SkipButton
-              onClick={handleSkip}
-            />
-          </div>
-        </footer>
-      }
+          <div>100</div>
+          <div className="w-1/5 text-ellipsis">{project2.name}</div>
+        </div>
+        <div className="flex flex-row gap-x-11">
+          <UndoButton
+            disabled={data?.votedPairs === 0 || isAnyModalOpen()}
+            onClick={handleUndo}
+          />
+          {/* Next Button */}
+          <button
+            className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+            onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
+          >
+            Next
+          </button>
+          <SkipButton
+            onClick={handleSkip}
+          />
+        </div>
+      </footer>
+
     </div>
   );
 }

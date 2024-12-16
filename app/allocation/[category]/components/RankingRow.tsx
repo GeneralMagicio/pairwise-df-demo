@@ -6,6 +6,8 @@ import { IProjectRanking } from '@/app/comparison/utils/types';
 // import { LockIcon } from '@/public/assets/icon-components/Lock';
 // import { UnlockIcon } from '@/public/assets/icon-components/Unlock';
 import styles from '@/app/styles/Project.module.css';
+import { LockIcon } from '@/public/assets/icon-components/Lock';
+import { UnlockIcon } from '@/public/assets/icon-components/Unlock';
 // import { COI } from '@/public/assets/icon-components/COI';
 // import { formatBudget } from '@/app/comparison/utils/helpers';
 interface IRankingRowProps {
@@ -26,6 +28,7 @@ const RankingRow: FC<IRankingRowProps> = ({
   project,
   locked,
   coi,
+  onLock,
   onVote,
 }) => {
   const handleAllowdValue = (values: any) => {
@@ -88,6 +91,7 @@ const RankingRow: FC<IRankingRowProps> = ({
             <NumericFormat
               suffix="%"
               decimalScale={2}
+              fixedDecimalScale={true}
               value={project.share * 100}
               onValueChange={(values) => {
                 onVote(
@@ -107,7 +111,7 @@ const RankingRow: FC<IRankingRowProps> = ({
               {formatBudget(budget)}
             </span> */}
           </div>
-          {/* <button
+          <button
             className={`flex size-9 items-center justify-center rounded-md border p-2
               ${coi ? 'opacity-20' : 'opacity-100'}
         ${
@@ -116,7 +120,7 @@ const RankingRow: FC<IRankingRowProps> = ({
             onClick={() => onLock(project.projectId)}
           >
             {locked ? <LockIcon color="#fff" /> : <UnlockIcon />}
-          </button> */}
+          </button>
         </div>
       </td>
     </tr>
