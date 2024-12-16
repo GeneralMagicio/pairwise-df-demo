@@ -32,13 +32,27 @@ import StorageLabel from '@/app/lib/localStorage';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
 
-const CustomSlider = styled(Slider)({
+const CustomSlider = styled(Slider, {
+  shouldForwardProp: prop => prop !== 'val',
+})<{ val: number }>(({ val }) => ({
+  'color': '#EAECF0',
   '& .MuiSlider-valueLabel': {
     color: '#000000',
-    backgroundColor: 'transparent',
+    backgroundColor: '#EAECF0',
     border: '1px solid #EAECF0',
   },
-});
+  '& .MuiSlider-thumb': {
+    backgroundColor: '#7F56D9',
+  },
+  '& .MuiSlider-track': {
+    background: (val > 0) ? `linear-gradient(to right, #EAECF0 0%, #EAECF0 ${100 / (100 + val) * 100}%, #7F56D9 ${100 / (100 + val) * 100}%, #7F56D9 100%)` : '#FFFFFF`',
+    border: 'transparent',
+  },
+  '& .MuiSlider-rail': {
+    background: (val > 0) ? '#EAECF0' : `linear-gradient(to right, #EAECF0 0%, #EAECF0 ${50 + val / 2}%, #7F56D9 ${50 + val / 2}%, #7F56D9 50%, #EAECF0 50%, #EAECF0 100%)`,
+    opacity: 1,
+  },
+}));
 
 export default function Home() {
   const { category } = useParams() ?? {};
@@ -366,7 +380,7 @@ export default function Home() {
           <div>100</div>
           <div className="relative mt-5 w-1/2">
             <CustomSlider
-              sx={{ color: '#7F56D9' }}
+              val={value}
               value={value}
               min={-100}
               step={1}
