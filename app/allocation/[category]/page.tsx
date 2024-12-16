@@ -373,11 +373,12 @@ const RankingPage = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <p className="text-sm font-medium text-gray-400">
-                Weighted Degree
-              </p>
+              <p className="text-sm font-medium text-gray-400">Rank</p>
+
               <div className="h-6 w-0 border border-op-neutral-300" />
-              <p className="text-sm font-medium text-gray-400">Level</p>
+              <p className="text-sm font-medium text-gray-400">
+                Edge weight
+              </p>
             </div>
           </div>
           {isLoading

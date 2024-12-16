@@ -93,6 +93,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   const renderProgressState = () => {
     if (loading) return <Loading />;
     switch (progress) {
+      case CollectionProgressStatusEnum.Finished:
       case CollectionProgressStatusEnum.Attested:
         return (
           <VotedCategory
@@ -103,7 +104,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
             budgetEditHandle={onEdit}
           />
         );
-      case CollectionProgressStatusEnum.Finished:
       case CollectionProgressStatusEnum.Pending:
       default:
         return (

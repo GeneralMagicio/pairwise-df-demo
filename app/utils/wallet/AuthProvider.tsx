@@ -176,6 +176,12 @@ export const useAuth = () => {
   ]);
 
   useEffect(() => {
+    if (loggedToPw === LogginToPwBackendState.LoggedIn && path === '/') {
+      router.replace('/allocation');
+    }
+  }, [loggedToPw, path, router]);
+
+  useEffect(() => {
     checkLoggedInToPw();
   }, [checkLoggedInToPw]);
 
