@@ -482,7 +482,7 @@ const RankingPage = () => {
                   )
                 : (
                     <>
-                      Submit votes
+                      Save edits
                       <ArrowRightIcon
                         color={
                           !!totalShareError
