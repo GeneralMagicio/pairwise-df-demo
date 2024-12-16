@@ -478,7 +478,7 @@ const RankingPage = () => {
             >
               {isSubmitting
                 ? (
-                    'Submitting votes...'
+                    'Saving edits...'
                   )
                 : (
                     <>
