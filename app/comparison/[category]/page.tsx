@@ -48,7 +48,7 @@ const CustomSlider = styled(Slider, {
     background: (val>0)?`linear-gradient(to right, #EAECF0 0%, #EAECF0 ${100 / (100 + val) * 100}%, #7F56D9 ${100 / (100 + val) * 100}%, #7F56D9 100%)`:"#FFFFFF`",
   },
   '& .MuiSlider-rail': {
-    background: (val>0)?'#EAECF0':`linear-gradient(to right, #EAECF0 0%, #EAECF0 ${50-val/2}, #7F56D9 ${50-val/2}, #7F56D9 50%,#EAECF0 50%, #EAECF0 100%`,
+    background: (val>0)?'#EAECF0':`linear-gradient(to right, #7F56D9 0%, #7F56D9 ${50-val/2}, #7F56D9 50%,#EAECF0 50%, #EAECF0 100%`,
     opacity: 1,
   },
 }));
