@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import debounce from 'lodash.debounce';
-import { useActiveWallet } from 'thirdweb/react';
+// import { useActiveWallet } from 'thirdweb/react';
 import { usePostHog } from 'posthog-js/react';
 import RankingRow from './components/RankingRow';
 import HeaderRF6 from '../../comparison/card/Header-RF6';
@@ -26,54 +26,38 @@ import {
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRight';
 import { modifyPercentage, RankItem } from '../utils';
-import Modal from '@/app/utils/Modal';
-import AttestationSuccessModal from './attestation/AttestationSuccessModal';
-import AttestationLoading from './attestation/AttestationLoading';
-import AttestationError from './attestation/AttestationError';
-import { attest, AttestationState, VotingHasEnded } from './attestation';
-import { useSigner } from './utils';
-import {
-  useMarkCoi,
-  useUnmarkCoi,
-} from '@/app/comparison/utils/data-fetching/coi';
-import AskDelegations from '@/app/delegation/farcaster/AskDelegations';
-import { getJWTData } from '@/app/utils/wallet/agora-login';
-import EmailLoginModal from '../components/EOA/EmailLoginModal';
+// import { useSigner } from './utils';
+// import {
+//   useMarkCoi,
+//   useUnmarkCoi,
+// } from '@/app/comparison/utils/data-fetching/coi';
 
 const RankingPage = () => {
   const params = useParams();
   const router = useRouter();
   const posthog = usePostHog();
 
-  const wallet = useActiveWallet();
-  const signer = useSigner();
+  // const signer = useSigner();
   const category = categorySlugIdMap.get((params?.category as string) || '');
 
   // const [search, setSearch] = useState<string>("");
-  const [attestationState, setAttestationState] = useState(
-    AttestationState.Initial
-  );
-  const [attestationLink, setAttestationLink] = useState<string>();
-  const [checkedItems, setCheckedItems] = useState<number[]>([]);
+  // const [checkedItems, setCheckedItems] = useState<number[]>([]);
   const [projects, setProjects] = useState<IProjectRanking[] | null>(null);
   const [totalShareError, setTotalShareError] = useState<string | null>(null);
   const [lockedItems, setLockedItems] = useState<number[]>([]);
   // const [allocationBudget, setAllocationBudget] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [nonCoIProjects, setNonCoIProjects] = useState<IProjectRanking[]>([]);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [closingDesibled, setClosingDesibled] = useState(false);
+  // const [showLoginModal, setShowLoginModal] = useState(false);
+  // const [closingDesibled, setClosingDesibled] = useState(false);
 
   // const { data: categoryRankings, isLoading: rankingLoading }
   //   = useCategoryRankings();
   const { data: ranking, isLoading } = useProjectsRankingByCategoryId(category);
   const { mutateAsync: updateProjectRanking }
     = useUpdateProjectRanking(category);
-  const { mutateAsync: markProjectCoI } = useMarkCoi();
-  const { mutateAsync: unmarkProjectCoI } = useUnmarkCoi();
-
-  const { isBadgeholder } = getJWTData();
-  console.log(projects);
+  // const { mutateAsync: markProjectCoI } = useMarkCoi();
+  // const { mutateAsync: unmarkProjectCoI } = useUnmarkCoi();
 
   // const handleBulkSelection = () => {
   //   if (!nonCoIProjects) return;
@@ -167,68 +151,68 @@ const RankingPage = () => {
     }
   };
 
-  const markCOI = async (id: number) => {
-    if (!projects) return;
+  // const markCOI = async (id: number) => {
+  //   if (!projects) return;
 
-    const unmarkedProjects = projects.filter(
-      project =>
-        project.projectId !== id
-        && !project.coi
-        && !lockedItems.includes(project.projectId)
-    );
+  //   const unmarkedProjects = projects.filter(
+  //     project =>
+  //       project.projectId !== id
+  //       && !project.coi
+  //       && !lockedItems.includes(project.projectId)
+  //   );
 
-    const currentProject = projects.find(project => project.projectId === id);
+  //   const currentProject = projects.find(project => project.projectId === id);
 
-    if (!currentProject) return;
+  //   if (!currentProject) return;
 
-    const distributedShare = currentProject.share / unmarkedProjects.length;
+  //   const distributedShare = currentProject.share / unmarkedProjects.length;
 
-    const newProjects = projects.map(project =>
-      project.projectId === id
-        ? { ...project, coi: true, share: 0 }
-        : {
-            ...project,
-            share:
-              project.coi || lockedItems.includes(project.projectId)
-                ? project.share
-                : project.share + distributedShare,
-          }
-    );
+  //   const newProjects = projects.map(project =>
+  //     project.projectId === id
+  //       ? { ...project, coi: true, share: 0 }
+  //       : {
+  //           ...project,
+  //           share:
+  //             project.coi || lockedItems.includes(project.projectId)
+  //               ? project.share
+  //               : project.share + distributedShare,
+  //         }
+  //   );
 
-    if (checkedItems.includes(id)) {
-      setCheckedItems(checkedItems.filter(checkedId => checkedId !== id));
-    }
+  //   if (checkedItems.includes(id)) {
+  //     setCheckedItems(checkedItems.filter(checkedId => checkedId !== id));
+  //   }
 
-    if (lockedItems.includes(id)) {
-      setLockedItems(lockedItems.filter(lockedId => lockedId !== id));
-    }
+  //   if (lockedItems.includes(id)) {
+  //     setLockedItems(lockedItems.filter(lockedId => lockedId !== id));
+  //   }
 
-    await markProjectCoI({ data: { pid: id } });
+  //   await markProjectCoI({ data: { pid: id } });
 
-    const rankingArray = newProjects.map(project => ({
-      id: project.projectId,
-      share: project.share,
-    }));
+  //   const rankingArray = newProjects.map(project => ({
+  //     id: project.projectId,
+  //     share: project.share,
+  //   }));
 
-    await updateProjectRanking({
-      cid: category,
-      ranking: rankingArray,
-    });
+  //   await updateProjectRanking({
+  //     cid: category,
+  //     ranking: rankingArray,
+  //   });
 
-    setProjects(newProjects);
-  };
+  //   setProjects(newProjects);
+  // };
 
-  const unmarkCOI = async (id: number) => {
-    if (!projects) return;
+  // const unmarkCOI = async (id: number) => {
+  //   if (!projects) return;
 
-    await unmarkProjectCoI({ data: { pid: id } });
+  //   await unmarkProjectCoI({ data: { pid: id } });
 
-    setProjects(
-      projects.map(project =>
-        project.projectId === id ? { ...project, coi: false } : project
-      )
-    );
-  };
+  //   setProjects(
+  //     projects.map(project =>
+  //       project.projectId === id ? { ...project, coi: false } : project
+  //     )
+  //   );
+  // };
 
   // const lockSelection = () => {
   //   if (!nonCoIProjects) return;
@@ -274,11 +258,6 @@ const RankingPage = () => {
   // };
 
   const submitVotes = async () => {
-    if (!wallet) {
-      setShowLoginModal(true);
-      return;
-    }
-
     setIsSubmitting(true);
 
     if (!projects) return;
@@ -293,78 +272,50 @@ const RankingPage = () => {
       ranking: rankingArray,
     });
 
-    if (!wallet || !ranking || !signer) {
-      console.error('Requirements not met for attestations', { wallet, ranking, signer });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!VotingHasEnded) {
-      await attest({
-        ranking: {
-          id: ranking.id,
-          name: ranking.name,
-          ranking: projects.map(el => ({
-            RF6Id: el.project.RF6Id,
-            share: el.share,
-          })),
-        },
-        setAttestationLink,
-        setAttestationState,
-        signer,
-        wallet,
-      });
-    }
+    // if (!wallet || !ranking || !signer) {
+    //   console.error('Requirements not met for attestations', { wallet, ranking, signer });
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
     setIsSubmitting(false);
   };
 
-  const handleAttestationModalClose = () => {
-    if (attestationState === AttestationState.Success || attestationState == AttestationState.FarcasterDelegate) {
-      router.push('/allocation');
-      setAttestationState(AttestationState.Initial);
-    }
-    else if (attestationState === AttestationState.Error) {
-      setAttestationState(AttestationState.Initial);
-    }
-  };
+  // useEffect(() => {
+  //   if (!projects || projects.length === 0) {
+  // setIsLocked(false);
+  // setIsUnlocked(true);
+  //   return;
+  // }
+
+  // const allLocked = lockedItems.length === projects.length && projects.length;
+  // const noneLocked = lockedItems.length === 0;
+  // const checkedLocked = checkedItems.every(id => lockedItems.includes(id));
+  // const checkedUnlocked = checkedItems.every(
+  //   id => !lockedItems.includes(id)
+  // );
+  // const someLocked = checkedItems.some(id => lockedItems.includes(id));
+  // const someUnlocked = checkedItems.some(id => !lockedItems.includes(id));
+
+  // if (allLocked || checkedLocked) {
+  // setIsLocked(true);
+  // setIsUnlocked(false);
+  // }
+  // else if (noneLocked || checkedUnlocked) {
+  // setIsLocked(false);
+  // setIsUnlocked(true);
+  // }
+  // else if (someLocked || someUnlocked) {
+  // setIsLocked(true);
+  // setIsUnlocked(true);
+  // }
+  // else {
+  // setIsLocked(false);
+  // setIsUnlocked(false);
+  // }
+  // }, [projects, lockedItems, checkedItems]);
 
   useEffect(() => {
-    if (!projects || projects.length === 0) {
-      // setIsLocked(false);
-      // setIsUnlocked(true);
-      return;
-    }
-
-    const allLocked = lockedItems.length === projects.length && projects.length;
-    const noneLocked = lockedItems.length === 0;
-    const checkedLocked = checkedItems.every(id => lockedItems.includes(id));
-    const checkedUnlocked = checkedItems.every(
-      id => !lockedItems.includes(id)
-    );
-    const someLocked = checkedItems.some(id => lockedItems.includes(id));
-    const someUnlocked = checkedItems.some(id => !lockedItems.includes(id));
-
-    if (allLocked || checkedLocked) {
-      // setIsLocked(true);
-      // setIsUnlocked(false);
-    }
-    else if (noneLocked || checkedUnlocked) {
-      // setIsLocked(false);
-      // setIsUnlocked(true);
-    }
-    else if (someLocked || someUnlocked) {
-      // setIsLocked(true);
-      // setIsUnlocked(true);
-    }
-    else {
-      // setIsLocked(false);
-      // setIsUnlocked(false);
-    }
-  }, [projects, lockedItems, checkedItems]);
-
-  useEffect(() => {
-    console.log;
     if (ranking) setProjects(ranking?.ranking);
   }, [ranking]);
 
@@ -392,56 +343,6 @@ const RankingPage = () => {
 
   return (
     <div>
-      <Modal
-        isOpen={attestationState !== AttestationState.Initial}
-        onClose={handleAttestationModalClose}
-        showCloseButton={
-          attestationState !== AttestationState.FarcasterDelegate
-        }
-      >
-        {attestationState === AttestationState.FarcasterDelegate
-        && attestationLink && (
-          <AskDelegations
-            categoryName={params?.category as string}
-            link={attestationLink}
-            onClose={() => {
-              if (isBadgeholder) {
-                setAttestationState(AttestationState.Success);
-              }
-              else {
-                handleAttestationModalClose();
-                setAttestationState(AttestationState.Initial);
-              }
-            }}
-            isBadgeHolder={isBadgeholder}
-          />
-        )}
-        {attestationState === AttestationState.Success && attestationLink && (
-          <AttestationSuccessModal
-            link={attestationLink}
-            onClose={() => {
-              handleAttestationModalClose();
-            }}
-          />
-        )}
-        {attestationState === AttestationState.Loading && (
-          <AttestationLoading />
-        )}
-        {attestationState === AttestationState.Error && (
-          <AttestationError onClick={submitVotes} />
-        )}
-      </Modal>
-      <Modal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        showCloseButton={!closingDesibled}
-      >
-        <EmailLoginModal
-          closeModal={() => setShowLoginModal(false)}
-          setCloseModalDisabled={setClosingDesibled}
-          selectedCategoryId={category}
-        />
-      </Modal>
       <HeaderRF6 />
       <div className="flex flex-col justify-between gap-4 px-6 py-16 lg:px-20 xl:px-52 2xl:px-72">
         <div className="flex flex-col gap-6 rounded-xl border border-gray-200 px-6 py-10">
@@ -463,11 +364,12 @@ const RankingPage = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <p className="text-sm font-medium text-gray-400">
-                Weighted Degree
-              </p>
+              <p className="text-sm font-medium text-gray-400">Rank</p>
+
               <div className="h-6 w-0 border border-op-neutral-300" />
-              <p className="text-sm font-medium text-gray-400">Level</p>
+              <p className="text-sm font-medium text-gray-400">
+                Edge weight
+              </p>
             </div>
           </div>
           {isLoading
@@ -502,7 +404,7 @@ const RankingPage = () => {
                                 // onSelect={selectItem}
                                 onVote={handleVote}
                                 coi={project.coi}
-                                onToggleCOI={markCOI}
+                                onToggleCOI={() => {}}
                               />
                             ))}
                           {projects.some(project => project.coi) && (
@@ -526,7 +428,7 @@ const RankingPage = () => {
                                     // onSelect={selectItem}
                                     onVote={handleVote}
                                     coi={project.coi}
-                                    onToggleCOI={unmarkCOI}
+                                    onToggleCOI={() => {}}
                                   />
                                 ))}
                             </>

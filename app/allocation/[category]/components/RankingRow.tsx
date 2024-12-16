@@ -6,7 +6,7 @@ import { IProjectRanking } from '@/app/comparison/utils/types';
 // import { LockIcon } from '@/public/assets/icon-components/Lock';
 // import { UnlockIcon } from '@/public/assets/icon-components/Unlock';
 import styles from '@/app/styles/Project.module.css';
-import { COI } from '@/public/assets/icon-components/COI';
+// import { COI } from '@/public/assets/icon-components/COI';
 // import { formatBudget } from '@/app/comparison/utils/helpers';
 interface IRankingRowProps {
   index: number
@@ -26,7 +26,6 @@ const RankingRow: FC<IRankingRowProps> = ({
   project,
   locked,
   coi,
-  onToggleCOI,
   onVote,
 }) => {
   const handleAllowdValue = (values: any) => {
@@ -72,12 +71,12 @@ const RankingRow: FC<IRankingRowProps> = ({
 
       <td>
         <div className="flex flex-row justify-center gap-1">
-          <button
+          {/* <button
             className="m-auto flex size-9 items-center justify-center"
             onClick={() => onToggleCOI(project.projectId)}
           >
             <COI isActive={coi} />
-          </button>
+          </button> */}
           <div
             className={`m-auto flex items-center justify-center rounded-md border ${coi ? 'border-op-neutral-300' : 'border-gray-200'} px-4 py-2 ${
               locked && 'bg-gray-100'

@@ -25,7 +25,7 @@ const ProjectDescription: React.FC<ProjectDescriptionProps> = ({ description }) 
   };
 
   return (
-    <div className="mb-8 flex flex-col gap-2">
+    <div className="mb-2 flex flex-col gap-2">
       <p
         ref={textRef}
         onClick={toggleExpand}

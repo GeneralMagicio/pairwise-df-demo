@@ -12,7 +12,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { WalletId, createWallet } from 'thirdweb/wallets';
 import { useActiveWallet, useConnect, useDisconnect as useThirdwebDisconnect } from 'thirdweb/react';
 import { AxiosError } from 'axios';
-import { usePostHog } from 'posthog-js/react';
 import {
   isLoggedIn,
   loginToPwBackend,
@@ -22,8 +21,7 @@ import { API_URL, axiosInstance } from '../axiosInstance';
 import { usePrevious } from '../methods';
 import StorageLabel from '@/app/lib/localStorage';
 import { client, smartWalletConfig } from './provider';
-import { getMessageAndSignature, isLoggedInToAgora, loginToAgora, signOutFromAgora } from './agora-login';
-import { JWTPayload } from './types';
+import { getMessageAndSignature } from './agora-login';
 
 export enum LogginToPwBackendState {
   Initial,
@@ -38,8 +36,6 @@ interface AuthContextType {
   setLoggedToPw: (bool: LogginToPwBackendState) => void
   isNewUser: boolean
   setIsNewUser: (bool: boolean) => void
-  loggedToAgora: 'initial' | 'error' | JWTPayload
-  setLoggedToAgora: (value: AuthContextType['loggedToAgora']) => void
   loginAddress: { value: `0x${string}` | undefined, confirmed: boolean }
   setLoginAddress: (value: AuthContextType['loginAddress']) => void
   isAutoConnecting: boolean
@@ -57,15 +53,12 @@ const AuthContext = React.createContext<AuthContextType>({
   setLoginAddress: () => {},
   isAutoConnecting: false,
   setIsAutoConnecting: () => {},
-  loggedToAgora: 'initial',
-  setLoggedToAgora: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loginInProgress, setLoginInProgress] = useState<boolean | null>(null);
   const [loggedToPw, setLoggedToPw] = useState(LogginToPwBackendState.Initial);
   const [isAutoConnecting, setIsAutoConnecting] = useState(false);
-  const [loggedToAgora, setLoggedToAgora] = useState<AuthContextType['loggedToAgora']>('initial');
 
   const [isNewUser, setIsNewUser] = useState(false);
 
@@ -80,8 +73,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         loginInProgress,
         setLoginInProgress,
-        loggedToAgora,
-        setLoggedToAgora,
         loggedToPw,
         setLoggedToPw,
         isNewUser,
@@ -109,8 +100,6 @@ export const useAuth = () => {
     setLoginAddress,
     isAutoConnecting,
     setIsAutoConnecting,
-    loggedToAgora,
-    setLoggedToAgora,
   } = useContext(AuthContext);
 
   // const [loginFlowDangling, setLoginFlowDangling] = useState(false)
@@ -123,18 +112,14 @@ export const useAuth = () => {
   const { connect } = useConnect();
   const wallet = useActiveWallet();
   const { disconnect } = useThirdwebDisconnect();
-  const posthog = usePostHog();
 
   const clearLocalStorage = () => {
     localStorage.removeItem(StorageLabel.AUTH);
-    localStorage.removeItem(StorageLabel.AGORA_SIWE_JWT);
     localStorage.removeItem(StorageLabel.LOGGED_IN_ADDRESS);
     localStorage.removeItem(StorageLabel.LAST_CONNECT_PERSONAL_WALLET_ID);
   };
 
   const signOut = async (redirectToLanding: boolean = true) => {
-    signOutFromAgora();
-    setLoggedToAgora('initial');
     clearLocalStorage();
     if (wallet) disconnect(wallet);
     logoutFromPwBackend();
@@ -176,12 +161,8 @@ export const useAuth = () => {
     }
   }, [connectedAddress, prevAddress, path]);
 
-  const checkLoggedInToPwAndAgora = useCallback(async () => {
+  const checkLoggedInToPw = useCallback(async () => {
     if (!loginAddress.value) return;
-
-    const loggedInToAgora = await isLoggedInToAgora(loginAddress.value);
-    if (loggedInToAgora) setLoggedToAgora(loggedInToAgora);
-    else setLoggedToAgora('error');
 
     const validToken = await isLoggedIn();
     if (validToken) {
@@ -195,8 +176,14 @@ export const useAuth = () => {
   ]);
 
   useEffect(() => {
-    checkLoggedInToPwAndAgora();
-  }, [checkLoggedInToPwAndAgora]);
+    if (loggedToPw === LogginToPwBackendState.LoggedIn && path === '/') {
+      router.replace('/allocation');
+    }
+  }, [loggedToPw, path, router]);
+
+  useEffect(() => {
+    checkLoggedInToPw();
+  }, [checkLoggedInToPw]);
 
   const doLoginFlow = useCallback(async (addressParam?: `0x${string}`) => {
     console.log('Running the check login flow');
@@ -205,28 +192,6 @@ export const useAuth = () => {
     // setLoginAddress({value: connectedAddress, confirmed: false})
     let message;
     let signature;
-
-    try {
-      console.log('chking agora exp');
-      const loggedInToAgora = await isLoggedInToAgora(address);
-      if (loggedInToAgora) setLoggedToAgora(loggedInToAgora);
-      else {
-        const { message: val1, signature: val2 } = await getMessageAndSignature(address, chainId, signMessageAsync);
-        message = val1;
-        signature = val2;
-        console.log('loggin to agora');
-        setLoginInProgress(true);
-        posthog.identify(address);
-        const res = await loginToAgora(message, signature);
-        setLoggedToAgora(res);
-      }
-    }
-    catch (e) {
-      console.log('agora err');
-      setLoggedToAgora('error');
-      setLoginInProgress(false);
-      return;
-    }
 
     try {
       console.log('Checking pw token if exists?');
@@ -324,7 +289,6 @@ export const useAuth = () => {
   return {
     loggedToPw,
     isNewUser,
-    loggedToAgora,
     loginInProgress,
     signOut,
     loginAddress,

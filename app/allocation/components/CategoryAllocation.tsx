@@ -13,18 +13,17 @@ import { UnlockIcon } from '@/public/assets/icon-components/Unlock';
 import { LockIcon } from '@/public/assets/icon-components/Lock';
 import Loading from '@/app/components/Loading';
 import VotedCategory from './ProgressCards/VotedCategory';
-import DelegatedCategory from './ProgressCards/DelegatedCategory';
 import PendingCategory from './ProgressCards/PendingCategory';
 import {
   categoryIdSlugMap,
 } from '@/app/comparison/utils/helpers';
 
 // Image source map for collections
-const collectionsImageSrc = new Map<number, string>([
-  [1, '/assets/images/category-it.svg'],
-  [2, '/assets/images/category-gra.svg'],
-  [3, '/assets/images/category-gl.svg'],
-]);
+// const collectionsImageSrc = new Map<number, string>([
+//   [1, '/assets/images/category-it.svg'],
+//   [2, '/assets/images/category-gra.svg'],
+//   [3, '/assets/images/category-gl.svg'],
+// ]);
 
 interface CategoryAllocationProps extends TCategory {
   allocationPercentage: number
@@ -34,6 +33,7 @@ interface CategoryAllocationProps extends TCategory {
   username?: string
   isBadgeholder: boolean
   bhCategory: string
+  image: string
   isBHCategoryAtessted: boolean
   categorySlug: string
   onDelegate: () => void
@@ -48,13 +48,13 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   name,
   description,
   projectCount,
+  image,
   progress,
   allocationPercentage,
   locked,
   attestationLink,
   delegations,
   loading,
-  username,
   isBadgeholder,
   bhCategory,
   categorySlug,
@@ -68,7 +68,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
 
   const hrefLink
     = progress === CollectionProgressStatusEnum.Finished
-    || progress === CollectionProgressStatusEnum.Delegated
     || progress === CollectionProgressStatusEnum.Attested
       ? `/allocation/${categoryIdSlugMap.get(id)}`
       : `/comparison/${categoryIdSlugMap.get(id)}`;
@@ -94,14 +93,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   const renderProgressState = () => {
     if (loading) return <Loading />;
     switch (progress) {
-      case CollectionProgressStatusEnum.Delegated:
-        return (
-          <DelegatedCategory
-            id={id}
-            isAutoConnecting={isAutoConnecting}
-            username={username}
-          />
-        );
+      case CollectionProgressStatusEnum.Finished:
       case CollectionProgressStatusEnum.Attested:
         return (
           <VotedCategory
@@ -112,7 +104,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
             budgetEditHandle={onEdit}
           />
         );
-      case CollectionProgressStatusEnum.Finished:
       case CollectionProgressStatusEnum.Pending:
       default:
         return (
@@ -132,13 +123,13 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   return (
     <div className="flex justify-between rounded-lg border bg-gray-50 p-4">
       <div className="flex w-[64%] space-x-4 2xl:w-[74%]">
-        <ImageContainer src={collectionsImageSrc.get(id) || ''} alt={name} />
+        <ImageContainer src={image} alt={name} />
         <ProjectInfo
           name={name}
           description={description}
           projectCount={projectCount}
           hrefLink={hrefLink}
-          isDelegated={progress === CollectionProgressStatusEnum.Delegated}
+          isDelegated={false}
         />
       </div>
 

@@ -1,17 +1,9 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC } from 'react';
 import Image from 'next/image';
-import { useCollapse } from 'react-collapsed';
-import { ExternalLink } from './ExternalLink';
 import GithubBox from './GithubBox';
-import SimpleInfoBox from './SimpleInfoBox';
-import { ProjectMetadata } from '../utils/types';
-import { ArrowUpIcon } from '@/public/assets/icon-components/ArrowUp';
-import ConflictOfInterestModal from './modals/CoIModal';
-import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
-import CoILoadingModal from './modals/CoILoading';
+import { IProject, ProjectMetadata } from '../utils/types';
 import ProjectDescription from './ProjectDescription';
 import styles from '@/app/styles/Project.module.css';
-import { ContractBox } from './modals/ContractBox';
 
 enum ProjectSection {
   REPOS = 'repos',
@@ -23,10 +15,7 @@ enum ProjectSection {
 interface CollapsibleProps {
   title: string
   children: React.ReactNode
-  onClick: () => void
   id: string
-  expanded: boolean
-  setExpanded: (value: boolean) => void
 }
 
 export interface AutoScrollAction {
@@ -45,42 +34,16 @@ const ProjectSectionTitles = {
 const Section: FC<CollapsibleProps> = ({
   title,
   children,
-  onClick,
   id,
-  expanded,
-  setExpanded,
 }) => {
-  const { getCollapseProps, getToggleProps } = useCollapse({
-    isExpanded: expanded,
-  });
-
-  const expandSection = () => {
-    onClick();
-    setExpanded(!expanded);
-  };
-
   return (
     <>
       <hr className="border-t border-gray-200" />
       <div id={id} className="mb-4 pt-4">
         <div className="flex items-center justify-between gap-4 p-2">
           <button className="text-xl font-medium">{title}</button>
-          <button
-            {...getToggleProps({
-              onClick: expandSection,
-            })}
-            className="flex cursor-pointer items-center gap-1 text-sm text-primary"
-          >
-            {expanded
-              ? (
-                  <ArrowUpIcon color="black" width={20} height={20} />
-                )
-              : (
-                  <ArrowDownIcon width={20} height={20} />
-                )}
-          </button>
         </div>
-        <section {...getCollapseProps()} className="p-2">
+        <section className="p-2">
           {children}
         </section>
       </div>
@@ -88,160 +51,51 @@ const Section: FC<CollapsibleProps> = ({
   );
 };
 
-function smoothScrollToElement(elementId: string) {
-  const element = document.getElementById(elementId);
+// function smoothScrollToElement(elementId: string) {
+//   const element = document.getElementById(elementId);
 
-  if (element) {
-    element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
-  }
-}
+//   if (element) {
+//     element.scrollIntoView({
+//       behavior: 'smooth',
+//       block: 'start',
+//     });
+//   }
+// }
 
 interface Props {
-  project: ProjectMetadata
-  coi: boolean
-  onCoICancel: () => void
-  onCoIConfirm: () => void
-  coiLoading: boolean
-  dispatchAction: (section: ProjectSection, action: boolean) => void
-  action: AutoScrollAction | undefined
+  metadata: ProjectMetadata & IProject
   name: string
-  sectionExpanded: Record<ProjectSection, boolean>
-  setSectionExpanded: (value: Props['sectionExpanded']) => void
-  key1: string
-  key2: string
   aiMode: boolean
   setAi: () => void
 }
 
-const NoneBox: FC = () => (
-  <div className="space-y-2">
-    <div className="max-w-full rounded-lg border border-gray-200 bg-gray-50 p-2">
-      None
-    </div>
-  </div>
-);
+// const NoneBox: FC = () => (
+//   <div className="space-y-2">
+//     <div className="max-w-full rounded-lg border border-gray-200 bg-gray-50 p-2">
+//       None
+//     </div>
+//   </div>
+// );
 
 export const ProjectCard: React.FC<Props> = ({
-  project,
-  coi,
-  onCoICancel,
-  onCoIConfirm,
-  coiLoading,
-  dispatchAction,
-  action,
+  metadata,
   name,
-  sectionExpanded,
-  setSectionExpanded,
-  key1,
-  key2,
 }) => {
-  const [render, setRender] = useState(0);
-  // const titleRef = useRef<HTMLDivElement>(null);
-  const parentRef = useRef<HTMLDivElement>(null);
-  const divRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // const parentElement = parentRef.current;
-
-    // const handleScroll = () => {
-    //   if (parentRef.current && titleRef.current) {
-    //     const rect = titleRef.current.getBoundingClientRect()?.top;
-    //     const offset = parentRef.current.getBoundingClientRect()?.top;
-    //     // setIsSticky(rect <= offset && rect >= -offset);
-    //   }
-    // };
-
-    // if (parentElement) {
-    //   parentElement.addEventListener('scroll', handleScroll);
-    // }
-
-    setRender(1);
-
-    // return () => {
-    //   if (parentElement) {
-    //     parentElement.removeEventListener('scroll', handleScroll);
-    //   }
-    // };
-  }, []);
-
-  useEffect(() => {
-    scrollToTop();
-  }, [key2, key1]);
-
-  useEffect(() => {
-    if (render === 0 || !action || action.initiator === name) return;
-
-    console.log('in', name, 'with action', action);
-    console.log('section states', sectionExpanded);
-
-    smoothScrollToElement(`${action.section}-${name}`);
-
-    const isSectionUpdated = action.action !== sectionExpanded[action.section];
-    if (isSectionUpdated) {
-      console.log('launched in', name, {
-        ...sectionExpanded,
-        [action.section]: action.action,
-      });
-      setSectionExpanded({
-        ...sectionExpanded,
-        [action.section]: action.action,
-      });
-    }
-  }, [action, name, sectionExpanded, render]);
-
-  // const infoTabs = [
-  //   {
-  //     src: '',
-  //     text: '',
-  //   },
-  // ];
-  const scrollToTop = () => {
-    if (divRef.current) {
-      divRef.current.scrollTop = 0;
-    }
-  };
-
-  const handleSectionClick = (id: ProjectSection, expanded: boolean) => () => {
-    dispatchAction(id, expanded);
-  };
-
-  const hnadleExpanded = (section: ProjectSection) => (value: boolean) => {
-    setSectionExpanded({ ...sectionExpanded, [section]: value });
-  };
-
   return (
-    <div ref={divRef} className="relative">
-      {coi && (
-        <div className="absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2">
-          <ConflictOfInterestModal
-            onCancel={onCoICancel}
-            onDeclareConflict={onCoIConfirm}
-          />
-        </div>
-      )}
-      {coiLoading && (
-        <div className="absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2">
-          <CoILoadingModal />
-        </div>
-      )}
+    <div className="relative">
       <div
         className={`container relative mx-auto my-4
-      h-[80vh] w-full rounded-xl border 
-      border-gray-200 bg-gray-50 px-4 pb-8 pt-4 ${
-    coi || coiLoading ? 'brightness-50' : ''
-    }`}
+      h-[40vh] w-full rounded-xl border 
+      border-gray-200 bg-gray-50 px-4 pb-8 pt-4`}
       >
-        <div ref={parentRef} className="h-[78vh] gap-10 overflow-y-auto">
+        <div className="h-[50vh] gap-10 overflow-y-auto">
           <div className="mr-4 flex flex-col gap-6">
             {/* Cover Image and Profile Avatar */}
-            <div className="relative flex h-auto flex-row">
+            <div className="relative flex h-auto flex-row items-center">
               <Image
-                src={project.profileAvatarUrl}
+                src={metadata.image || ''}
                 unoptimized
-                alt={project.name}
+                alt={metadata.name}
                 width={80}
                 height={80}
                 className="rounded-md"
@@ -249,280 +103,20 @@ export const ProjectCard: React.FC<Props> = ({
               <h1
                 className={`m-2 text-center text-3xl font-semibold ${styles.oneLineClamp}`}
               >
-                {project.name}
+                {metadata.name}
               </h1>
             </div>
-            {/* Sticky Title Section */}
-            {/* <div
-              ref={titleRef}
-              className={`mb-4 mt-2 transition-all ${
-                isSticky
-                  ? 'sticky left-0 top-0 z-30 w-full rounded-lg border border-gray-200 bg-gray-100 p-4 shadow-md'
-                  : ''
-              }`}
-            >
-              <div className="flex items-center gap-8">
-                {isSticky && (
-                  <Image
-                    src={project.profileAvatarUrl}
-                    unoptimized
-                    alt={project.name}
-                    width={70}
-                    height={70}
-                    className="rounded-md"
-                  />
-                )}
-                <div className="flex flex-col gap-3">
-                  <h1
-                    className={`text-3xl font-semibold ${styles.oneLineClamp}`}
-                  >
-                    {project.name}
-                  </h1>
-                  {project.organization && (
-                    <div className="flex items-center gap-1 font-medium leading-6 text-slate-600">
-                      <p>By</p>
-                      {project.organization.organizationAvatarUrl && (
-                        <Image
-                          src={project.organization.organizationAvatarUrl}
-                          alt={project.organization.name}
-                          width={24}
-                          height={24}
-                          className="mx-1 rounded-full"
-                          unoptimized
-                        />
-                      )}
-                      <p>{project.organization.name}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div> */}
-            <ProjectDescription description={project.description} />
-            {project.socialLinks && (
-              <div className="mb-6 flex flex-wrap gap-x-6 gap-y-2 text-slate-600">
-                {project.socialLinks.website?.map(item => (
-                  <ExternalLink key={item} address={item} type="website" />
-                ))}
-                {project.socialLinks.farcaster?.map((item, index) => (
-                  <ExternalLink
-                    key={`${item}_${index}`}
-                    address={item}
-                    type="warpcast"
-                  />
-                ))}
-                {project.socialLinks.twitter && (
-                  <ExternalLink
-                    address={project.socialLinks.twitter}
-                    type="x"
-                  />
-                )}
-                {project.socialLinks.mirror && (
-                  <ExternalLink
-                    address={project.socialLinks.mirror}
-                    type="mirror"
-                  />
-                )}
-              </div>
-            )}
-            {/* {project.team?.length && (
-              <div className="mb-6 w-full">
-                <Team
-                  team={(project.team || [])
-                    .filter(el => 'pfp_url' in el)
-                    .map(item => ({
-                      profileImg: item.pfp_url,
-                      urlLink: `https://warpcast.com/${item.username}`,
-                    }))}
-                />
-              </div>
-            )} */}
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
-                <Image src="/assets/images/time.svg" width={16} height={16} alt="time" />
-                <div>10 months old</div>
-              </div>
-              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
-                <Image src="/assets/images/contributor.svg" width={16} height={16} alt="time" />
-                <div>10 contributors</div>
-              </div>
-              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
-                <Image src="/assets/images/trusted-contributer.svg" width={16} height={16} alt="time" />
-                <div>5 trusted contributors</div>
-              </div>
-              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
-                <Image src="/assets/images/contributor.svg" width={16} height={16} alt="time" />
-                <div>10 contributors last 6mo</div>
-              </div>
-              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
-                <Image src="/assets/images/fork.svg" width={16} height={16} alt="time" />
-                <div>100 forks</div>
-              </div>
-              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
-                <Image src="/assets/images/trusted-fork.svg" width={16} height={16} alt="time" />
-                <div>10 trusted forks</div>
-              </div>
-              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
-                <Image src="/assets/images/project-star.svg" width={16} height={16} alt="time" />
-                <div>100 stars</div>
-              </div>
-              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
-                <Image src="/assets/images/trusted-stars.svg" width={16} height={16} alt="time" />
-                <div>10 trusted stars</div>
-              </div>
-              <div className="flex flex-row gap-2 bg-gray-100 px-3 py-2.5">
-                <Image src="/assets/images/open-source.svg" width={16} height={16} alt="time" />
-                <div>Open source</div>
-              </div>
-            </div>
+            <ProjectDescription description={metadata.description} />
+
             <Section
               id={`repos-${name}`}
-              setExpanded={hnadleExpanded(ProjectSection.REPOS)}
-              expanded={sectionExpanded[ProjectSection.REPOS]}
-              onClick={handleSectionClick(
-                ProjectSection.REPOS,
-                !sectionExpanded[ProjectSection.REPOS]
-              )}
               title={ProjectSectionTitles[ProjectSection.REPOS]}
             >
-              {project.github?.length
-              || project.links?.length
-              || project.contracts?.length
-                ? (
-                    <div className="space-y-4">
-                      {project.github?.map((repo) => {
-                        if (repo.url) {
-                          return <GithubBox key={repo.url} repo={repo} />;
-                        }
-                        return null;
-                      })}
-
-                      {project.links?.map(link => (
-                        <SimpleInfoBox
-                          key={link.url}
-                          title={link.name}
-                          link={link.url}
-                          description={link.description}
-                          type="link"
-                        />
-                      ))}
-
-                      {project.contracts?.map(({ address, chainId }) => (
-                        <ContractBox
-                          key={`${chainId}_${address}`}
-                          description=""
-                          address={address}
-                          chainId={chainId}
-                        />
-                      ))}
-                    </div>
-                  )
-                : (
-                    <NoneBox />
-                  )}
-            </Section>
-            {/* <Section
-              id={`testimonials-${name}`}
-              setExpanded={hnadleExpanded(ProjectSection.TESTIMONIALS)}
-              expanded={sectionExpanded[ProjectSection.TESTIMONIALS]}
-              onClick={handleSectionClick(
-                ProjectSection.TESTIMONIALS,
-                !sectionExpanded[ProjectSection.TESTIMONIALS]
-              )}
-              title={ProjectSectionTitles[ProjectSection.TESTIMONIALS]}
-            >
               <div className="space-y-4">
-                <SimpleInfoBox
-                  title={`https://devouch.xyz/project/rf/${project.projectId}`}
-                  description=""
-                  type="link"
-                  showIcon={false}
-                />
-                {project.testimonials?.length && (
-                  <SimpleInfoBox
-                    title={`https://www.metricsgarden.xyz/projects/${project.projectId}/?tab=insights`}
-                    description=""
-                    type="link"
-                    showIcon={false}
-                  />
-                )}
+                <GithubBox key={metadata.github_url} {...metadata} />
               </div>
-            </Section> */}
-            {/* <Section
-              id={`impact-${name}`}
-              setExpanded={hnadleExpanded(ProjectSection.IMPACT)}
-              expanded={sectionExpanded[ProjectSection.IMPACT]}
-              onClick={handleSectionClick(
-                ProjectSection.IMPACT,
-                !sectionExpanded[ProjectSection.IMPACT]
-              )}
-              title={ProjectSectionTitles[ProjectSection.IMPACT]}
-            >
-              {project.impactStatement
-                ? (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <p>
-                          <strong className="text-gray-800">Category:</strong>
-                          {' '}
-                          {convertCategoryToLabel(
-                            project.impactStatement
-                              .category as JWTPayload['category']
-                          )}
-                        </p>
-                        <p>
-                          <strong className="text-gray-800">Subcategory:</strong>
-                          {' '}
-                          {project.impactStatement.subcategory}
-                        </p>
-                        <p className="text-primary">
-                          Applicants were asked to report on impact made between Oct
-                          1, 2023 - July 31, 2024. Promises of future deliverables
-                          or impact are not allowed.
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        {project.impactStatement.statement?.map(
-                          ({ question, answer }) => (
-                            <QABox
-                              key={question}
-                              question={question}
-                              answer={answer}
-                            />
-                          )
-                        )}
-                      </div>
-                    </div>
-                  )
-                : (
-                    <NoneBox />
-                  )}
-            </Section> */}
-            {/* <Section
-              id={`pricing-${name}`}
-              setExpanded={hnadleExpanded(ProjectSection.PRICING)}
-              onClick={handleSectionClick(
-                ProjectSection.PRICING,
-                !sectionExpanded[ProjectSection.PRICING]
-              )}
-              expanded={sectionExpanded[ProjectSection.PRICING]}
-              title={ProjectSectionTitles[ProjectSection.PRICING]}
-            >
-              <div className="space-y-2 capitalize">
-                {project.pricingModel
-                && typeof project.pricingModel === 'object'
-                  ? (
-                      <SimpleInfoBox
-                        title={project.pricingModel || ''}
-                        description=""
-                        type="pricing"
-                      />
-                    )
-                  : (
-                      <NoneBox />
-                    )}
-              </div>
-            </Section> */}
+            </Section>
           </div>
         </div>
       </div>
