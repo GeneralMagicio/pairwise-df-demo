@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import Image from 'next/image';
 import { UnlockIcon } from '@/public/assets/icon-components/Unlock';
 interface UnlockBallotProps {
   projectCount: number
@@ -15,13 +14,6 @@ const FinishBallot: FC<UnlockBallotProps> = ({
   return (
     <div className="mx-auto w-[300px] overflow-hidden rounded-lg bg-white bg-ballot bg-no-repeat shadow-lg md:w-[500px]">
       <div className="px-6 py-10 text-center md:p-10">
-        <Image
-          src="/assets/images/finish-celebration.png"
-          alt="Celebration"
-          width={320}
-          height={250}
-          className="mx-auto mb-6"
-        />
         <h2 className="mb-4 text-xl font-medium text-dark-500">
           Nice work! You're ready to unlock your ballot and distribute rewards
         </h2>
