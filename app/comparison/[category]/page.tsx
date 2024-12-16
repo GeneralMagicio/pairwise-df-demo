@@ -33,22 +33,23 @@ import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
 
 const CustomSlider = styled(Slider, {
-  shouldForwardProp: (prop) => prop !== 'val',
+  shouldForwardProp: prop => prop !== 'val',
 })<{ val: number }>(({ val }) => ({
-  color: '#EAECF0',
+  'color': '#EAECF0',
   '& .MuiSlider-valueLabel': {
-      color: '#000000',
-      backgroundColor: '#EAECF0',
-      border: '1px solid #EAECF0',
+    color: '#000000',
+    backgroundColor: '#EAECF0',
+    border: '1px solid #EAECF0',
   },
   '& .MuiSlider-thumb': {
     backgroundColor: '#7F56D9',
   },
   '& .MuiSlider-track': {
-    background: (val>0)?`linear-gradient(to right, #EAECF0 0%, #EAECF0 ${100 / (100 + val) * 100}%, #7F56D9 ${100 / (100 + val) * 100}%, #7F56D9 100%)`:"#FFFFFF`",
+    background: (val > 0) ? `linear-gradient(to right, #EAECF0 0%, #EAECF0 ${100 / (100 + val) * 100}%, #7F56D9 ${100 / (100 + val) * 100}%, #7F56D9 100%)` : '#FFFFFF`',
+    border: 'transparent',
   },
   '& .MuiSlider-rail': {
-    background: (val>0)?'#EAECF0':`linear-gradient(to right, #7F56D9 0%, #7F56D9 ${50-val/2}, #7F56D9 50%,#EAECF0 50%, #EAECF0 100%`,
+    background: (val > 0) ? '#EAECF0' : `linear-gradient(to right, #EAECF0 0%, #EAECF0 ${50 + val / 2}%, #7F56D9 ${50 + val / 2}%, #7F56D9 50%,#EAECF0 50%, #EAECF0 100%`,
     opacity: 1,
   },
 }));
@@ -375,23 +376,22 @@ export default function Home() {
               onClick={showCoI1}
               disabled={coiLoading1 || isAnyModalOpen()}
             /> */}
-            <div className="w-1/5 text-ellipsis">{project1.name}</div>
-            <div>100</div>
-            <div className="relative mt-5 w-1/2">
-              <CustomSlider
-                val={value}
-                sx={{ color: '#7F56D9' }}
-                value={value}
-                min={-100}
-                step={1}
-                max={100}
-                getAriaValueText={(value: number) => `${Math.abs(value)}`}
-                valueLabelFormat={(value: number) => `${Math.abs(value)}`}
-                onChange={handleChange}
-                valueLabelDisplay="auto"
-                aria-labelledby="non-linear-slider"
-              />
-              <div className="absolute left-[calc(50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
+          <div className="w-1/5 text-ellipsis">{project1.name}</div>
+          <div>100</div>
+          <div className="relative mt-5 w-1/2">
+            <CustomSlider
+              val={value}
+              value={value}
+              min={-100}
+              step={1}
+              max={100}
+              getAriaValueText={(value: number) => `${Math.abs(value)}`}
+              valueLabelFormat={(value: number) => `${Math.abs(value)}`}
+              onChange={handleChange}
+              valueLabelDisplay="auto"
+              aria-labelledby="non-linear-slider"
+            />
+            <div className="absolute left-[calc(50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
 
           </div>
           <div>100</div>
