@@ -26,7 +26,6 @@ const RankingRow: FC<IRankingRowProps> = ({
   project,
   locked,
   coi,
-  onToggleCOI,
   onVote,
 }) => {
   const handleAllowdValue = (values: any) => {
