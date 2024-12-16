@@ -83,9 +83,9 @@ export const ProjectCard: React.FC<Props> = ({
 }) => {
   return (
     <div
-      className={`container relative mx-auto my-4 h-[55vh] sl:h-[65vh]
-       w-full rounded-xl border 
-      border-gray-200 bg-gray-50 px-4 pb-8 pt-4`}
+      className={`container relative mx-auto my-4 h-[55vh] w-full
+       rounded-xl border border-gray-200 
+      bg-gray-50 px-4 pb-8 pt-4 sl:h-[65vh]`}
     >
       <div className="gap-2 overflow-y-auto">
         <div className="mr-4 flex flex-col gap-6">
@@ -106,7 +106,7 @@ export const ProjectCard: React.FC<Props> = ({
             </h1>
           </div>
 
-          <div className='h-16'>
+          <div className="h-16">
             <ProjectDescription description={metadata.description} />
           </div>
 

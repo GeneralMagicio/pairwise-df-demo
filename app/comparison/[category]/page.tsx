@@ -286,7 +286,7 @@ export default function Home() {
   if (!project1 || !project2 || !data) return <div>No data</div>;
 
   return (
-    <div className='relative min-h-[100vh]'>
+    <div className="relative min-h-screen">
       <Modals />
       <Modal
         isOpen={

@@ -47,7 +47,7 @@ const RankingPage = () => {
   const [lockedItems, setLockedItems] = useState<number[]>([]);
   // const [allocationBudget, setAllocationBudget] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [nonCoIProjects, setNonCoIProjects] = useState<IProjectRanking[]>([]);
+  // const [nonCoIProjects, setNonCoIProjects] = useState<IProjectRanking[]>([]);
   // const [showLoginModal, setShowLoginModal] = useState(false);
   // const [closingDesibled, setClosingDesibled] = useState(false);
 
@@ -76,10 +76,10 @@ const RankingPage = () => {
     debounce((id: number, share: number) => {
       setTotalShareError(null);
 
-      if (!nonCoIProjects || !projects) return;
+      if (!projects) return;
 
       try {
-        const values: RankItem[] = nonCoIProjects.map(project => ({
+        const values: RankItem[] = projects.map(project => ({
           id: project.projectId,
           percentage: project.share * 100,
           locked: lockedItems.includes(project.projectId),
@@ -136,13 +136,13 @@ const RankingPage = () => {
   );
 
   const handleLocck = (id: number) => {
-    if (!nonCoIProjects) return;
+    if (!projects) return;
 
     if (lockedItems.includes(id)) {
       setLockedItems(lockedItems.filter(lockedId => lockedId !== id));
     }
     else {
-      if (lockedItems.length >= nonCoIProjects?.length - 2) {
+      if (lockedItems.length >= projects?.length - 2) {
         setTotalShareError('At least two projects must be unlocked');
         window.scrollTo(0, document.body.scrollHeight);
         return;
@@ -320,11 +320,11 @@ const RankingPage = () => {
   }, [ranking]);
 
   useEffect(() => {
-    if (!nonCoIProjects) return;
+    if (!projects) return;
 
-    if (!nonCoIProjects?.length) return;
+    if (!projects?.length) return;
 
-    if (lockedItems.length > nonCoIProjects?.length - 2) {
+    if (lockedItems.length > projects?.length - 2) {
       setTotalShareError('At least two projects must be unlocked');
       window.scrollTo(0, document.body.scrollHeight);
     }
@@ -333,11 +333,11 @@ const RankingPage = () => {
     }
   }, [lockedItems]);
 
-  useEffect(() => {
-    if (!projects || !projects.length) return;
+  // useEffect(() => {
+  //   if (!projects || !projects.length) return;
 
-    setNonCoIProjects(projects.filter(project => !project.coi));
-  }, [projects]);
+  //   setNonCoIProjects(projects.filter(project => !project.coi));
+  // }, [projects]);
 
   if (!category) return <NotFoundComponent />;
 
