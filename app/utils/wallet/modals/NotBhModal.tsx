@@ -88,7 +88,7 @@ const BadgeHolderModal: React.FC<BhModalProps> = ({ onConnectFarcaster, open }) 
     <div className="relative flex max-w-3xl flex-col items-center justify-center gap-6 rounded-lg bg-badge-modal bg-cover bg-no-repeat px-24 py-8 text-center">
       <h2 className="w-fit text-wrap text-4xl font-bold">
         Welcome to the Pairwise voting for&nbsp;
-        <span className="text-primary">Retro Funding 6</span>
+        <span className="text-primary">Deep Funding</span>
       </h2>
       {badges && Object.keys(badges).length > 0
         ? (
