@@ -96,7 +96,7 @@ const config: Config = {
 
       screens: {
         // small laptops
-        sl: { max: '1400px' },
+        sl: { max: '1550px' },
         // laptops
         l: { max: '1920px' },
       },
