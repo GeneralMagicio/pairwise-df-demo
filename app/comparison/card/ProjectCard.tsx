@@ -39,7 +39,7 @@ const Section: FC<CollapsibleProps> = ({
   return (
     <>
       <hr className="border-t border-gray-200" />
-      <div id={id} className="mb-4 pt-4">
+      <div id={id} className="mb-2 pt-4">
         <div className="flex items-center justify-between gap-4 p-2">
           <button className="text-xl font-medium">{title}</button>
         </div>
@@ -82,42 +82,42 @@ export const ProjectCard: React.FC<Props> = ({
   name,
 }) => {
   return (
-    <div className="relative">
-      <div
-        className={`container relative mx-auto my-4
-      h-[40vh] w-full rounded-xl border 
+    <div
+      className={`container relative mx-auto my-4 h-[55vh] sl:h-[65vh]
+       w-full rounded-xl border 
       border-gray-200 bg-gray-50 px-4 pb-8 pt-4`}
-      >
-        <div className="h-[50vh] gap-10 overflow-y-auto">
-          <div className="mr-4 flex flex-col gap-6">
-            {/* Cover Image and Profile Avatar */}
-            <div className="relative flex h-auto flex-row items-center">
-              <Image
-                src={metadata.image || ''}
-                unoptimized
-                alt={metadata.name}
-                width={80}
-                height={80}
-                className="rounded-md"
-              />
-              <h1
-                className={`m-2 text-center text-3xl font-semibold ${styles.oneLineClamp}`}
-              >
-                {metadata.name}
-              </h1>
-            </div>
-
-            <ProjectDescription description={metadata.description} />
-
-            <Section
-              id={`repos-${name}`}
-              title={ProjectSectionTitles[ProjectSection.REPOS]}
+    >
+      <div className="gap-2 overflow-y-auto">
+        <div className="mr-4 flex flex-col gap-6">
+          {/* Cover Image and Profile Avatar */}
+          <div className="relative flex h-auto flex-row items-center">
+            <Image
+              src={metadata.image || ''}
+              unoptimized
+              alt={metadata.name}
+              width={80}
+              height={80}
+              className="rounded-md"
+            />
+            <h1
+              className={`m-2 text-center text-3xl font-semibold ${styles.oneLineClamp}`}
             >
-              <div className="space-y-4">
-                <GithubBox key={metadata.github_url} {...metadata} />
-              </div>
-            </Section>
+              {metadata.name}
+            </h1>
           </div>
+
+          <div className='h-16'>
+            <ProjectDescription description={metadata.description} />
+          </div>
+
+          <Section
+            id={`repos-${name}`}
+            title={ProjectSectionTitles[ProjectSection.REPOS]}
+          >
+            <div className="space-y-4">
+              <GithubBox key={metadata.github_url} {...metadata} />
+            </div>
+          </Section>
         </div>
       </div>
     </div>
