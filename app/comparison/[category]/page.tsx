@@ -27,8 +27,6 @@ import Modal from '@/app/utils/Modal';
 import { IProject } from '../utils/types';
 // import { mockProject1, mockProject2 } from '../card/mockData';
 import Spinner from '../../components/Spinner';
-import PostRatingModal from '../card/modals/PostRatingModal';
-import GoodRatingModal from '../card/modals/GoodRatingModal';
 import RevertLoadingModal from '../card/modals/RevertLoadingModal';
 import StorageLabel from '@/app/lib/localStorage';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
@@ -60,8 +58,6 @@ export default function Home() {
   // const [lastAction, setLastAction] = useState<AutoScrollAction>();
 
   const [revertingBack, setRevertingBack] = useState(false);
-  const [showPostRatingModal, setShowPostRatingModal] = useState(false);
-  const [showGoodRatingModal, setShowGoodRatingModal] = useState(false);
   // const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
   // const [sectionExpanded1, setSectionExpanded1] = useState({
@@ -153,36 +149,6 @@ export default function Home() {
     setProject2(data.pairs[0][1]);
   }, [data, temp]);
 
-  useEffect(() => {
-    const initialRating1
-      = data?.pairs[0] && data?.pairs[0].length > 0
-        ? data.pairs[0][0].rating
-        : null;
-    const initialRating2
-      = data?.pairs[0] && data?.pairs[0].length > 0
-        ? data.pairs[0][1].rating
-        : null;
-
-    // observe if user rated both projects
-    if (rating1 !== initialRating1 && rating2 !== initialRating2) {
-      setShowPostRatingModal(!getGetStarted().postRating);
-    }
-
-    // observe if first rated project is rated good >= 4
-    if (
-      (rating1
-      && rating1 >= 80
-      && rating2 === initialRating2
-      && rating1 !== initialRating1)
-      || (rating2
-      && rating2 >= 80
-      && rating1 === initialRating1
-      && rating2 !== initialRating2)
-    ) {
-      setShowGoodRatingModal(!getGetStarted().goodRating);
-    }
-  }, [rating1, rating2]);
-
   const toggleAiMode = () => {
     if (!aiMode1) {
       posthog.capture('AI Summary', {
@@ -195,9 +161,7 @@ export default function Home() {
   };
 
   const isAnyModalOpen = () =>
-    revertingBack
-    || showPostRatingModal
-    || showGoodRatingModal;
+    revertingBack;
 
   // const showCoI1 = () => {
   //   if (!wallet) {
@@ -327,8 +291,6 @@ export default function Home() {
       <Modal
         isOpen={
           revertingBack
-          || showPostRatingModal
-          || showGoodRatingModal
           || showFinishModal
         }
         onClose={() => {}}
@@ -343,22 +305,6 @@ export default function Home() {
             cancelSelection={() => setShowLowRateModal(false)}
           />
         )} */}
-        {showPostRatingModal && (
-          <PostRatingModal
-            confirm={() => {
-              updateGetStarted({ postRating: true });
-              setShowPostRatingModal(false);
-            }}
-          />
-        )}
-        {showGoodRatingModal && (
-          <GoodRatingModal
-            confirm={() => {
-              updateGetStarted({ goodRating: true });
-              setShowGoodRatingModal(false);
-            }}
-          />
-        )}
         {showFinishModal && (
           <PostVotingModal
             categorySlug={category}
