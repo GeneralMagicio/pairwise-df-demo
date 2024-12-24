@@ -115,7 +115,7 @@ export const ProjectCard: React.FC<Props> = ({
             title={ProjectSectionTitles[ProjectSection.REPOS]}
           >
             <div className="space-y-4">
-              <GithubBox key={metadata.github_url} {...metadata} />
+              <GithubBox key={metadata.id} {...metadata} />
             </div>
           </Section>
         </div>

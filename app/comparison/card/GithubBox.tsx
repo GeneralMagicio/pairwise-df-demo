@@ -8,8 +8,7 @@ import { QuestionMarkIcon } from '@/public/assets/icon-components/QuestionMark';
 import { TimeIcon } from '@/public/assets/icon-components/Time';
 import { ProjectMetadata } from '../utils/types';
 
-type Props = Pick<ProjectMetadata, 'star_count' | 'github_url' | 'fork_count' | 'watcher_count' | 'first_commit_time' | 'last_commit_time' | 'contributors_to_repo_count'
-| 'created_at' | 'artifact_name' | 'commit_count' | 'days_with_commits_count'>
+type Props = Pick<ProjectMetadata, 'forkCount' | 'starCount' | 'id'> & { name: string }
 
 function calculateAge(createdAt: string): number {
   // Parse the input string to a Date object
@@ -28,8 +27,7 @@ function calculateAge(createdAt: string): number {
   return Math.floor(years);
 }
 
-const GithubBox: FC<Props> = ({ contributors_to_repo_count,
-  fork_count, star_count, github_url, artifact_name, created_at,
+const GithubBox: FC<Props> = ({ forkCount, starCount, id, name,
 }) => {
   // const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
 
@@ -43,12 +41,12 @@ const GithubBox: FC<Props> = ({ contributors_to_repo_count,
         <div className="flex items-center gap-2">
           <GithubIcon />
           <a
-            href={github_url}
+            href={id}
             className="break-all text-gray-700 hover:underline"
             target="_blank"
             onClick={e => e.stopPropagation()}
           >
-            {artifact_name}
+            {name}
           </a>
           <div
             className="flex items-center gap-1 rounded-2xl border bg-blue-background px-2
@@ -66,19 +64,19 @@ const GithubBox: FC<Props> = ({ contributors_to_repo_count,
           <div className="font-inter mb-2 grid grid-cols-3 gap-2 text-sm font-normal leading-5">
             <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <TimeIcon />
-              <span className="text-sm">
+              {/* <span className="text-sm">
                 {`${
                   calculateAge(created_at)
                 } years old`}
-              </span>
+              </span> */}
             </div>
             <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <DevIcon />
-              <span className="text-sm">
+              {/* <span className="text-sm">
                 {`${
                   Number(contributors_to_repo_count).toFixed(0) || 0
                 } contributors`}
-              </span>
+              </span> */}
             </div>
             {/* <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <DevIcon />
@@ -97,7 +95,7 @@ const GithubBox: FC<Props> = ({ contributors_to_repo_count,
             <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <ForkIcon />
               <span className="text-sm">
-                {`${fork_count || 0} forks`}
+                {`${forkCount || 0} forks`}
               </span>
             </div>
             {/* <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
@@ -109,7 +107,7 @@ const GithubBox: FC<Props> = ({ contributors_to_repo_count,
             <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <StarIcon />
               <span className="text-sm">
-                {`${star_count || 0} stars`}
+                {`${starCount || 0} stars`}
               </span>
             </div>
             {/* <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">

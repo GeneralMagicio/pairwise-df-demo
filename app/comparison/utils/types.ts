@@ -1,21 +1,20 @@
 export type ProjectMetadata = { '': number // Represents an unnamed key
-  'artifact_id': string
-  'artifact_namespace': string
-  'artifact_name': string
-  'is_fork': string // Consider changing to a boolean if applicable
-  'fork_count': number
-  'star_count': number
-  'watcher_count': number
-  'language': string
-  'license_spdx_id': string
-  'created_at': string // Consider using Date if you plan to parse it as a date object
-  'updated_at': string // Same as above
-  'first_commit_time': string // Same as above
-  'last_commit_time': string // Same as above
-  'days_with_commits_count': string | number // Seems ambiguous, clarify its type if possible
-  'contributors_to_repo_count': string | number // Same as above
-  'commit_count': string | number // Same as above
-  'github_url': string
+  'id': string
+  'status': string
+  'language'?: 'TypeScript' | 'JavaScript' | 'C++' | 'Rust' | 'Go' | 'Nim' | 'Python'
+  'isFork'?: boolean
+  'createdAt'?: string
+  'updatedAt'?: string
+  'starCount'?: number
+  'forkCount'?: number
+  'numPackages'?: number
+  'numDependentsInOso'?: number
+  'listOfFunders'?: string[]
+  'totalFundingUsd'?: number
+  'totalFundingUsdSince2023'?: number
+  'osoDependencyRank'?: number
+  'numReposInSameLanguage'?: number
+  'osoDependencyRankForLanguage'?: number
 }
 
 export interface ICategory {
