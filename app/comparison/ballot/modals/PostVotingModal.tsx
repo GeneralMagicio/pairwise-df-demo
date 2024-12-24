@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
 type TPostVotingProps = {
-  categorySlug: string | string[]
+  cid: number
   categoryLabel: string
 };
 
-const PostVoting: FC<TPostVotingProps> = ({ categorySlug, categoryLabel }) => {
+const PostVoting: FC<TPostVotingProps> = ({ cid, categoryLabel }) => {
   const posthog = usePostHog();
   return (
     <div className="mx-auto flex w-[300px] flex-col items-center justify-center gap-6 rounded-lg bg-white bg-ballot bg-no-repeat px-6 py-10 shadow-lg md:w-[500px]">
@@ -33,11 +33,11 @@ const PostVoting: FC<TPostVotingProps> = ({ categorySlug, categoryLabel }) => {
       </p>
 
       <Link
-        href={`/allocation/${categorySlug}`}
+        href={`/allocation/${cid}`}
         className="w-full rounded-md bg-primary py-2 text-center text-white"
         onClick={() => {
           posthog.capture('Show my results', {
-            category: categorySlug,
+            category: cid,
           });
         }}
       >

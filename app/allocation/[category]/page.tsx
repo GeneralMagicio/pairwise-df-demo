@@ -9,10 +9,10 @@ import RankingRow from './components/RankingRow';
 import HeaderRF6 from '../../comparison/card/Header-RF6';
 import Spinner from '@/app/components/Spinner';
 // import SearchBar from "./components/SearchBar";
-import {
-  categorySlugIdMap,
-  categoryIdTitleMap,
-} from '../../comparison/utils/helpers';
+// import {
+//   categorySlugIdMap,
+//   categoryIdTitleMap,
+// } from '../../comparison/utils/helpers';
 import NotFoundComponent from '@/app/components/404';
 import {
   useProjectsRankingByCategoryId,
@@ -38,7 +38,7 @@ const RankingPage = () => {
   const posthog = usePostHog();
 
   // const signer = useSigner();
-  const category = categorySlugIdMap.get((params?.category as string) || '');
+  const category = Number(params?.category as string);
 
   // const [search, setSearch] = useState<string>("");
   // const [checkedItems, setCheckedItems] = useState<number[]>([]);
@@ -350,9 +350,7 @@ const RankingPage = () => {
             <div className="flex flex-col gap-2">
               <p className="text-base text-gray-400">Edit your votes</p>
               <p className="text-2xl font-semibold text-gray-700">
-                {categoryIdTitleMap.get(category)}
-                {' '}
-                results
+                {`${ranking?.name} results`}
               </p>
             </div>
           </div>

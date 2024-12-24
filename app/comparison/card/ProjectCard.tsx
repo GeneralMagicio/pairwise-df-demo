@@ -92,6 +92,7 @@ export const ProjectCard: React.FC<Props> = ({
           {/* Cover Image and Profile Avatar */}
           <div className="relative flex h-auto flex-row items-center">
             <Image
+              key={metadata.image}
               src={metadata.image || ''}
               unoptimized
               alt={metadata.name}

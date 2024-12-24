@@ -319,7 +319,7 @@ export default function Home() {
         )} */}
         {showFinishModal && (
           <PostVotingModal
-            categorySlug={data.name}
+            cid={data.id}
             categoryLabel={data.name}
           />
         )}

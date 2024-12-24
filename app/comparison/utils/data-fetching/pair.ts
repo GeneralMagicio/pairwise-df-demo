@@ -7,6 +7,7 @@ export interface IPairwisePairsResponse {
   totalPairs: number
   votedPairs: number
   name: string
+  id: number
   progress: number
   threshold: number
 }

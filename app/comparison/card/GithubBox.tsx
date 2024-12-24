@@ -65,11 +65,15 @@ const GithubBox: FC<Props> = ({ forkCount, starCount, id, name, totalFundingUsd,
           <div className="font-inter mb-2 grid grid-cols-3 gap-2 text-sm font-normal leading-5">
             <div title="Total Funding Received" className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <USDIcon />
-              <span className="text-sm">
-                {`$${
-                  formatAmount(`${totalFundingUsd}`)
-                }`}
-              </span>
+              {totalFundingUsd
+                ? (
+                    <span className="text-sm">
+                      {`$${
+                        formatAmount(`${totalFundingUsd}`)
+                      }`}
+                    </span>
+                  )
+                : <span> N/A </span>}
             </div>
 
             {/* <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
@@ -112,9 +116,13 @@ const GithubBox: FC<Props> = ({ forkCount, starCount, id, name, totalFundingUsd,
             </div> */}
             <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <DevIcon />
-              <span className="text-sm">
-                {`Lang: ${language}`}
-              </span>
+              {language
+                ? (
+                    <span className="text-sm">
+                      {`Lang: ${language}`}
+                    </span>
+                  )
+                : 'N/A'}
             </div>
             <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <OpenSourceIcon />
