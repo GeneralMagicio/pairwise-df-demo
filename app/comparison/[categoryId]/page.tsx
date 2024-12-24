@@ -328,7 +328,6 @@ export default function Home() {
       <HeaderRF6
         progress={progress * 100}
         category={data.name}
-        question="Which dependency deserves more credit?"
         isFirstSelection={false}
       />
 

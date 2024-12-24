@@ -5,10 +5,11 @@ import { ForkIcon } from '@/public/assets/icon-components/Fork';
 import { StarIcon } from '@/public/assets/icon-components/Star';
 import { OpenSourceIcon } from '@/public/assets/icon-components/OpenSource';
 import { QuestionMarkIcon } from '@/public/assets/icon-components/QuestionMark';
-import { TimeIcon } from '@/public/assets/icon-components/Time';
 import { ProjectMetadata } from '../utils/types';
+import { formatAmount } from './GrantBox';
+import { USDIcon } from '@/public/assets/icon-components/Usd';
 
-type Props = Pick<ProjectMetadata, 'forkCount' | 'starCount' | 'id'> & { name: string }
+type Props = Pick<ProjectMetadata, 'forkCount' | 'starCount' | 'id' | 'totalFundingUsd' | 'language' > & { name: string }
 
 function calculateAge(createdAt: string): number {
   // Parse the input string to a Date object
@@ -27,7 +28,7 @@ function calculateAge(createdAt: string): number {
   return Math.floor(years);
 }
 
-const GithubBox: FC<Props> = ({ forkCount, starCount, id, name,
+const GithubBox: FC<Props> = ({ forkCount, starCount, id, name, totalFundingUsd, language,
 }) => {
   // const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
 
@@ -62,22 +63,15 @@ const GithubBox: FC<Props> = ({ forkCount, starCount, id, name,
 
         <>
           <div className="font-inter mb-2 grid grid-cols-3 gap-2 text-sm font-normal leading-5">
-            <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
-              <TimeIcon />
-              {/* <span className="text-sm">
-                {`${
-                  calculateAge(created_at)
-                } years old`}
-              </span> */}
+            <div title="Total Funding Received" className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
+              <USDIcon />
+              <span className="text-sm">
+                {`$${
+                  formatAmount(`${totalFundingUsd}`)
+                }`}
+              </span>
             </div>
-            <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
-              <DevIcon />
-              {/* <span className="text-sm">
-                {`${
-                  Number(contributors_to_repo_count).toFixed(0) || 0
-                } contributors`}
-              </span> */}
-            </div>
+
             {/* <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <DevIcon />
               <span className="text-sm">
@@ -116,6 +110,12 @@ const GithubBox: FC<Props> = ({ forkCount, starCount, id, name,
                 {`${repo.metrics.num_trusted_stars || 0} stars from top devs`}
               </span>
             </div> */}
+            <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
+              <DevIcon />
+              <span className="text-sm">
+                {`Lang: ${language}`}
+              </span>
+            </div>
             <div className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
               <OpenSourceIcon />
               <span className="text-sm">Open source</span>

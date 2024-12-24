@@ -163,16 +163,21 @@ const HeaderRF6: FC<HeaderProps> = ({
         )}
         <div className="flex grow items-center justify-start px-6 py-4 md:px-12 lg:px-4">
 
-          {category && (
+          {/* {category && (
             <span className="rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
               {category}
             </span>
-          )}
+          )} */}
           <div className="flex items-center gap-4">
 
-            {question && (
+            {category && (
               <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
-                <h2 className="text-center text-lg font-semibold">{question}</h2>
+                <span className="text-center text-lg font-semibold">Which dependency deserves more credit for</span>
+                <span className="mx-1 rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
+                  {`${category}'s`}
+                </span>
+                <span className="text-center text-lg font-semibold">success?</span>
+
               </div>
             )}
             <div
