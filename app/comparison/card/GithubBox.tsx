@@ -11,22 +11,22 @@ import { USDIcon } from '@/public/assets/icon-components/Usd';
 
 type Props = Pick<ProjectMetadata, 'forkCount' | 'starCount' | 'id' | 'totalFundingUsd' | 'language' > & { name: string }
 
-function calculateAge(createdAt: string): number {
-  // Parse the input string to a Date object
-  const createdDate = new Date(createdAt);
+// function calculateAge(createdAt: string): number {
+//   // Parse the input string to a Date object
+//   const createdDate = new Date(createdAt);
 
-  // Get current date
-  const currentDate = new Date();
+//   // Get current date
+//   const currentDate = new Date();
 
-  // Calculate the difference in milliseconds
-  const diffInMs = currentDate.getTime() - createdDate.getTime();
+//   // Calculate the difference in milliseconds
+//   const diffInMs = currentDate.getTime() - createdDate.getTime();
 
-  // Convert milliseconds to years
-  const years = diffInMs / (1000 * 60 * 60 * 24 * 365.25);
+//   // Convert milliseconds to years
+//   const years = diffInMs / (1000 * 60 * 60 * 24 * 365.25);
 
-  // Return rounded down number of years
-  return Math.floor(years);
-}
+//   // Return rounded down number of years
+//   return Math.floor(years);
+// }
 
 const GithubBox: FC<Props> = ({ forkCount, starCount, id, name, totalFundingUsd, language,
 }) => {

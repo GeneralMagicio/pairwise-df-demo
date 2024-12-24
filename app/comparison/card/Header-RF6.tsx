@@ -15,7 +15,7 @@ import StorageLabel from '@/app/lib/localStorage';
 interface HeaderProps {
   progress?: number
   category?: string
-  question?: string
+  // question?: string
   isFirstSelection?: boolean
 }
 
@@ -25,7 +25,7 @@ const PAIRWISE_REPORT_URL
 const HeaderRF6: FC<HeaderProps> = ({
   progress,
   category,
-  question,
+  // question,
   isFirstSelection = false,
 }) => {
   const path = usePathname();
