@@ -14,9 +14,6 @@ import { LockIcon } from '@/public/assets/icon-components/Lock';
 import Loading from '@/app/components/Loading';
 import VotedCategory from './ProgressCards/VotedCategory';
 import PendingCategory from './ProgressCards/PendingCategory';
-import {
-  categoryIdSlugMap,
-} from '@/app/comparison/utils/helpers';
 
 // Image source map for collections
 // const collectionsImageSrc = new Map<number, string>([
@@ -69,8 +66,8 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   const hrefLink
     = progress === CollectionProgressStatusEnum.Finished
     || progress === CollectionProgressStatusEnum.Attested
-      ? `/allocation/${categoryIdSlugMap.get(id)}`
-      : `/comparison/${categoryIdSlugMap.get(id)}`;
+      ? `/allocation/${id}`
+      : `/comparison/${id}`;
 
   const handleAllowedValue = (values: any) => {
     const { floatValue } = values;

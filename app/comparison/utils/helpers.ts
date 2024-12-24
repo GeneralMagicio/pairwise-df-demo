@@ -1,17 +1,17 @@
 import { JWTPayload } from '@/app/utils/wallet/types';
 
-export const convertCategoryNameToId = (category: JWTPayload['category']) => {
-  switch (category) {
-    case 'web3.js':
-      return 38;
-    case 'account-abstraction':
-      return 39;
-    case 'remix-project':
-      return 40;
-    default:
-      throw new Error(`Invalid category name: ${category}`);
-  }
-};
+// export const convertCategoryNameToId = (category: JWTPayload['category']) => {
+//   switch (category) {
+//     case 'web3.js':
+//       return 38;
+//     case 'account-abstraction':
+//       return 39;
+//     case 'remix-project':
+//       return 40;
+//     default:
+//       throw new Error(`Invalid category name: ${category}`);
+//   }
+// };
 
 export const convertCategoryToLabel = (category: JWTPayload['category']) => {
   const labels = {
@@ -25,23 +25,23 @@ export const convertCategoryToLabel = (category: JWTPayload['category']) => {
   return labels[category];
 };
 
-export const categoryIdSlugMap = new Map([
-  [38, 'web3.js'],
-  [39, 'account-abstraction'],
-  [40, 'remix-project'],
-]);
+// export const categoryIdSlugMap = new Map([
+//   [38, 'web3.js'],
+//   [39, 'account-abstraction'],
+//   [40, 'remix-project'],
+// ]);
 
-export const categoryIdTitleMap = new Map([
-  [38, 'web3.js'],
-  [39, 'Account Abstraction'],
-  [40, 'Remix Project'],
-]);
+// export const categoryIdTitleMap = new Map([
+//   [38, 'web3.js'],
+//   [39, 'Account Abstraction'],
+//   [40, 'Remix Project'],
+// ]);
 
-export const categorySlugIdMap = new Map([
-  ['web3.js', 38],
-  ['account-abstraction', 39],
-  ['remix-project', 40],
-]);
+// export const categorySlugIdMap = new Map([
+//   ['web3.js', 38],
+//   ['account-abstraction', 39],
+//   ['remix-project', 40],
+// ]);
 
 // export const getCategoryCount = (category: JWTPayload['category']) => {
 //   const labels = {

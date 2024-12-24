@@ -7,7 +7,6 @@ import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
-import { JWTPayload } from '@/app/utils/wallet/types';
 import { ProjectCard } from '../card/ProjectCard';
 import HeaderRF6 from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
@@ -16,7 +15,6 @@ import SkipButton from '../card/Skip';
 import {
   useGetPairwisePairs,
 } from '../utils/data-fetching/pair';
-import { categorySlugIdMap, convertCategoryToLabel } from '../utils/helpers';
 import {
   useUpdateProjectUndo,
   useUpdateProjectVote,
@@ -55,7 +53,7 @@ const CustomSlider = styled(Slider, {
 }));
 
 export default function Home() {
-  const { category } = useParams() ?? {};
+  const { categoryId } = useParams() ?? {};
   // const queryClient = useQueryClient();
   const { address, chainId } = useAccount();
   // const wallet = useActiveWallet();
@@ -94,7 +92,7 @@ export default function Home() {
   const [aiMode2, setAiMode2] = useState(false);
   const posthog = usePostHog();
 
-  const cid = categorySlugIdMap.get((category as string) || '');
+  const cid = Number(categoryId);
   const { data, isLoading } = useGetPairwisePairs(cid);
   const prevProgress = usePrevious(progress);
 
@@ -321,17 +319,15 @@ export default function Home() {
         )} */}
         {showFinishModal && (
           <PostVotingModal
-            categorySlug={category}
-            categoryLabel={convertCategoryToLabel(
-              category as JWTPayload['category']
-            )}
+            categorySlug={data.name}
+            categoryLabel={data.name}
           />
         )}
       </Modal>
 
       <HeaderRF6
         progress={progress * 100}
-        category={convertCategoryToLabel(category! as JWTPayload['category'])}
+        category={data.name}
         question="Which dependency deserves more credit?"
         isFirstSelection={false}
       />

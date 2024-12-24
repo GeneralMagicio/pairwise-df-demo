@@ -7,9 +7,9 @@ import HeaderRF6 from '../comparison/card/Header-RF6';
 import CategoryAllocation from './components/CategoryAllocation';
 import ConnectBox from './components/ConnectBox';
 import { modifyPercentage, RankItem, roundFractions } from './utils';
-import {
-  categoryIdSlugMap,
-} from '../comparison/utils/helpers';
+// import {
+//   categoryIdSlugMap,
+// } from '../comparison/utils/helpers';
 import { useCategories } from '../comparison/utils/data-fetching/categories';
 import {
   CollectionProgressStatusEnum,
@@ -79,12 +79,12 @@ const AllocationPage = () => {
   const handleScoreProjects = (id: RankItem['id']) => () => {
     console.log(id);
     // setSelectedCategoryId(id);
-    router.push(`/comparison/${categoryIdSlugMap.get(id)}`);
+    router.push(`/comparison/${id}`);
   };
 
   const handleEdit = (id: RankItem['id']) => {
     // setSelectedCategoryId(id);
-    router.push(`/allocation/${categoryIdSlugMap.get(id)}`);
+    router.push(`/allocation/${id}`);
   };
 
   useEffect(() => {
@@ -165,7 +165,7 @@ const AllocationPage = () => {
                             isBadgeholder={false}
                             bhCategory=""
                             isBHCategoryAtessted={false}
-                            categorySlug={categoryIdSlugMap.get(cat.id)!}
+                            categorySlug={cat.name}
                             onDelegate={() => {}}
                             onLockClick={handleLock(cat.id)}
                             onScore={handleScoreProjects(cat.id)}
