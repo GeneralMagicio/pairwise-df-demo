@@ -30,8 +30,8 @@ import StorageLabel from '@/app/lib/localStorage';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
 
-const SliderMax = 10;
-const SliderBase = 2;
+const SliderMax = 3;
+const SliderBase = 10;
 
 const sliderScaleFunction = (x: number, base: number) => Math.floor(Math.pow(base, Math.abs(x)));
 
