@@ -17,7 +17,6 @@ export const ConnectButton = () => {
   const posthog = usePostHog();
   const { data: url, isLoading } = useGithubURL();
 
-
   const logout = async () => {
     signOut();
   };
@@ -25,7 +24,7 @@ export const ConnectButton = () => {
 
   function handleOpen() {
     posthog.capture('Connect');
-    if(!isLoading) {
+    if (!isLoading) {
       window.open(url);
     }
   }
