@@ -211,49 +211,6 @@ const HeaderRF6: FC<HeaderProps> = ({
             <ThinExternalLinkIcon />
           </button>
         </div>
-        {/* <div className='my-auto'> */}
-        {/* <Dropdown customClass={category ? '2xl:hidden' : 'hidden'}>
-              <div className="flex flex-col gap-2">
-                {activeBadges.length > 0 && (
-                  <>
-                    <div className="flex items-center justify-between gap-2 py-2">
-                      <p className="text-sm text-gray-600">Your budges</p>
-                      <button
-                        onClick={() => setIsBadgesModalOpen(true)}
-                        className="mr-3 flex items-center"
-                      >
-                        <ActiveBadges activeBadges={activeBadges} />
-                      </button>
-                    </div>
-                    <hr className="my-2 border-t border-gray-200" />
-                  </>
-                )}
-                <div className="flex w-full items-center justify-center rounded-lg bg-gray-100 p-2 font-semibold">
-                  {loginAddress?.value && (
-                    <p className="text-dark-500">
-                      {shortenWalletAddress(loginAddress?.value)}
-                    </p>
-                  )}
-                </div>
-                <button
-                  className="flex items-center justify-center gap-2 p-2 font-semibold"
-                  onClick={() => window.open(PAIRWISE_REPORT_URL, '_blank')}
-                >
-                  Report an issue
-                  <ThinExternalLinkIcon />
-                </button>
-                <hr className="my-2 border-t border-gray-200" />
-                <button
-                  onClick={logout}
-                  className="flex w-full items-center justify-center gap-2 py-2"
-                >
-                  <PowerIcon />
-                  <span className="font-semibold text-primary"> Log out </span>
-                </button>
-              </div>
-            </Dropdown> */}
-        {/* </div> */}
-
       </div>
       {category && (
         <div

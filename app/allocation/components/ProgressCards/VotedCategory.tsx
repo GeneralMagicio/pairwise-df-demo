@@ -2,14 +2,12 @@ import { CheckIcon } from '@/public/assets/icon-components/Check';
 
 type TVotedCategoryProps = {
   id: number
-  isAutoConnecting: boolean
   budgetEditHandle: () => void
   attestationLink?: string | null
   delegations: number
 };
 
 const VotedCategory = ({
-  isAutoConnecting,
   attestationLink,
   delegations,
   budgetEditHandle,
@@ -47,7 +45,6 @@ const VotedCategory = ({
         <button
           onClick={() => window.open(attestationLink, '_blank')}
           className="whitespace-nowrap text-xs text-gray-600 underline"
-          disabled={isAutoConnecting}
         >
           View attestation
         </button>

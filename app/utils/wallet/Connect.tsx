@@ -1,8 +1,6 @@
 'use client';
 
-import { useWeb3Modal } from '@web3modal/wagmi/react';
 import React from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
 import { CoinbaseIcon } from '@/public/assets/icon-components/CoinbaseIcon';
 import { MetaMaskIcon } from '@/public/assets/icon-components/MetaMaskIcon';
@@ -14,41 +12,21 @@ import { useAuth } from './AuthProvider';
 // import { loginToAgora } from './agora-login'
 
 export const ConnectButton = () => {
-  const { open } = useWeb3Modal();
-  const { isConnected } = useAccount();
-  const { disconnectAsync } = useDisconnect();
-  const { signOut, loginAddress } = useAuth();
+  const { signOut, githubHandle } = useAuth();
   const posthog = usePostHog();
 
   const logout = async () => {
-    await disconnectAsync();
     signOut();
   };
   // const { signMessageAsync } = useSignMessage()
 
   function handleOpen() {
-    posthog.capture('Connect');
-    try {
-      open();
-    }
-    catch (_e) {
-      open();
-    }
+    posthog.capture("Connect");
+    window.open(`https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}`);
   }
 
-  // useEffect(() => {
-  //   if (!address || !chainId) return
-
-  //   const func = async () => {
-  //     const payload = await loginToAgora(address, chainId, signMessageAsync)
-  //     // console.log(loggedIn)
-  //   }
-
-  //   func()
-  // }, [isConnected, address, chainId, signMessageAsync])
-
-  if (isConnected && loginAddress.value) return (
-    <ConnectedButton onLogout={logout} wallet={loginAddress.value} />
+  if (githubHandle) return (
+    <ConnectedButton onLogout={logout} wallet={githubHandle} />
   );
 
   return (
@@ -58,7 +36,7 @@ export const ConnectButton = () => {
      bg-primary px-4 py-1.5 font-semibold text-white shadow-md transition duration-300
      hover:bg-purple-600 sm:px-6 sm:py-2 md:px-8 md:py-3"
     >
-      <span className="ml-2 whitespace-nowrap">Get Started</span>
+      <span className="ml-2 whitespace-nowrap">Login With Github</span>
       <ArrowRightIcon />
     </button>
   );
