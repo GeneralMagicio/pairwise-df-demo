@@ -60,7 +60,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   onLockClick,
   onPercentageChange,
 }) => {
-
   const hrefLink
     = progress === CollectionProgressStatusEnum.Finished
     || progress === CollectionProgressStatusEnum.Attested

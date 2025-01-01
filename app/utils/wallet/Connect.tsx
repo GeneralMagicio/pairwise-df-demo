@@ -21,7 +21,7 @@ export const ConnectButton = () => {
   // const { signMessageAsync } = useSignMessage()
 
   function handleOpen() {
-    posthog.capture("Connect");
+    posthog.capture('Connect');
     window.open(`https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}`);
   }
 

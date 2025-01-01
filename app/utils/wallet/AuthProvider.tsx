@@ -10,12 +10,12 @@ export enum LogginToPwBackendState {
 }
 
 interface AuthContextType {
-  loginInProgress: boolean | null;
-  setLoginInProgress: (bool: boolean | null) => void;
-  loggedToPw: LogginToPwBackendState;
-  setLoggedToPw: (state: LogginToPwBackendState) => void;
-  githubHandle: string | undefined;
-  setGithubHandle: (value: string | undefined) => void;
+  loginInProgress: boolean | null
+  setLoginInProgress: (bool: boolean | null) => void
+  loggedToPw: LogginToPwBackendState
+  setLoggedToPw: (state: LogginToPwBackendState) => void
+  githubHandle: string | undefined
+  setGithubHandle: (value: string | undefined) => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -75,7 +75,7 @@ export const useAuth = () => {
 
   const checkLoggedInToPw = useCallback(async () => {
     if (!githubHandle) return;
-    const validToken = await isLoggedIn();    
+    const validToken = await isLoggedIn();
     setLoggedToPw(validToken ? LogginToPwBackendState.LoggedIn : LogginToPwBackendState.Error);
   }, [githubHandle]);
 
