@@ -118,25 +118,25 @@ export default function Home() {
     },
   });
 
-  const handleSkip = async () => {
-    try {
-      await vote({
-        data: {
-          project1Id: project1!.id,
-          project2Id: project2!.id,
-          project1Val: 0,
-          project2Val: 0,
-          pickedId: null,
-        },
-      });
-      setRatio({ type: 'slider', value: 0 });
-      setRating1(0);
-      setRating2(0);
-    }
-    catch (e) {
-      console.error(e);
-    }
-  };
+  // const handleSkip = async () => {
+  //   try {
+  //     await vote({
+  //       data: {
+  //         project1Id: project1!.id,
+  //         project2Id: project2!.id,
+  //         project1Val: 0,
+  //         project2Val: 0,
+  //         pickedId: null,
+  //       },
+  //     });
+  //     setRatio({ type: 'slider', value: 0 });
+  //     setRating1(0);
+  //     setRating2(0);
+  //   }
+  //   catch (e) {
+  //     console.error(e);
+  //   }
+  // };
 
   useEffect(() => {
     if (bypassPrevProgress && data) {
