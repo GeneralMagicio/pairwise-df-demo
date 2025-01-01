@@ -9,11 +9,14 @@ import { WalletConnectIcon } from '@/public/assets/icon-components/WalletConnect
 import { ZerionIcon } from '@/public/assets/icon-components/ZerionIcon';
 import { ConnectedButton } from './ConnectedButton';
 import { useAuth } from './AuthProvider';
+import { useGithubURL } from '@/app/useGithub';
 // import { loginToAgora } from './agora-login'
 
 export const ConnectButton = () => {
   const { signOut, githubHandle } = useAuth();
   const posthog = usePostHog();
+  const { data: url, isLoading } = useGithubURL();
+
 
   const logout = async () => {
     signOut();
@@ -22,7 +25,9 @@ export const ConnectButton = () => {
 
   function handleOpen() {
     posthog.capture('Connect');
-    window.open(`https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}`);
+    if(!isLoading) {
+      window.open(url);
+    }
   }
 
   if (githubHandle) return (
