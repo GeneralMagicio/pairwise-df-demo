@@ -11,7 +11,6 @@ import { ProjectCard } from '../card/ProjectCard';
 import HeaderRF6 from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
 import Modals from '@/app/utils/wallet/Modals';
-import SkipButton from '../card/Skip';
 import {
   useGetPairwisePairs,
 } from '../utils/data-fetching/pair';
@@ -29,6 +28,7 @@ import RevertLoadingModal from '../card/modals/RevertLoadingModal';
 import StorageLabel from '@/app/lib/localStorage';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
+import { NumberBox } from './NumberBox';
 
 const SliderMax = 3;
 const SliderBase = 10;
@@ -66,7 +66,7 @@ export default function Home() {
   const { address, chainId } = useAccount();
   // const wallet = useActiveWallet();
 
-  const [value, setValue] = React.useState<number>(0);
+  const [ratio, setRatio] = React.useState<{ value: number, type: 'slider' | 'input' }>({ value: 0, type: 'slider' });
   const [rating1, setRating1] = useState<number | null>(null);
   const [rating2, setRating2] = useState<number | null>(null);
   const [project1, setProject1] = useState<IProject>();
@@ -118,25 +118,25 @@ export default function Home() {
     },
   });
 
-  const handleSkip = async () => {
-    try {
-      await vote({
-        data: {
-          project1Id: project1!.id,
-          project2Id: project2!.id,
-          project1Val: 0,
-          project2Val: 0,
-          pickedId: null,
-        },
-      });
-      setValue(0);
-      setRating1(0);
-      setRating2(0);
-    }
-    catch (e) {
-      console.error(e);
-    }
-  };
+  // const handleSkip = async () => {
+  //   try {
+  //     await vote({
+  //       data: {
+  //         project1Id: project1!.id,
+  //         project2Id: project2!.id,
+  //         project1Val: 0,
+  //         project2Val: 0,
+  //         pickedId: null,
+  //       },
+  //     });
+  //     setRatio({ type: 'slider', value: 0 });
+  //     setRating1(0);
+  //     setRating2(0);
+  //   }
+  //   catch (e) {
+  //     console.error(e);
+  //   }
+  // };
 
   useEffect(() => {
     if (bypassPrevProgress && data) {
@@ -183,6 +183,11 @@ export default function Home() {
   const isAnyModalOpen = () =>
     revertingBack;
 
+  const convertInputValueToSlider = () => {
+    if (ratio.type === 'slider') return ratio.value;
+    else return Math.sign(ratio.value) * Math.log(Math.abs(ratio.value)) / Math.log(SliderBase);
+  };
+
   // const showCoI1 = () => {
   //   if (!wallet) {
   //     setShowLoginModal(true);
@@ -228,7 +233,7 @@ export default function Home() {
           pickedId: chosenId,
         },
       });
-      setValue(0);
+      setRatio({ type: 'slider', value: 0 });
       if (getGetStarted().goodRating && !getGetStarted().postRating) {
         updateGetStarted({ postRating: true });
       }
@@ -291,7 +296,15 @@ export default function Home() {
 
   const handleChange = (_event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
-      setValue(newValue);
+      setRatio({ type: 'slider', value: newValue });
+      setRating1(-newValue);
+      setRating2(newValue);
+    }
+  };
+
+  const handleNumberBoxChange = (newValue: number) => {
+    if (typeof newValue === 'number') {
+      setRatio({ type: 'input', value: newValue });
       setRating1(-newValue);
       setRating2(newValue);
     }
@@ -304,6 +317,10 @@ export default function Home() {
   if (!address || !chainId) return redirect('/');
 
   if (!project1 || !project2 || !data) return <div>No data</div>;
+
+  const shownValue = ratio.type === 'slider'
+    ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase)
+    : ratio.value;
 
   return (
     <div className="relative min-h-screen">
@@ -381,10 +398,10 @@ export default function Home() {
             /> */}
           <div className="w-1/5 text-ellipsis">{project1.name}</div>
           <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
-          <div className="relative mt-5 w-1/2">
+          <div className="relative mt-5 flex gap-4 w-1/2 flex-col items-center justify-center">
             <CustomSlider
-              val={value}
-              value={value}
+              val={convertInputValueToSlider()}
+              value={convertInputValueToSlider()}
               scale={x => sliderScaleFunction(x, SliderBase)}
               min={-1 * SliderMax}
               step={1}
@@ -396,11 +413,44 @@ export default function Home() {
               aria-labelledby="non-linear-slider"
             />
             <div className="absolute left-[calc(50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
-
+            <NumberBox
+              value={shownValue}
+              onChange={handleNumberBoxChange}
+              min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
+              max={sliderScaleFunction(SliderMax, SliderBase)}
+            />
           </div>
           <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
           <div className="w-1/5 text-ellipsis">{project2.name}</div>
         </div>
+        {shownValue < 0
+          ? (
+              <p className="h-6">
+                <span style={{ color: 'green' }}>
+                  {project1.name}
+                </span>
+                {` deserves ${-1 * shownValue}x more credit than `}
+                <span style={{ color: 'green' }}>
+                  {project2.name}
+                </span>
+              </p>
+            )
+          : shownValue > 0
+            ? (
+                <p className="h-6">
+                  <span style={{ color: 'green' }}>
+                    {project2.name}
+                  </span>
+                  {` deserves ${shownValue}x more credit than `}
+                  <span style={{ color: 'green' }}>
+                    {project1.name}
+                  </span>
+                </p>
+              )
+            : (
+                <p className="h-6">
+                </p>
+              )}
         <div className="flex flex-row gap-x-11">
           <UndoButton
             disabled={data?.votedPairs === 0 || isAnyModalOpen()}
@@ -411,11 +461,8 @@ export default function Home() {
             className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
             onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
           >
-            Next
+            {ratio.value === 0 ? 'Skip' : 'Next'}
           </button>
-          <SkipButton
-            onClick={handleSkip}
-          />
         </div>
       </footer>
 
