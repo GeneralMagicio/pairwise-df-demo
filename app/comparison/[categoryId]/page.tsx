@@ -26,7 +26,6 @@ import { IProject } from '../utils/types';
 import Spinner from '../../components/Spinner';
 import RevertLoadingModal from '../card/modals/RevertLoadingModal';
 import StorageLabel from '@/app/lib/localStorage';
-import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
 import { NumberBox } from './NumberBox';
 import { useAuth } from '@/app/utils/wallet/AuthProvider';
@@ -343,12 +342,12 @@ export default function Home() {
             cancelSelection={() => setShowLowRateModal(false)}
           />
         )} */}
-        {showFinishModal && (
+        {/* {showFinishModal && (
           <PostVotingModal
             cid={data.id}
             categoryLabel={data.name}
           />
-        )}
+        )} */}
       </Modal>
 
       <HeaderRF6
@@ -380,26 +379,10 @@ export default function Home() {
 
       <footer className="absolute bottom-0 z-50 flex w-full flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner sl:py-2">
         <div className="flex w-3/4 flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
-          {/* <Rating
-              value={rating1 || 0}
-              onChange={(value) => {
-                !wallet ? setShowLoginModal(true) : setRating1(value);
-              }}
-              disabled={coiLoading1 || isAnyModalOpen()}
-            />
-            <VoteButton
-              onClick={() =>
-                !checkLowRatedProjectSelected(project1.id)
-                && handleVote(project1.id)}
-              disabled={coiLoading1 || isAnyModalOpen()}
-            />
-            <ConflictButton
-              onClick={showCoI1}
-              disabled={coiLoading1 || isAnyModalOpen()}
-            /> */}
           <div className="w-1/5 text-ellipsis">{project1.name}</div>
           <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
-          <div className="relative mt-5 flex gap-4 w-1/2 flex-col items-center justify-center">
+          <div className="relative mt-5 flex w-1/2 flex-col items-center justify-center gap-4">
+            <div className="absolute left-[calc(50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
             <CustomSlider
               val={convertInputValueToSlider()}
               value={convertInputValueToSlider()}
@@ -413,57 +396,74 @@ export default function Home() {
               valueLabelDisplay="auto"
               aria-labelledby="non-linear-slider"
             />
-            <div className="absolute left-[calc(50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
-            <NumberBox
-              value={shownValue}
-              onChange={handleNumberBoxChange}
-              min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
-              max={sliderScaleFunction(SliderMax, SliderBase)}
-            />
+
           </div>
           <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
           <div className="w-1/5 text-ellipsis">{project2.name}</div>
         </div>
-        {shownValue < 0
-          ? (
-              <p className="h-6">
-                <span style={{ color: 'green' }}>
-                  {project1.name}
-                </span>
-                {` deserves ${-1 * shownValue}x more credit than `}
-                <span style={{ color: 'green' }}>
-                  {project2.name}
-                </span>
-              </p>
-            )
-          : shownValue > 0
+        <NumberBox
+          value={shownValue}
+          onChange={handleNumberBoxChange}
+          min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
+          max={sliderScaleFunction(SliderMax, SliderBase)}
+        />
+        <div className="flex translate-x-2 flex-row gap-3">
+          {shownValue < 0
             ? (
                 <p className="h-6">
                   <span style={{ color: 'green' }}>
-                    {project2.name}
-                  </span>
-                  {` deserves ${shownValue}x more credit than `}
-                  <span style={{ color: 'green' }}>
                     {project1.name}
+                  </span>
+                  {` deserves ${-1 * shownValue}x more credit than `}
+                  <span style={{ color: 'green' }}>
+                    {project2.name}
                   </span>
                 </p>
               )
-            : (
-                <p className="h-6">
-                </p>
-              )}
-        <div className="flex flex-row gap-x-11">
-          <UndoButton
-            disabled={data?.votedPairs === 0 || isAnyModalOpen()}
-            onClick={handleUndo}
-          />
-          {/* Next Button */}
-          <button
-            className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-            onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
-          >
-            {ratio.value === 0 ? 'Skip' : 'Next'}
-          </button>
+            : shownValue > 0
+              ? (
+                  <p className="h-6">
+                    <span style={{ color: 'green' }}>
+                      {project2.name}
+                    </span>
+                    {` deserves ${shownValue}x more credit than `}
+                    <span style={{ color: 'green' }}>
+                      {project1.name}
+                    </span>
+                  </p>
+                )
+              : (
+                  <p className="h-6">
+                  </p>
+                )}
+        </div>
+        <div className='flex flex-row relative w-full justify-center px-10'>
+          {shownValue !== 0 && <div className={`flex flex-grow ${shownValue > 0?"justify-end":"justify-start"}`}>
+          { (
+            <div className={`flex w-2/5 flex-col gap-2 px-10`}>
+              <div className="font-bold">Rationale</div>
+              <textarea
+                rows={3}
+                className="w-full resize-none rounded-md border border-gray-200 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Why did you select this dependency?"
+              />
+            </div>
+          )}
+          </div>}
+          <div className={shownValue?"":`translate-x-5`}>
+            <div className={`flex gap-x-11 ${shownValue ? 'align-center h-full flex-col-reverse justify-center gap-y-2' : ''}`}>
+              <UndoButton
+                disabled={data?.votedPairs === 0 || isAnyModalOpen()}
+                onClick={handleUndo}
+              />
+              <button
+                className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+                onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
+              >
+                {ratio.value === 0 ? 'Skip' : 'Next'}
+              </button>
+            </div>
+          </div>
         </div>
       </footer>
 
