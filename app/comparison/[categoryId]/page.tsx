@@ -437,20 +437,20 @@ export default function Home() {
                   </p>
                 )}
         </div>
-        <div className='flex flex-row relative w-full justify-center px-10'>
-          {shownValue !== 0 && <div className={`flex flex-grow ${shownValue > 0?"justify-end":"justify-start"}`}>
-          { (
-            <div className={`flex w-2/5 flex-col gap-2 px-10`}>
-              <div className="font-bold">Rationale</div>
-              <textarea
-                rows={3}
-                className="w-full resize-none rounded-md border border-gray-200 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Why did you select this dependency?"
-              />
+        <div className="relative flex w-full flex-row justify-center px-10">
+          {shownValue !== 0 && (
+            <div className={`flex grow ${shownValue > 0 ? 'justify-end' : 'justify-start'}`}>
+              <div className="flex w-2/5 flex-col gap-2 px-10">
+                <div className="font-bold">Rationale</div>
+                <textarea
+                  rows={3}
+                  className="w-full resize-none rounded-md border border-gray-200 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Why did you select this dependency?"
+                />
+              </div>
             </div>
           )}
-          </div>}
-          <div className={shownValue?"":`translate-x-5`}>
+          <div className={shownValue ? '' : 'translate-x-5'}>
             <div className={`flex gap-x-11 ${shownValue ? 'align-center h-full flex-col-reverse justify-center gap-y-2' : ''}`}>
               <UndoButton
                 disabled={data?.votedPairs === 0 || isAnyModalOpen()}
