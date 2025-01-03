@@ -85,7 +85,7 @@ export const ProjectCard: React.FC<Props> = ({
     <div
       className={`container relative mx-auto my-4 h-[55vh] w-full
        rounded-xl border border-gray-200 
-      bg-gray-50 px-4 pb-8 pt-4 sl:h-[65vh]`}
+      bg-gray-50 px-4 pb-8 pt-4 xsl:h-[45vh] sl:h-[50vh]`}
     >
       <div className="gap-2 overflow-y-auto">
         <div className="mr-4 flex flex-col gap-6">
