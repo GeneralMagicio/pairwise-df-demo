@@ -513,7 +513,7 @@ export default function Home() {
           </footer>
         </div>
         {comments && comments.length && (
-          <div className="mr-3 mt-6 flex w-96 flex-col gap-3 rounded-xl border border-gray-200 px-4 pb-8 pt-4 overflow-scroll">
+          <div className="mr-3 mt-6 flex w-96 flex-col gap-3 overflow-scroll rounded-xl border border-gray-200 px-4 pb-8 pt-4">
             <button onClick={() => { setShowComments(!showComments); }} className="flex items-center gap-2 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
               <Image width={20} height={20} src="/assets/images/people.png" alt="people" />
               <span>View Other Evaluations</span>
