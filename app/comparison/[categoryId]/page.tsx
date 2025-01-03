@@ -368,14 +368,15 @@ export default function Home() {
         )} */}
       </Modal>
 
-          <div>
-      <HeaderRF6
-        progress={progress * 100}
-        category={data.name}
-        isFirstSelection={false}
-      /></div>
+      <div>
+        <HeaderRF6
+          progress={progress * 100}
+          category={data.name}
+          isFirstSelection={false}
+        />
+      </div>
       <div className="flex h-full grow">
-        <div className="relative flex flex-col grow">
+        <div className="relative flex grow flex-col">
           <div className="flex w-full">
             <div className="relative flex grow items-center justify-between gap-8 px-8 pt-2">
               <div className="relative w-[49%]">
@@ -398,7 +399,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <footer className="shrink w-full gap-8 rounded-xl px-8">
+          <footer className="w-full shrink gap-8 rounded-xl px-8">
             <div className="relative bottom-0 z-50 flex grow flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner sl:py-2">
               <div className="flex w-3/4 flex-col items-center justify-center gap-4 rounded-xl lg:flex-row xl:gap-8">
                 <div className="w-1/5 text-ellipsis">{project1.name}</div>
@@ -472,22 +473,22 @@ export default function Home() {
                     </div>
                   </div>
                 )}
-                
+
               </div>
               <div className={shownValue ? '' : 'translate-x-5'}>
-                  <div className={`flex gap-x-11`}>
-                    <UndoButton
-                      disabled={data?.votedPairs === 0 || isAnyModalOpen()}
-                      onClick={handleUndo}
-                    />
-                    <button
-                      className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-                      onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
-                    >
-                      {ratio.value === 0 ? 'Skip' : 'Next'}
-                    </button>
-                  </div>
+                <div className="flex gap-x-11">
+                  <UndoButton
+                    disabled={data?.votedPairs === 0 || isAnyModalOpen()}
+                    onClick={handleUndo}
+                  />
+                  <button
+                    className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+                    onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
+                  >
+                    {ratio.value === 0 ? 'Skip' : 'Next'}
+                  </button>
                 </div>
+              </div>
             </div>
           </footer>
         </div>
