@@ -341,7 +341,7 @@ export default function Home() {
     : ratio.value;
 
   return (
-    <div className='flex flex-col h-screen'>
+    <div className="flex h-screen flex-col">
       <Modals />
       <Modal
         isOpen={
@@ -373,7 +373,7 @@ export default function Home() {
         category={data.name}
         isFirstSelection={false}
       />
-      <div className="flex grow h-full">
+      <div className="flex h-full grow">
         <div className="relative grow">
           <div className="flex w-full">
             <div className="relative flex grow items-center justify-between gap-8 px-8 pt-2">
@@ -491,8 +491,8 @@ export default function Home() {
         </div>
         {comments && comments.length && (
           <div className="mr-3 mt-6 flex w-80 flex-col gap-3 rounded-xl border border-gray-200 px-4 pb-8 pt-4">
-            <button onClick={() => { setShowComments(!showComments); }}  className="flex items-center gap-2 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
-              <Image width={20} height={20} src="/assets/images/people.png" alt="people"/>
+            <button onClick={() => { setShowComments(!showComments); }} className="flex items-center gap-2 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
+              <Image width={20} height={20} src="/assets/images/people.png" alt="people" />
               <span>View Other Evaluations</span>
               <ArrowDownIcon />
             </button>
