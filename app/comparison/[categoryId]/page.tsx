@@ -252,7 +252,7 @@ export default function Home() {
   //   }
   //   return false;
   // };
-  const handleVote = async (chosenId: number) => {
+  const handleVote = async (chosenId: number | null) => {
     if (shownValue !== 0 && (rationale === null || rationale.trim().length === 0)) {
       setRationaleError('Please provide your rationale.');
       return;
@@ -502,7 +502,7 @@ export default function Home() {
                     />
                     <button
                       className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-                      onClick={() => { handleVote(shownValue > 0 ? project2.id : project1.id); }}
+                      onClick={() => { handleVote(shownValue === 0 ? null : shownValue > 0 ? project2.id : project1.id); }}
                     >
                       {ratio.value === 0 ? 'Skip' : 'Next'}
                     </button>
