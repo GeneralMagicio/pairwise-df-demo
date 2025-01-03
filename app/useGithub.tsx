@@ -3,7 +3,7 @@ import { axiosInstance } from '@/app/utils/axiosInstance';
 
 export const getAuthURL = async (): Promise<string> => {
   const { data } = await axiosInstance.get('/auth/github/url');
-  return data;
+  return data.url;
 };
 
 export const useGithubURL = () => {
