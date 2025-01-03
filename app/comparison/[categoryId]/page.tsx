@@ -87,7 +87,7 @@ export default function Home() {
   const [revertingBack, setRevertingBack] = useState(false);
   // const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
-  const [showComments, setShowComments] = useState(true);
+  const [showComments, setShowComments] = useState(false);
   const [rationale, setRationale] = useState<string | null>(null);
   const [rationaleError, setRationaleError] = useState<string | null>(null);
   // const [sectionExpanded1, setSectionExpanded1] = useState({
