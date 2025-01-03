@@ -72,14 +72,7 @@ export default function Home() {
   const { githubHandle } = useAuth();
   // const wallet = useActiveWallet();
 
-  const [comments, setComments] = useState<IComment[] | undefined>([{
-    title: 'A is 1000 times better than B',
-    rationale: 'A has more impact',
-  }, {
-    title: 'A is 1000 times better than B',
-    rationale: 'A has more impact',
-  },
-  ]);
+  const [comments, setComments] = useState<IComment[] | undefined>();
   const [ratio, setRatio] = React.useState<{ value: number, type: 'slider' | 'input' }>({ value: 0, type: 'slider' });
   const [rating1, setRating1] = useState<number | null>(null);
   const [rating2, setRating2] = useState<number | null>(null);
@@ -162,6 +155,17 @@ export default function Home() {
       setProgress(getBiggerNumber(prevProgress, data?.progress));
     }
   }, [data]);
+
+  useEffect(()=>{
+    setComments([{
+      title: 'A is 1000 times better than B',
+      rationale: 'A has more impact',
+    }, {
+      title: 'A is 1000 times better than B',
+      rationale: 'A has more impact',
+    },
+    ])
+  }, [])
 
   useEffect(() => {
     if (!data || !data.pairs?.length) return;
