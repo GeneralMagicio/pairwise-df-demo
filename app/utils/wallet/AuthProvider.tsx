@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import StorageLabel from '@/app/lib/localStorage';
 import { isLoggedIn } from './pw-login';
@@ -62,6 +62,7 @@ export const useAuth = () => {
   } = useContext(AuthContext);
 
   const router = useRouter();
+  const path = usePathname();
 
   const clearLocalStorage = () => {
     localStorage.removeItem(StorageLabel.AUTH);
@@ -78,9 +79,14 @@ export const useAuth = () => {
   const checkLoggedInToPw = useCallback(async () => {
     const validToken = await isLoggedIn();
     setLoggedToPw(validToken ? LogginToPwBackendState.LoggedIn : LogginToPwBackendState.Error);
-    const storedHandle = localStorage.getItem(StorageLabel.LOGGED_IN_GITHUB_HANDLE);
+  }, [setLoggedToPw]);
+
+  useEffect(() => {
+    if (loggedToPw !== LogginToPwBackendState.LoggedIn) return;
+    const storedHandle = localStorage.getItem(StorageLabel.LOGGED_IN_GITHUB_HANDLE || '');
     if (storedHandle) setGithubHandle(storedHandle);
-  }, [githubHandle]);
+    if (path === '/') router.push('/allocation');
+  }, [loggedToPw, path, router, setGithubHandle]);
 
   // Set up axios interceptors
   useEffect(() => {
