@@ -2,13 +2,12 @@ import { axiosInstance } from '../axiosInstance';
 import StorageLabel from '../../lib/localStorage';
 
 export const isLoggedIn = async () => {
-  const token = localStorage.getItem(StorageLabel.AUTH);
-  if (!token) return false;
-
-  const valid = await axiosInstance
-    .get('/auth/validate-token')
-    .then(res => res.data.valid)
-    .catch(() => false);
-
-  return valid;
+  if (!localStorage.getItem(StorageLabel.AUTH) || !localStorage.getItem(StorageLabel.LOGGED_IN_GITHUB_HANDLE)) return false;
+  try {
+    const { data } = await axiosInstance.get<Number>('/auth/isloggedin');
+    return data;
+  }
+  catch (err) {
+    return false;
+  }
 };

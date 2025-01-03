@@ -1,7 +1,9 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 import StorageLabel from '@/app/lib/localStorage';
 import { isLoggedIn } from './pw-login';
+import { axiosInstance, API_URL } from '../axiosInstance';
 
 export enum LogginToPwBackendState {
   Initial,
@@ -74,14 +76,33 @@ export const useAuth = () => {
   }, [router, setGithubHandle, setLoggedToPw]);
 
   const checkLoggedInToPw = useCallback(async () => {
-    if (!githubHandle) return;
     const validToken = await isLoggedIn();
     setLoggedToPw(validToken ? LogginToPwBackendState.LoggedIn : LogginToPwBackendState.Error);
-  }, [githubHandle]);
-
-  useEffect(() => {
     const storedHandle = localStorage.getItem(StorageLabel.LOGGED_IN_GITHUB_HANDLE);
     if (storedHandle) setGithubHandle(storedHandle);
+  }, [githubHandle]);
+
+  // Set up axios interceptors
+  useEffect(() => {
+    const interceptor = axiosInstance.interceptors.response.use(
+      function (response) {
+        return response;
+      },
+      async function (error: AxiosError) {
+        if (error.response && error.response.status === 401) {
+        // check the base url to prevent signing out when getting 401 from other origins
+          if (error?.config?.baseURL?.includes(API_URL)) {
+            signOut();
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+    // Remove the interceptor when the component unmounts
+      axiosInstance.interceptors.response.eject(interceptor);
+    };
   }, []);
 
   useEffect(() => {

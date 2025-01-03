@@ -30,7 +30,7 @@ export const ConnectButton = () => {
   }
 
   if (githubHandle) return (
-    <ConnectedButton onLogout={logout} wallet={githubHandle} />
+    <ConnectedButton onLogout={logout} username={githubHandle} />
   );
 
   return (

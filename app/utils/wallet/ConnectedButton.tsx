@@ -2,9 +2,9 @@ import { FC, useState } from 'react';
 import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
 import { ArrowUpIcon } from '@/public/assets/icon-components/ArrowUp';
 import { PowerIcon } from '@/public/assets/icon-components/Power';
-import { shortenWalletAddress } from '@/app/comparison/utils/helpers';
+import { GithubIcon } from '@/public/assets/icon-components/Github';
 interface Props {
-  wallet: string
+  username: string
   onLogout: () => void
 }
 
@@ -20,7 +20,7 @@ const LogoutButton: FC<Pick<Props, 'onLogout'>> = ({ onLogout }) => {
   );
 };
 
-const ConnectedButton: FC<Props> = ({ wallet, onLogout }) => {
+const ConnectedButton: FC<Props> = ({ username, onLogout }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -29,8 +29,9 @@ const ConnectedButton: FC<Props> = ({ wallet, onLogout }) => {
         onClick={() => setOpen(!open)}
         className="flex h-fit w-44 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white py-2 font-semibold"
       >
+        <GithubIcon />
         <span className="text-sm text-gray-800">
-          {shortenWalletAddress(wallet)}
+          {username.length < 10 ? username : username.slice(0, 10) + '...'}
         </span>
         {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
       </button>

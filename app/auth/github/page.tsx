@@ -20,6 +20,7 @@ export default function LoginGithub() {
       }
       setGithubHandle(username);
       window.localStorage.setItem(StorageLabel.AUTH, token);
+      window.localStorage.setItem(StorageLabel.LOGGED_IN_GITHUB_HANDLE, username);
       router.push('/allocation');
     };
     handleAuth();
