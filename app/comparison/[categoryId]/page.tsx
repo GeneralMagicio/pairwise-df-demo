@@ -7,6 +7,7 @@ import { redirect, useParams } from 'next/navigation';
 import { usePostHog } from 'posthog-js/react';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
+import Image from 'next/image';
 import { ProjectCard } from '../card/ProjectCard';
 import HeaderRF6 from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
@@ -29,6 +30,7 @@ import StorageLabel from '@/app/lib/localStorage';
 import NotFoundComponent from '@/app/components/404';
 import { NumberBox } from './NumberBox';
 import { useAuth } from '@/app/utils/wallet/AuthProvider';
+import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
 
 const SliderMax = 10;
 const SliderBase = 2;
@@ -60,12 +62,24 @@ const CustomSlider = styled(Slider, {
   });
 });
 
+type IComment = {
+  title: string
+  rationale: string
+}
 export default function Home() {
   const { categoryId } = useParams() ?? {};
   // const queryClient = useQueryClient();
   const { githubHandle } = useAuth();
   // const wallet = useActiveWallet();
 
+  const [comments, setComments] = useState<IComment[] | undefined>([{
+    title: 'A is 1000 times better than B',
+    rationale: 'A has more impact',
+  }, {
+    title: 'A is 1000 times better than B',
+    rationale: 'A has more impact',
+  },
+  ]);
   const [ratio, setRatio] = React.useState<{ value: number, type: 'slider' | 'input' }>({ value: 0, type: 'slider' });
   const [rating1, setRating1] = useState<number | null>(null);
   const [rating2, setRating2] = useState<number | null>(null);
@@ -80,6 +94,7 @@ export default function Home() {
   const [revertingBack, setRevertingBack] = useState(false);
   // const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   // const [sectionExpanded1, setSectionExpanded1] = useState({
   //   repos: true,
   //   pricing: true,
@@ -323,8 +338,7 @@ export default function Home() {
     : ratio.value;
 
   return (
-    <div className="relative min-h-screen">
-      {/* <Modals /> */}
+    <div className="flex h-screen flex-col">
       <Modal
         isOpen={
           revertingBack
@@ -355,118 +369,140 @@ export default function Home() {
         category={data.name}
         isFirstSelection={false}
       />
-
-      <div className="relative flex w-full items-center justify-between gap-8 px-8 pt-2">
-        <div className="relative w-[49%]">
-          <ProjectCard
-            key={project1.RF6Id}
-            aiMode={aiMode1}
-            setAi={toggleAiMode}
-            name="card1"
-            metadata={{ ...project1.metadata, ...project1 } as any}
-          />
-        </div>
-        <div className="relative w-[49%]">
-          <ProjectCard
-            key={project2.RF6Id}
-            aiMode={aiMode2}
-            setAi={toggleAiMode}
-            name="card2"
-            metadata={{ ...project2.metadata, ...project2 } as any}
-          />
-        </div>
-      </div>
-
-      <footer className="absolute bottom-0 z-50 flex w-full flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner sl:py-2">
-        <div className="flex w-3/4 flex-col items-center justify-center gap-4 lg:flex-row xl:gap-8">
-          <div className="w-1/5 text-ellipsis">{project1.name}</div>
-          <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
-          <div className="relative mt-5 flex w-1/2 flex-col items-center justify-center gap-4">
-            <div className="absolute left-[calc(50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
-            <CustomSlider
-              val={convertInputValueToSlider()}
-              value={convertInputValueToSlider()}
-              scale={x => sliderScaleFunction(x, SliderBase)}
-              min={-1 * SliderMax}
-              step={1}
-              max={SliderMax}
-              getAriaValueText={(value: number) => `${Math.abs(value)}`}
-              valueLabelFormat={(value: number) => `${Math.abs(value)}`}
-              onChange={handleChange}
-              valueLabelDisplay="auto"
-              aria-labelledby="non-linear-slider"
-            />
-
-          </div>
-          <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
-          <div className="w-1/5 text-ellipsis">{project2.name}</div>
-        </div>
-        <NumberBox
-          value={shownValue}
-          onChange={handleNumberBoxChange}
-          min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
-          max={sliderScaleFunction(SliderMax, SliderBase)}
-        />
-        <div className="flex translate-x-2 flex-row gap-3">
-          {shownValue < 0
-            ? (
-                <p className="h-6">
-                  <span style={{ color: 'green' }}>
-                    {project1.name}
-                  </span>
-                  {` deserves ${-1 * shownValue}x more credit than `}
-                  <span style={{ color: 'green' }}>
-                    {project2.name}
-                  </span>
-                </p>
-              )
-            : shownValue > 0
-              ? (
-                  <p className="h-6">
-                    <span style={{ color: 'green' }}>
-                      {project2.name}
-                    </span>
-                    {` deserves ${shownValue}x more credit than `}
-                    <span style={{ color: 'green' }}>
-                      {project1.name}
-                    </span>
-                  </p>
-                )
-              : (
-                  <p className="h-6">
-                  </p>
-                )}
-        </div>
-        <div className="relative flex w-full flex-row justify-center px-10">
-          {shownValue !== 0 && (
-            <div className={`flex grow ${shownValue > 0 ? 'justify-end' : 'justify-start'}`}>
-              <div className="flex w-2/5 flex-col gap-2 px-10">
-                <div className="font-bold">Rationale</div>
-                <textarea
-                  rows={3}
-                  className="w-full resize-none rounded-md border border-gray-200 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Why did you select this dependency?"
+      <div className="flex h-full grow">
+        <div className="relative grow">
+          <div className="flex w-full">
+            <div className="relative flex grow items-center justify-between gap-8 px-8 pt-2">
+              <div className="relative w-[49%]">
+                <ProjectCard
+                  key={project1.RF6Id}
+                  aiMode={aiMode1}
+                  setAi={toggleAiMode}
+                  name="card1"
+                  metadata={{ ...project1.metadata, ...project1 } as any}
+                />
+              </div>
+              <div className="relative w-[49%]">
+                <ProjectCard
+                  key={project2.RF6Id}
+                  aiMode={aiMode2}
+                  setAi={toggleAiMode}
+                  name="card2"
+                  metadata={{ ...project2.metadata, ...project2 } as any}
                 />
               </div>
             </div>
-          )}
-          <div className={shownValue ? '' : 'translate-x-5'}>
-            <div className={`flex gap-x-11 ${shownValue ? 'align-center h-full flex-col-reverse justify-center gap-y-2' : ''}`}>
-              <UndoButton
-                disabled={data?.votedPairs === 0 || isAnyModalOpen()}
-                onClick={handleUndo}
-              />
-              <button
-                className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-                onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
-              >
-                {ratio.value === 0 ? 'Skip' : 'Next'}
-              </button>
-            </div>
           </div>
-        </div>
-      </footer>
+          <footer className="flex w-full flex-row gap-8 rounded-xl px-8">
+            <div className="relative bottom-0 z-50 flex grow flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner sl:py-2">
+              <div className="flex w-3/4 flex-col items-center justify-center gap-4 rounded-xl lg:flex-row xl:gap-8">
+                <div className="w-1/5 text-ellipsis">{project1.name}</div>
+                <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
+                <div className="relative mt-5 flex w-1/2 flex-col items-center justify-center gap-4">
+                  <div className="absolute left-[(calc50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
+                  <CustomSlider
+                    val={convertInputValueToSlider()}
+                    value={convertInputValueToSlider()}
+                    scale={x => sliderScaleFunction(x, SliderBase)}
+                    min={-1 * SliderMax}
+                    step={1}
+                    max={SliderMax}
+                    getAriaValueText={(value: number) => `${Math.abs(value)}`}
+                    valueLabelFormat={(value: number) => `${Math.abs(value)}`}
+                    onChange={handleChange}
+                    valueLabelDisplay="auto"
+                    aria-labelledby="non-linear-slider"
+                  />
 
+                </div>
+                <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
+                <div className="w-1/5 text-ellipsis">{project2.name}</div>
+              </div>
+              <NumberBox
+                value={shownValue}
+                onChange={handleNumberBoxChange}
+                min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
+                max={sliderScaleFunction(SliderMax, SliderBase)}
+              />
+              <div className="flex translate-x-2 flex-row gap-3">
+                {shownValue < 0
+                  ? (
+                      <p className="h-6">
+                        <span style={{ color: 'green' }}>
+                          {project1.name}
+                        </span>
+                        {` deserves ${-1 * shownValue}x more credit than `}
+                        <span style={{ color: 'green' }}>
+                          {project2.name}
+                        </span>
+                      </p>
+                    )
+                  : shownValue > 0
+                    ? (
+                        <p className="h-6">
+                          <span style={{ color: 'green' }}>
+                            {project2.name}
+                          </span>
+                          {` deserves ${shownValue}x more credit than `}
+                          <span style={{ color: 'green' }}>
+                            {project1.name}
+                          </span>
+                        </p>
+                      )
+                    : (
+                        <p className="h-6">
+                        </p>
+                      )}
+              </div>
+              <div className="relative flex w-full flex-row justify-center px-10">
+                {shownValue !== 0 && (
+                  <div className={`flex grow ${shownValue > 0 ? 'justify-end' : 'justify-start'}`}>
+                    <div className="flex w-2/5 flex-col gap-2 px-10">
+                      <div className="font-bold">Rationale</div>
+                      <textarea
+                        rows={3}
+                        className="w-full resize-none rounded-md border border-gray-200 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Why did you select this dependency?"
+                      />
+                    </div>
+                  </div>
+                )}
+                <div className={shownValue ? '' : 'translate-x-5'}>
+                  <div className={`flex gap-x-11 ${shownValue ? 'align-center h-full flex-col-reverse justify-center gap-y-2' : ''}`}>
+                    <UndoButton
+                      disabled={data?.votedPairs === 0 || isAnyModalOpen()}
+                      onClick={handleUndo}
+                    />
+                    <button
+                      className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+                      onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
+                    >
+                      {ratio.value === 0 ? 'Skip' : 'Next'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>
+        {comments && comments.length && (
+          <div className="mr-3 mt-6 flex w-80 flex-col gap-3 rounded-xl border border-gray-200 px-4 pb-8 pt-4">
+            <button className="flex items-center gap-2 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
+              <Image width={20} height={20} src="/assets/images/people.png" alt="people" onClick={() => { setShowComments(!showComments); }} />
+              <span>View Other Evaluations</span>
+              <ArrowDownIcon />
+            </button>
+            {showComments && comments.map((comment, index) => {
+              return (
+                <div key={index} className="flex flex-col gap-3 rounded-md border border-gray-200 p-5">
+                  <div className="font-bold">{comment.title}</div>
+                  <div className="font-normal">{comment.rationale}</div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
