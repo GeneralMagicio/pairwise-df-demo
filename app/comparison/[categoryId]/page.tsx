@@ -156,7 +156,7 @@ export default function Home() {
     }
   }, [data]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setComments([{
       title: 'A is 1000 times better than B',
       rationale: 'A has more impact',
@@ -164,8 +164,8 @@ export default function Home() {
       title: 'A is 1000 times better than B',
       rationale: 'A has more impact',
     },
-    ])
-  }, [])
+    ]);
+  }, []);
 
   useEffect(() => {
     if (!data || !data.pairs?.length) return;
