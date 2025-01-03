@@ -397,7 +397,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <footer className="flex w-full flex-row gap-8 rounded-xl px-8">
+          <footer className="w-full gap-8 rounded-xl px-8">
             <div className="relative bottom-0 z-50 flex grow flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner sl:py-2">
               <div className="flex w-3/4 flex-col items-center justify-center gap-4 rounded-xl lg:flex-row xl:gap-8">
                 <div className="w-1/5 text-ellipsis">{project1.name}</div>
@@ -458,7 +458,7 @@ export default function Home() {
                         </p>
                       )}
               </div>
-              <div className="relative flex w-full flex-row justify-center px-10">
+              <div className="flex w-full flex-row justify-center px-10">
                 {shownValue !== 0 && (
                   <div className={`flex grow ${shownValue > 0 ? 'justify-end' : 'justify-start'}`}>
                     <div className="flex w-2/5 flex-col gap-2 px-10">
@@ -472,7 +472,7 @@ export default function Home() {
                   </div>
                 )}
                 <div className={shownValue ? '' : 'translate-x-5'}>
-                  <div className={`flex gap-x-11 ${shownValue ? 'align-center h-full flex-col-reverse justify-center gap-y-2' : ''}`}>
+                  <div className={`flex gap-x-11 ${shownValue ? 'align-center flex-col-reverse justify-center gap-y-2' : ''}`}>
                     <UndoButton
                       disabled={data?.votedPairs === 0 || isAnyModalOpen()}
                       onClick={handleUndo}
@@ -491,8 +491,8 @@ export default function Home() {
         </div>
         {comments && comments.length && (
           <div className="mr-3 mt-6 flex w-80 flex-col gap-3 rounded-xl border border-gray-200 px-4 pb-8 pt-4">
-            <button className="flex items-center gap-2 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
-              <Image width={20} height={20} src="/assets/images/people.png" alt="people" onClick={() => { setShowComments(!showComments); }} />
+            <button onClick={() => { setShowComments(!showComments); }} className="flex items-center gap-2 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
+              <Image width={20} height={20} src="/assets/images/people.png" alt="people" />
               <span>View Other Evaluations</span>
               <ArrowDownIcon />
             </button>
