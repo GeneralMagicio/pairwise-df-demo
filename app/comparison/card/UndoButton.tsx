@@ -10,8 +10,8 @@ const UndoButton: React.FC<UndoButtonProps> = ({ disabled, onClick }) => {
   return (
     <button
       onClick={onClick}
-      className={`gap border-primary shadow-custom-shadow flex flex-row
-        items-center justify-center gap-1.5 rounded-md border px-4 py-2.5 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+      className={`gap shadow-custom-shadow flex flex-row items-center
+        justify-center gap-1.5 rounded-md border border-primary px-4 py-2.5 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       disabled={disabled}
     >
       <UndoIcon />
