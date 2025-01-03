@@ -88,7 +88,7 @@ export const ProjectCard: React.FC<Props> = ({
       bg-gray-50 px-4 pb-8 pt-4 xsl:h-[45vh] sl:h-[50vh]`}
     >
       <div className="gap-2 overflow-y-auto">
-        <div className="mr-4 flex flex-col gap-6">
+        <div className="mr-4 flex flex-col gap-3">
           {/* Cover Image and Profile Avatar */}
           <div className="relative flex h-auto flex-row items-center">
             <Image
@@ -96,8 +96,8 @@ export const ProjectCard: React.FC<Props> = ({
               src={metadata.image || ''}
               unoptimized
               alt={metadata.name}
-              width={80}
-              height={80}
+              width={64}
+              height={64}
               className="rounded-md"
             />
             <h1
@@ -107,7 +107,7 @@ export const ProjectCard: React.FC<Props> = ({
             </h1>
           </div>
 
-          <div className="h-16">
+          <div>
             <ProjectDescription description={metadata.description} />
           </div>
 
