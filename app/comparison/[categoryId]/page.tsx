@@ -252,7 +252,7 @@ export default function Home() {
   //   }
   //   return false;
   // };
-  const handleVote = async (chosenId: number) => {
+  const handleVote = async (chosenId: number | null) => {
     if (shownValue !== 0 && (rationale === null || rationale.trim().length === 0)) {
       setRationaleError('Please provide your rationale.');
       return;
@@ -502,7 +502,7 @@ export default function Home() {
                     />
                     <button
                       className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-                      onClick={() => { handleVote(shownValue > 0 ? project2.id : project1.id); }}
+                      onClick={() => { handleVote(shownValue === 0 ? null : shownValue > 0 ? project2.id : project1.id); }}
                     >
                       {ratio.value === 0 ? 'Skip' : 'Next'}
                     </button>
@@ -519,15 +519,15 @@ export default function Home() {
               <span>View Other Evaluations</span>
               {showComments ? <ArrowUpIcon /> : <ArrowDownIcon />}
             </button>
-            {showComments && comments.map(({ pickedId, project1, project2, rationale, multiplier, user }, index) => {
+            {showComments && comments.map(({ pickedId, project1: p1, project2: p2, rationale, multiplier, user }, index) => {
               return (
-                <div key={index} className="flex flex-col gap-3 rounded-md border border-gray-200 p-5">
+                <div key={index} className={`flex flex-col gap-3 rounded-md border border-gray-200 p-5 ${project1.id === p1.id && project2.id === p2.id ? 'bg-purple-50' : ''}`}>
                   <div className="font-bold">
-                    {pickedId === project1.id
-                      ? `${user.ghUsername}: ${project1.name} deserves ${multiplier}x more credit than ${project2.name}`
-                      : pickedId === project2.id
-                        ? `${user.ghUsername}: ${project2.name} deserves ${multiplier}x more credit than ${project1.name}`
-                        : `${user.ghUsername}: Skipped comparing ${project2.name} with ${project2.name}`}
+                    {pickedId === p1.id
+                      ? `${user.ghUsername}: ${p1.name} deserves ${multiplier}x more credit than ${p2.name}`
+                      : pickedId === p2.id
+                        ? `${user.ghUsername}: ${p2.name} deserves ${multiplier}x more credit than ${p1.name}`
+                        : `${user.ghUsername}: Skipped comparing ${p2.name} with ${p2.name}`}
                   </div>
                   <div className="text-[15px] font-normal text-gray-800">{rationale}</div>
                 </div>
