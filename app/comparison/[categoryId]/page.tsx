@@ -376,7 +376,7 @@ export default function Home() {
         />
       </div>
       <div className="flex h-full grow">
-        <div className="relative flex grow flex-col">
+        <div className="relative grow">
           <div className="flex w-full">
             <div className="relative flex grow items-center justify-between gap-8 px-8 pt-2">
               <div className="relative w-[49%]">
@@ -399,7 +399,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <footer className="w-full shrink gap-8 rounded-xl px-8">
+          <footer className="w-full gap-8 rounded-xl px-8">
             <div className="relative bottom-0 z-50 flex grow flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner sl:py-2">
               <div className="flex w-3/4 flex-col items-center justify-center gap-4 rounded-xl lg:flex-row xl:gap-8">
                 <div className="w-1/5 text-ellipsis">{project1.name}</div>
@@ -460,33 +460,32 @@ export default function Home() {
                         </p>
                       )}
               </div>
-              <div className="flex w-full flex-row justify-end px-10">
+              <div className={`flex w-full flex-row ${shownValue ? 'justify-end' : 'justify-center'} px-10`}>
                 {shownValue !== 0 && (
-                  <div className={`flex grow ${shownValue > 0 ? 'justify-end' : 'justify-start'}`}>
-                    <div className="flex w-2/5 flex-col gap-2 px-10">
+                  <div className="flex grow justify-start}">
+                    <div className="flex w-4/5 flex-col gap-2 px-10">
                       <div className="font-bold">Rationale</div>
                       <textarea
                         rows={3}
                         className="w-full resize-none rounded-md border border-gray-200 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Why did you select this dependency?"
+                        placeholder={`Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
                       />
                     </div>
                   </div>
                 )}
-
-              </div>
-              <div className={shownValue ? '' : 'translate-x-5'}>
-                <div className="flex gap-x-11">
-                  <UndoButton
-                    disabled={data?.votedPairs === 0 || isAnyModalOpen()}
-                    onClick={handleUndo}
-                  />
-                  <button
-                    className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-                    onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
-                  >
-                    {ratio.value === 0 ? 'Skip' : 'Next'}
-                  </button>
+                <div className={shownValue ? '' : 'translate-x-5'}>
+                  <div className={`flex gap-x-11 ${shownValue ? 'align-center flex-col-reverse justify-center gap-y-2' : ''}`}>
+                    <UndoButton
+                      disabled={data?.votedPairs === 0 || isAnyModalOpen()}
+                      onClick={handleUndo}
+                    />
+                    <button
+                      className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+                      onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
+                    >
+                      {ratio.value === 0 ? 'Skip' : 'Next'}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
