@@ -62,7 +62,7 @@ export const useAuth = () => {
   } = useContext(AuthContext);
 
   const router = useRouter();
-  const path = usePathname()
+  const path = usePathname();
 
   const clearLocalStorage = () => {
     localStorage.removeItem(StorageLabel.AUTH);
@@ -79,14 +79,14 @@ export const useAuth = () => {
   const checkLoggedInToPw = useCallback(async () => {
     const validToken = await isLoggedIn();
     setLoggedToPw(validToken ? LogginToPwBackendState.LoggedIn : LogginToPwBackendState.Error);
-  }, [githubHandle]);
+  }, [setLoggedToPw]);
 
   useEffect(() => {
     if (loggedToPw !== LogginToPwBackendState.LoggedIn) return;
     const storedHandle = localStorage.getItem(StorageLabel.LOGGED_IN_GITHUB_HANDLE || '');
     if (storedHandle) setGithubHandle(storedHandle);
-    if (path === '/') router.push('/allocation')
-  }, [loggedToPw])
+    if (path === '/') router.push('/allocation');
+  }, [loggedToPw, path, router, setGithubHandle]);
 
   // Set up axios interceptors
   useEffect(() => {

@@ -64,11 +64,6 @@ const CustomSlider = styled(Slider, {
   });
 });
 
-type IComment = {
-  title: string
-  rationale: string
-}
-
 const InitRatioValue = { value: 0, type: 'slider' } as { value: number, type: 'slider' | 'input' };
 
 export default function Home() {
@@ -94,7 +89,7 @@ export default function Home() {
   const [showFinishModal, setShowFinishModal] = useState(false);
   const [showComments, setShowComments] = useState(true);
   const [rationale, setRationale] = useState<string | null>(null);
-  const [rationaleError, setRationaleError] = useState<string | null>(null)
+  const [rationaleError, setRationaleError] = useState<string | null>(null);
   // const [sectionExpanded1, setSectionExpanded1] = useState({
   //   repos: true,
   //   pricing: true,
@@ -181,7 +176,7 @@ export default function Home() {
     setRatio(InitRatioValue);
     setRationale(null);
     setComments(data.rationales);
-    setRationaleError(null)
+    setRationaleError(null);
   }, [data]);
 
   // useEffect(() => {
@@ -259,8 +254,8 @@ export default function Home() {
   // };
   const handleVote = async (chosenId: number) => {
     if (shownValue !== 0 && (rationale === null || rationale.trim().length === 0)) {
-      setRationaleError("Please provide your rationale.")
-      return
+      setRationaleError('Please provide your rationale.');
+      return;
     }
     try {
       await vote({
@@ -492,7 +487,11 @@ export default function Home() {
                       className="w-full resize-none rounded-md border border-primary p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder={shownValue === 0 ? 'Why do you want to skip this comparison?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
                     />
-                    <span className='mt text-red-600 text-sm'> {!!rationaleError ? rationaleError : ''} </span>
+                    <span className="mt text-sm text-red-600">
+                      {' '}
+                      {rationaleError ? rationaleError : ''}
+                      {' '}
+                    </span>
                   </div>
                 </div>
                 <div className="translate-x-5">
@@ -503,7 +502,7 @@ export default function Home() {
                     />
                     <button
                       className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-                      onClick={() => { handleVote(shownValue > 0  ? project2.id : project1.id); }}
+                      onClick={() => { handleVote(shownValue > 0 ? project2.id : project1.id); }}
                     >
                       {ratio.value === 0 ? 'Skip' : 'Next'}
                     </button>
@@ -518,7 +517,7 @@ export default function Home() {
             <button onClick={() => { setShowComments(!showComments); }} className="flex items-center gap-2 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
               <Image width={20} height={20} src="/assets/images/people.png" alt="people" />
               <span>View Other Evaluations</span>
-              {showComments ? <ArrowUpIcon/> : <ArrowDownIcon />}
+              {showComments ? <ArrowUpIcon /> : <ArrowDownIcon />}
             </button>
             {showComments && comments.map(({ pickedId, project1, project2, rationale, multiplier, user }, index) => {
               return (
@@ -526,11 +525,11 @@ export default function Home() {
                   <div className="font-bold">
                     {pickedId === project1.id
                       ? `${user.ghUsername}: ${project1.name} deserves ${multiplier}x more credit than ${project2.name}`
-                      : pickedId === project2.id ? `${user.ghUsername}: ${project2.name} deserves ${multiplier}x more credit than ${project1.name}`
-                      : `${user.ghUsername}: Skipped comparing ${project2.name} with ${project2.name}`
-                    }
+                      : pickedId === project2.id
+                        ? `${user.ghUsername}: ${project2.name} deserves ${multiplier}x more credit than ${project1.name}`
+                        : `${user.ghUsername}: Skipped comparing ${project2.name} with ${project2.name}`}
                   </div>
-                  <div className="font-normal text-[15px] text-gray-800">{rationale}</div>
+                  <div className="text-[15px] font-normal text-gray-800">{rationale}</div>
                 </div>
               );
             })}
