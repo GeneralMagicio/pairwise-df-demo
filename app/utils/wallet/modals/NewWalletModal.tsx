@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAccount } from 'wagmi';
 import Image from 'next/image';
 import { shortenWalletAddress } from '@/app/comparison/utils/helpers';
+import { useAuth } from '../AuthProvider';
 
 interface Props {
   onCancel: () => void
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const NewWalletModal: React.FC<Props> = ({ onCancel, onSignIn }) => {
-  const { address } = useAccount();
+  const { githubHandle } = useAuth();
   return (
     <div className="relative flex w-[300px] flex-col items-center justify-center rounded-lg bg-white p-8 text-center shadow-md md:w-[420px]">
       <Image
@@ -20,7 +20,7 @@ const NewWalletModal: React.FC<Props> = ({ onCancel, onSignIn }) => {
       />
       <h2 className="my-4 text-xl font-medium">New Wallet Detected</h2>
       <h3 className="mb-4 text-lg font-bold text-gray-400">
-        {address ? shortenWalletAddress(address) : ''}
+        {githubHandle ? shortenWalletAddress(githubHandle) : ''}
       </h3>
       <p className="mb-8 text-gray-400">
         Looks like you’re connected with a different wallet. Please sign in with

@@ -1,7 +1,6 @@
 type TPendingCategoryProps = {
   onScore: () => void
   progress: string
-  isAutoConnecting: boolean
   isBadgeholder: boolean
   bhCategory: string
   categorySlug: string
@@ -10,7 +9,6 @@ type TPendingCategoryProps = {
 
 const PendingCategory = ({
   onScore,
-  isAutoConnecting,
   progress,
   isBadgeholder,
   bhCategory,
@@ -23,14 +21,14 @@ const PendingCategory = ({
         <button
           onClick={onScore}
           className={`flex w-full items-center justify-center gap-2 rounded-md border py-3 font-semibold ${
-            isAutoConnecting || (isBadgeholder && bhCategory !== categorySlug && !isBHCategoryAtessted)
+            (isBadgeholder && bhCategory !== categorySlug && !isBHCategoryAtessted)
               ? 'border bg-gray-300 text-gray-600'
               : 'bg-primary text-white'
           } ${
             isBadgeholder && bhCategory === categorySlug ? 'w-full' : 'w-[48%]'
           }`}
           disabled={
-            isAutoConnecting || (isBadgeholder && bhCategory !== categorySlug && !isBHCategoryAtessted)
+            (isBadgeholder && bhCategory !== categorySlug && !isBHCategoryAtessted)
           }
         >
           Vote

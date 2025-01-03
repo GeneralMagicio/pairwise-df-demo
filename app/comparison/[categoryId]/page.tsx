@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { redirect, useParams } from 'next/navigation';
 // import { useQueryClient } from '@tanstack/react-query';
-import { useAccount } from 'wagmi';
+// import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
@@ -11,8 +11,9 @@ import Image from 'next/image';
 import { ProjectCard } from '../card/ProjectCard';
 import HeaderRF6 from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
-import Modals from '@/app/utils/wallet/Modals';
+// import Modals from '@/app/utils/wallet/Modals';
 import {
+  IPairwisePairsResponse,
   useGetPairwisePairs,
 } from '../utils/data-fetching/pair';
 import {
@@ -29,7 +30,9 @@ import RevertLoadingModal from '../card/modals/RevertLoadingModal';
 import StorageLabel from '@/app/lib/localStorage';
 import NotFoundComponent from '@/app/components/404';
 import { NumberBox } from './NumberBox';
+import { useAuth } from '@/app/utils/wallet/AuthProvider';
 import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
+import { ArrowUpIcon } from '@/public/assets/icon-components/ArrowUp';
 
 const SliderMax = 10;
 const SliderBase = 2;
@@ -61,20 +64,18 @@ const CustomSlider = styled(Slider, {
   });
 });
 
-type IComment = {
-  title: string
-  rationale: string
-}
+const InitRatioValue = { value: 0, type: 'slider' } as { value: number, type: 'slider' | 'input' };
+
 export default function Home() {
   const { categoryId } = useParams() ?? {};
   // const queryClient = useQueryClient();
-  const { address, chainId } = useAccount();
+  const { githubHandle } = useAuth();
   // const wallet = useActiveWallet();
 
-  const [comments, setComments] = useState<IComment[] | undefined>();
-  const [ratio, setRatio] = React.useState<{ value: number, type: 'slider' | 'input' }>({ value: 0, type: 'slider' });
-  const [rating1, setRating1] = useState<number | null>(null);
-  const [rating2, setRating2] = useState<number | null>(null);
+  const [comments, setComments] = useState<IPairwisePairsResponse['rationales']>();
+  const [ratio, setRatio] = React.useState(InitRatioValue);
+  // const [rating1, setRating1] = useState<number | null>(null);
+  // const [rating2, setRating2] = useState<number | null>(null);
   const [project1, setProject1] = useState<IProject>();
   const [project2, setProject2] = useState<IProject>();
   // const [coiLoading1, setCoiLoading1] = useState(false);
@@ -86,7 +87,9 @@ export default function Home() {
   const [revertingBack, setRevertingBack] = useState(false);
   // const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+  const [showComments, setShowComments] = useState(true);
+  const [rationale, setRationale] = useState<string | null>(null);
+  const [rationaleError, setRationaleError] = useState<string | null>(null);
   // const [sectionExpanded1, setSectionExpanded1] = useState({
   //   repos: true,
   //   pricing: true,
@@ -155,25 +158,34 @@ export default function Home() {
     }
   }, [data]);
 
-  useEffect(() => {
-    setComments([{
-      title: 'A is 1000 times better than B',
-      rationale: 'A has more impact',
-    }, {
-      title: 'A is 1000 times better than B',
-      rationale: 'A has more impact',
-    },
-    ]);
-  }, []);
+  // useEffect(() => {
+  //   setComments([{
+  //     title: 'A is 1000 times better than B',
+  //     rationale: 'A has more impact',
+  //   }, {
+  //     title: 'A is 1000 times better than B',
+  //     rationale: 'A has more impact',
+  //   },
+  //   ]);
+  // }, []);
 
   useEffect(() => {
     if (!data || !data.pairs?.length) return;
-    setRating1(data.pairs[0][0].rating ?? null);
-    setRating2(data.pairs[0][1].rating ?? null);
+    // setRating1(data.pairs[0][0].rating ?? null);
+    // setRating2(data.pairs[0][1].rating ?? null);
+    setRatio(InitRatioValue);
+    setRationale(null);
+    setComments(data.rationales);
+    setRationaleError(null);
   }, [data]);
 
+  // useEffect(() => {
+  //   if (!data || !data.pairs?.length) return;
+
+  // }, [data]);
+
   useEffect(() => {
-    if (!data || !address) return;
+    if (!data || !githubHandle) return;
     if (data.pairs.length === 0) {
       setShowFinishModal(true);
 
@@ -241,17 +253,22 @@ export default function Home() {
   //   return false;
   // };
   const handleVote = async (chosenId: number) => {
+    if (shownValue !== 0 && (rationale === null || rationale.trim().length === 0)) {
+      setRationaleError('Please provide your rationale.');
+      return;
+    }
     try {
       await vote({
         data: {
           project1Id: project1!.id,
           project2Id: project2!.id,
-          project1Val: rating1 ?? 0,
-          project2Val: rating2 ?? 0,
+          project1Val: chosenId === project1!.id ? Math.abs(shownValue) : -1 * Math.abs(shownValue),
+          project2Val: chosenId === project2!.id ? Math.abs(shownValue) : -1 * Math.abs(shownValue),
           pickedId: chosenId,
+          rationale: rationale,
         },
       });
-      setRatio({ type: 'slider', value: 0 });
+      setRatio(InitRatioValue);
       if (getGetStarted().goodRating && !getGetStarted().postRating) {
         updateGetStarted({ postRating: true });
       }
@@ -277,9 +294,9 @@ export default function Home() {
     lowRate?: boolean
     postRating?: boolean
   }) {
-    if (!address || !chainId) return;
+    if (!githubHandle) return;
 
-    const currentUserKey = `${chainId}_${address}`;
+    const currentUserKey = `${githubHandle}`;
     const storedData = JSON.parse(
       localStorage.getItem(StorageLabel.GET_STARTED_DATA) || '{}'
     );
@@ -303,28 +320,28 @@ export default function Home() {
   }
 
   function getGetStarted() {
-    if (!address || !chainId) return {};
+    if (!githubHandle) return {};
 
     const storedData = JSON.parse(
       localStorage.getItem(StorageLabel.GET_STARTED_DATA) || '{}'
     );
 
-    return storedData[`${chainId}_${address}`] || {};
+    return storedData[`${githubHandle}`] || {};
   }
 
   const handleChange = (_event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
       setRatio({ type: 'slider', value: newValue });
-      setRating1(-newValue);
-      setRating2(newValue);
+      // setRating1(-newValue);
+      // setRating2(newValue);
     }
   };
 
   const handleNumberBoxChange = (newValue: number) => {
     if (typeof newValue === 'number') {
       setRatio({ type: 'input', value: newValue });
-      setRating1(-newValue);
-      setRating2(newValue);
+      // setRating1(-newValue);
+      // setRating2(newValue);
     }
   };
 
@@ -332,7 +349,7 @@ export default function Home() {
 
   if (!cid) return <NotFoundComponent />;
 
-  if (!address || !chainId) return redirect('/');
+  if (!githubHandle) return redirect('/');
 
   if (!project1 || !project2 || !data) return <div>No data</div>;
 
@@ -342,7 +359,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col">
-      <Modals />
       <Modal
         isOpen={
           revertingBack
@@ -402,8 +418,8 @@ export default function Home() {
           <footer className="w-full gap-8 rounded-xl px-8">
             <div className="relative bottom-0 z-50 flex grow flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner sl:py-2">
               <div className="flex w-3/4 flex-col items-center justify-center gap-4 rounded-xl lg:flex-row xl:gap-8">
-                <div className="w-1/5 text-ellipsis">{project1.name}</div>
-                <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
+                <div className="mr-3 w-1/5 text-ellipsis">{project1.name}</div>
+                {/* <div>{sliderScaleFunction(SliderMax, SliderBase)}</div> */}
                 <div className="relative mt-5 flex w-1/2 flex-col items-center justify-center gap-4">
                   <div className="absolute left-[(calc50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
                   <CustomSlider
@@ -421,8 +437,8 @@ export default function Home() {
                   />
 
                 </div>
-                <div>{sliderScaleFunction(SliderMax, SliderBase)}</div>
-                <div className="w-1/5 text-ellipsis">{project2.name}</div>
+                {/* <div>{sliderScaleFunction(SliderMax, SliderBase)}</div> */}
+                <div className="ml-3 w-1/5 text-ellipsis">{project2.name}</div>
               </div>
               <NumberBox
                 value={shownValue}
@@ -461,27 +477,32 @@ export default function Home() {
                       )}
               </div>
               <div className={`flex w-full flex-row ${shownValue ? 'justify-end' : 'justify-center'} px-10`}>
-                {shownValue !== 0 && (
-                  <div className="flex grow justify-start}">
-                    <div className="flex w-4/5 flex-col gap-2 px-10">
-                      <div className="font-bold">Rationale</div>
-                      <textarea
-                        rows={3}
-                        className="w-full resize-none rounded-md border border-gray-200 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder={`Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
-                      />
-                    </div>
+                <div className="flex grow justify-start}">
+                  <div className="flex w-4/5 flex-col gap-2 px-10">
+                    <div className="font-bold">Rationale</div>
+                    <textarea
+                      value={rationale ?? ''}
+                      onChange={e => setRationale(e.target.value)}
+                      rows={3}
+                      className="w-full resize-none rounded-md border border-primary p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder={shownValue === 0 ? 'Why do you want to skip this comparison?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
+                    />
+                    <span className="mt text-sm text-red-600">
+                      {' '}
+                      {rationaleError ? rationaleError : ''}
+                      {' '}
+                    </span>
                   </div>
-                )}
-                <div className={shownValue ? '' : 'translate-x-5'}>
-                  <div className={`flex gap-x-11 ${shownValue ? 'align-center flex-col-reverse justify-center gap-y-2' : ''}`}>
+                </div>
+                <div className="translate-x-5">
+                  <div className="flex flex-col-reverse justify-center gap-y-6">
                     <UndoButton
                       disabled={data?.votedPairs === 0 || isAnyModalOpen()}
                       onClick={handleUndo}
                     />
                     <button
                       className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
-                      onClick={() => { handleVote(((rating1 ?? 0) > (rating2 ?? 0)) ? project1.id : project2.id); }}
+                      onClick={() => { handleVote(shownValue > 0 ? project2.id : project1.id); }}
                     >
                       {ratio.value === 0 ? 'Skip' : 'Next'}
                     </button>
@@ -492,17 +513,23 @@ export default function Home() {
           </footer>
         </div>
         {comments && comments.length && (
-          <div className="mr-3 mt-6 flex w-80 flex-col gap-3 rounded-xl border border-gray-200 px-4 pb-8 pt-4">
+          <div className="mr-3 mt-6 flex w-96 flex-col gap-3 rounded-xl border border-gray-200 px-4 pb-8 pt-4">
             <button onClick={() => { setShowComments(!showComments); }} className="flex items-center gap-2 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
               <Image width={20} height={20} src="/assets/images/people.png" alt="people" />
               <span>View Other Evaluations</span>
-              <ArrowDownIcon />
+              {showComments ? <ArrowUpIcon /> : <ArrowDownIcon />}
             </button>
-            {showComments && comments.map((comment, index) => {
+            {showComments && comments.map(({ pickedId, project1, project2, rationale, multiplier, user }, index) => {
               return (
                 <div key={index} className="flex flex-col gap-3 rounded-md border border-gray-200 p-5">
-                  <div className="font-bold">{comment.title}</div>
-                  <div className="font-normal">{comment.rationale}</div>
+                  <div className="font-bold">
+                    {pickedId === project1.id
+                      ? `${user.ghUsername}: ${project1.name} deserves ${multiplier}x more credit than ${project2.name}`
+                      : pickedId === project2.id
+                        ? `${user.ghUsername}: ${project2.name} deserves ${multiplier}x more credit than ${project1.name}`
+                        : `${user.ghUsername}: Skipped comparing ${project2.name} with ${project2.name}`}
+                  </div>
+                  <div className="text-[15px] font-normal text-gray-800">{rationale}</div>
                 </div>
               );
             })}

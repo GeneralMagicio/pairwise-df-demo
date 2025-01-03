@@ -1,8 +1,6 @@
 'use client';
 
-import { useWeb3Modal } from '@web3modal/wagmi/react';
 import React from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
 import { CoinbaseIcon } from '@/public/assets/icon-components/CoinbaseIcon';
 import { MetaMaskIcon } from '@/public/assets/icon-components/MetaMaskIcon';
@@ -11,44 +9,28 @@ import { WalletConnectIcon } from '@/public/assets/icon-components/WalletConnect
 import { ZerionIcon } from '@/public/assets/icon-components/ZerionIcon';
 import { ConnectedButton } from './ConnectedButton';
 import { useAuth } from './AuthProvider';
+import { useGithubURL } from '@/app/useGithub';
 // import { loginToAgora } from './agora-login'
 
 export const ConnectButton = () => {
-  const { open } = useWeb3Modal();
-  const { isConnected } = useAccount();
-  const { disconnectAsync } = useDisconnect();
-  const { signOut, loginAddress } = useAuth();
+  const { signOut, githubHandle } = useAuth();
   const posthog = usePostHog();
+  const { data: url, isLoading } = useGithubURL();
 
   const logout = async () => {
-    await disconnectAsync();
     signOut();
   };
   // const { signMessageAsync } = useSignMessage()
 
   function handleOpen() {
     posthog.capture('Connect');
-    try {
-      open();
-    }
-    catch (_e) {
-      open();
+    if (!isLoading) {
+      window.open(url);
     }
   }
 
-  // useEffect(() => {
-  //   if (!address || !chainId) return
-
-  //   const func = async () => {
-  //     const payload = await loginToAgora(address, chainId, signMessageAsync)
-  //     // console.log(loggedIn)
-  //   }
-
-  //   func()
-  // }, [isConnected, address, chainId, signMessageAsync])
-
-  if (isConnected && loginAddress.value) return (
-    <ConnectedButton onLogout={logout} wallet={loginAddress.value} />
+  if (githubHandle) return (
+    <ConnectedButton onLogout={logout} username={githubHandle} />
   );
 
   return (
@@ -58,7 +40,7 @@ export const ConnectButton = () => {
      bg-primary px-4 py-1.5 font-semibold text-white shadow-md transition duration-300
      hover:bg-purple-600 sm:px-6 sm:py-2 md:px-8 md:py-3"
     >
-      <span className="ml-2 whitespace-nowrap">Get Started</span>
+      <span className="ml-2 whitespace-nowrap">Login With Github</span>
       <ArrowRightIcon />
     </button>
   );
