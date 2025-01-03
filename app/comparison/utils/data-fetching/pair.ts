@@ -2,12 +2,27 @@ import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '@/app/utils/axiosInstance';
 import { IProject } from '../types';
 
+interface ProjectRationaleData {
+  createdAt: string
+  id: number
+  multiplier: number
+  pickedId: number
+  project1Id: number
+  project2Id: number
+  project1: { id: number, name: string }
+  project2: { id: number, name: string }
+  user: { ghUsername: string }
+  rationale: string
+  updatedAt: string
+  userId: number
+}
 export interface IPairwisePairsResponse {
   pairs: IProject[][]
   totalPairs: number
   votedPairs: number
   name: string
   id: number
+  rationales: ProjectRationaleData[]
   progress: number
   threshold: number
 }

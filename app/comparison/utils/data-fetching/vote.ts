@@ -8,6 +8,7 @@ type ProjectVoteData = {
     project2Val: number | null
     project1Val: number | null
     pickedId: number | null
+    rationale: string | null
   }
 };
 
