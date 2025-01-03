@@ -3,14 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { redirect, useParams } from 'next/navigation';
 // import { useQueryClient } from '@tanstack/react-query';
-import { useAccount } from 'wagmi';
+// import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import { ProjectCard } from '../card/ProjectCard';
 import HeaderRF6 from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
-import Modals from '@/app/utils/wallet/Modals';
+// import Modals from '@/app/utils/wallet/Modals';
 import {
   useGetPairwisePairs,
 } from '../utils/data-fetching/pair';
@@ -29,6 +29,7 @@ import StorageLabel from '@/app/lib/localStorage';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import NotFoundComponent from '@/app/components/404';
 import { NumberBox } from './NumberBox';
+import { useAuth } from '@/app/utils/wallet/AuthProvider';
 
 const SliderMax = 10;
 const SliderBase = 2;
@@ -63,7 +64,7 @@ const CustomSlider = styled(Slider, {
 export default function Home() {
   const { categoryId } = useParams() ?? {};
   // const queryClient = useQueryClient();
-  const { address, chainId } = useAccount();
+  const { githubHandle } = useAuth();
   // const wallet = useActiveWallet();
 
   const [ratio, setRatio] = React.useState<{ value: number, type: 'slider' | 'input' }>({ value: 0, type: 'slider' });
@@ -155,7 +156,7 @@ export default function Home() {
   }, [data]);
 
   useEffect(() => {
-    if (!data || !address) return;
+    if (!data || !githubHandle) return;
     if (data.pairs.length === 0) {
       setShowFinishModal(true);
 
@@ -259,9 +260,9 @@ export default function Home() {
     lowRate?: boolean
     postRating?: boolean
   }) {
-    if (!address || !chainId) return;
+    if (!githubHandle) return;
 
-    const currentUserKey = `${chainId}_${address}`;
+    const currentUserKey = `${githubHandle}`;
     const storedData = JSON.parse(
       localStorage.getItem(StorageLabel.GET_STARTED_DATA) || '{}'
     );
@@ -285,13 +286,13 @@ export default function Home() {
   }
 
   function getGetStarted() {
-    if (!address || !chainId) return {};
+    if (!githubHandle) return {};
 
     const storedData = JSON.parse(
       localStorage.getItem(StorageLabel.GET_STARTED_DATA) || '{}'
     );
 
-    return storedData[`${chainId}_${address}`] || {};
+    return storedData[`${githubHandle}`] || {};
   }
 
   const handleChange = (_event: Event, newValue: number | number[]) => {
@@ -314,7 +315,7 @@ export default function Home() {
 
   if (!cid) return <NotFoundComponent />;
 
-  if (!address || !chainId) return redirect('/');
+  if (!githubHandle) return redirect('/');
 
   if (!project1 || !project2 || !data) return <div>No data</div>;
 
@@ -324,7 +325,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen">
-      <Modals />
+      {/* <Modals /> */}
       <Modal
         isOpen={
           revertingBack

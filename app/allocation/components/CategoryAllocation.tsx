@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { NumericFormat } from 'react-number-format';
 import { usePostHog } from 'posthog-js/react';
 import { roundFractions } from '../utils';
-import { useAuth } from '@/app/utils/wallet/AuthProvider';
 import { CollectionProgressStatusEnum } from '@/app/comparison/utils/types';
 import { TCategory } from '@/app/comparison/utils/data-fetching/categories';
 import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRightIcon';
@@ -61,8 +60,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   onLockClick,
   onPercentageChange,
 }) => {
-  const { isAutoConnecting } = useAuth();
-
   const hrefLink
     = progress === CollectionProgressStatusEnum.Finished
     || progress === CollectionProgressStatusEnum.Attested
@@ -95,7 +92,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         return (
           <VotedCategory
             id={id}
-            isAutoConnecting={isAutoConnecting}
             attestationLink={attestationLink || ''}
             delegations={delegations}
             budgetEditHandle={onEdit}
@@ -107,7 +103,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
           <PendingCategory
             onScore={onScore}
             progress={progress}
-            isAutoConnecting={isAutoConnecting}
             isBadgeholder={isBadgeholder}
             bhCategory={bhCategory}
             categorySlug={categorySlug}
