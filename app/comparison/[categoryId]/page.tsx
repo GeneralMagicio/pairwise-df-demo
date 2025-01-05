@@ -519,18 +519,22 @@ export default function Home() {
               <span>View Other Evaluations</span>
               {showComments ? <ArrowUpIcon /> : <ArrowDownIcon />}
             </button>
-            {showComments && comments.map(({ pickedId, project1: p1, project2: p2, rationale, multiplier, user }, index) => {
+            {showComments && comments.filter(({ project1: p1, project2: p2 }) => {
+              return (project1.id === p1.id || project1.id === p2.id) && (project2.id === p2.id || project2.id === p1.id);
+            }).map(({ pickedId, project1: p1, project2: p2, rationale, multiplier }, index) => {
               return (
-                <div key={index} className={`flex flex-col gap-3 rounded-md border border-gray-200 p-5 ${project1.id === p1.id && project2.id === p2.id ? 'bg-purple-50' : ''}`}>
-                  <div className="font-bold">
-                    {pickedId === p1.id
-                      ? `${user.ghUsername}: ${p1.name} deserves ${multiplier}x more credit than ${p2.name}`
-                      : pickedId === p2.id
-                        ? `${user.ghUsername}: ${p2.name} deserves ${multiplier}x more credit than ${p1.name}`
-                        : `${user.ghUsername}: Skipped comparing ${p2.name} with ${p2.name}`}
+                (
+                  <div key={index} className={`flex flex-col gap-3 rounded-md border border-gray-200 p-5 ${project1.id === p1.id && project2.id === p2.id ? 'bg-purple-50' : ''}`}>
+                    <div className="font-bold">
+                      {pickedId === p1.id
+                        ? `${p1.name} deserves ${multiplier}x more credit than ${p2.name}`
+                        : pickedId === p2.id
+                          ? `${p2.name} deserves ${multiplier}x more credit than ${p1.name}`
+                          : `Skipped comparing ${p1.name} with ${p2.name}`}
+                    </div>
+                    <div className="text-[15px] font-normal text-gray-800">{rationale}</div>
                   </div>
-                  <div className="text-[15px] font-normal text-gray-800">{rationale}</div>
-                </div>
+                )
               );
             })}
           </div>
