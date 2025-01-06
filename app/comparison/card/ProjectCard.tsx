@@ -13,7 +13,7 @@ enum ProjectSection {
 }
 
 interface CollapsibleProps {
-  title: string
+  title?: string
   children: React.ReactNode
   id: string
 }
@@ -24,12 +24,12 @@ export interface AutoScrollAction {
   action: boolean
 }
 
-const ProjectSectionTitles = {
-  [ProjectSection.REPOS]: 'Repos, links, and contracts',
-  [ProjectSection.TESTIMONIALS]: 'Testimonials',
-  [ProjectSection.IMPACT]: 'Impact statement',
-  [ProjectSection.PRICING]: 'Pricing model',
-};
+// const ProjectSectionTitles = {
+//   [ProjectSection.REPOS]: 'Repos, links, and contracts',
+//   [ProjectSection.TESTIMONIALS]: 'Testimonials',
+//   [ProjectSection.IMPACT]: 'Impact statement',
+//   [ProjectSection.PRICING]: 'Pricing model',
+// };
 
 const Section: FC<CollapsibleProps> = ({
   title,
@@ -40,9 +40,11 @@ const Section: FC<CollapsibleProps> = ({
     <>
       <hr className="border-t border-gray-200" />
       <div id={id} className="mb-2 pt-4">
-        <div className="flex items-center justify-between gap-4 p-2">
-          <button className="text-xl font-medium">{title}</button>
-        </div>
+        {title && (
+          <div className="flex items-center justify-between gap-4 p-2">
+            <button className="text-xl font-medium">{title}</button>
+          </div>
+        )}
         <section className="p-2">
           {children}
         </section>
@@ -113,7 +115,6 @@ export const ProjectCard: React.FC<Props> = ({
 
           <Section
             id={`repos-${name}`}
-            title={ProjectSectionTitles[ProjectSection.REPOS]}
           >
             <div className="space-y-4">
               <GithubBox key={metadata.id} {...metadata} />
