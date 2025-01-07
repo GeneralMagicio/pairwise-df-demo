@@ -258,7 +258,7 @@ export default function Home() {
       if(shownValue !== 0)
         setRationaleError('Min 70 characters required');
       else
-        setRationaleError('Why do you think these 2 are equal important.')
+        setRationaleError('Why do you think these 2 are equal important')
       return;
     }
     try {
