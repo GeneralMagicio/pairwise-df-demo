@@ -28,24 +28,26 @@ type Props = Pick<ProjectMetadata, 'forkCount' | 'starCount' | 'id' | 'totalFund
 // }
 enum Tab {
   METRICS,
+  AISUMMARY,
+  WHEREUSED,
 }
 const tabs = {
   [Tab.METRICS]: 'Metrics',
+  [Tab.AISUMMARY]: 'AI Summary',
+  [Tab.WHEREUSED]: 'Where it is used',
 };
 const GithubBox: FC<Props> = ({ forkCount, starCount, totalFundingUsd, language,
 }) => {
   // const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
   const [tab, setTab] = useState<keyof typeof tabs>(Tab.METRICS);
   return (
-    <div
-      className="max-w-full rounded-lg border border-gray-200 bg-gray-50 p-2 py-[12px]"
-    >
+    <div>
       <div
-        className="mb-5 border-b border-black"
+        className="mb-5 border-b border-gray-border"
       >
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-3">
           {Object.entries(tabs).map(([t, text]) => {
-            return <button key={t} className={tab === parseInt(t) ? 'border-b border-primary text-primary' : ''} onClick={() => setTab(parseInt(t))}>{text}</button>;
+            return <button key={t} className={`px-1 pb-3 text-base ${tab === parseInt(t) ? 'border-b border-primary text-main-title' : 'text-gray-placeholder'}`} onClick={() => setTab(parseInt(t))}>{text}</button>;
           })}
         </div>
       </div>

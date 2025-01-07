@@ -68,6 +68,9 @@ const config: Config = {
           text: '#079455',
           border: '#17B26A',
         },
+        'main': {
+          title: '#6941C6',
+        },
       },
       fontFamily: {
         sans: ['"Inter var", sans-serif'],
