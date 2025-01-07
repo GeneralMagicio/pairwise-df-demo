@@ -254,8 +254,11 @@ export default function Home() {
   //   return false;
   // };
   const handleVote = async (chosenId: number | null) => {
-    if ((rationale === null || rationale.trim().length < 70)) {
-      setRationaleError('Min 70 characters required');
+    if (rationale === null || rationale.trim().length < 70) {
+      if(shownValue !== 0)
+        setRationaleError('Min 70 characters required');
+      else
+        setRationaleError('Why do you think these 2 are equal important.')
       return;
     }
     try {
