@@ -174,7 +174,7 @@ const HeaderRF6: FC<HeaderProps> = ({
               <>
                 <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
                   <span className="mr-4 rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
-                    {`${category}'s`}
+                    {category}
                   </span>
                   <span className="text-center text-lg font-semibold">
                     Which dependency gets more credit for
