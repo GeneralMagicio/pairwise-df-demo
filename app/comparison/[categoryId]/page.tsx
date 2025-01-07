@@ -255,7 +255,7 @@ export default function Home() {
   // };
   const handleVote = async (chosenId: number | null) => {
     if ((rationale === null || rationale.trim().length < 70)) {
-      setRationaleError('Min 70 characters required.');
+      setRationaleError('Min 70 characters required');
       return;
     }
     try {
