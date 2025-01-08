@@ -51,7 +51,8 @@ const CustomSlider = styled(Slider, {
       border: '1px solid #EAECF0',
     },
     '& .MuiSlider-thumb': {
-      backgroundColor: '#7F56D9',
+      backgroundColor: '#FFFFFF',
+      border: '1.5px solid #7F56D9',
     },
     '& .MuiSlider-track': {
       background: (val > 0) ? `linear-gradient(to right, #EAECF0 0%, #EAECF0 ${max / (max + val) * 100}%, #7F56D9 ${max / (max + val) * 100}%, #7F56D9 100%)` : '#FFFFFF`',
@@ -253,8 +254,11 @@ export default function Home() {
   //   return false;
   // };
   const handleVote = async (chosenId: number | null) => {
-    if (shownValue !== 0 && (rationale === null || rationale.trim().length === 0)) {
-      setRationaleError('Please provide your rationale.');
+    if (rationale === null || rationale.trim().length < 70) {
+      if (shownValue !== 0)
+        setRationaleError('Min 70 characters required');
+      else
+        setRationaleError('Why do you think these 2 are equally important');
       return;
     }
     try {
@@ -477,25 +481,25 @@ export default function Home() {
                       )}
               </div>
               <div className={`flex w-full flex-row ${shownValue ? 'justify-end' : 'justify-center'} px-10`}>
-                <div className="flex grow justify-start}">
-                  <div className="flex w-4/5 flex-col gap-2 px-10">
+                <div className="relative flex grow justify-start">
+                  <div className="flex w-4/5 flex-col justify-around gap-2 pl-10">
                     <div className="font-bold">Rationale</div>
                     <textarea
                       value={rationale ?? ''}
                       onChange={e => setRationale(e.target.value)}
-                      rows={3}
-                      className="w-full resize-none rounded-md border border-primary p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={2}
+                      className="w-full resize-none rounded-md border border-[#D0D5DD] p-2 shadow-sm focus:outline-none focus:ring-2 "
                       placeholder={shownValue === 0 ? 'Why do you want to skip this comparison?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
                     />
-                    <span className="mt text-sm text-red-600">
+                    <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-[#475467]">
                       {' '}
                       {rationaleError ? rationaleError : ''}
                       {' '}
                     </span>
                   </div>
                 </div>
-                <div className="translate-x-5">
-                  <div className="flex flex-col-reverse justify-center gap-y-6">
+                <div className="mb-2 flex">
+                  <div className="mt-auto flex w-full justify-center gap-x-4 align-bottom">
                     <UndoButton
                       disabled={data?.votedPairs === 0 || isAnyModalOpen()}
                       onClick={handleUndo}
@@ -504,7 +508,7 @@ export default function Home() {
                       className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
                       onClick={() => { handleVote(shownValue === 0 ? null : shownValue > 0 ? project2.id : project1.id); }}
                     >
-                      {ratio.value === 0 ? 'Skip' : 'Next'}
+                      Next
                     </button>
                   </div>
                 </div>

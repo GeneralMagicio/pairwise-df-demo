@@ -38,14 +38,13 @@ const Section: FC<CollapsibleProps> = ({
 }) => {
   return (
     <>
-      <hr className="border-t border-gray-200" />
       <div id={id} className="mb-2 pt-4">
         {title && (
           <div className="flex items-center justify-between gap-4 p-2">
             <button className="text-xl font-medium">{title}</button>
           </div>
         )}
-        <section className="p-2">
+        <section>
           {children}
         </section>
       </div>
