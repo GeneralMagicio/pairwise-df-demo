@@ -205,9 +205,9 @@ const HeaderRF6: FC<HeaderProps> = ({
 
         </div>
         <div className="mx-2 my-auto flex flex-row gap-4">
-          <ConnectButton/>
+          <ConnectButton />
           <button
-            className="flex items-center justify-center gap-2 rounded-lg border border-gray-200 p-2 text-sm font-semibold text-nowrap"
+            className="flex items-center justify-center gap-2 text-nowrap rounded-lg border border-gray-200 p-2 text-sm font-semibold"
             onClick={() => window.open(PAIRWISE_REPORT_URL, '_blank')}
           >
             Report an issue
