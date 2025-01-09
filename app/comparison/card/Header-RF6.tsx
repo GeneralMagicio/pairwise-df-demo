@@ -178,6 +178,7 @@ const HeaderRF6: FC<HeaderProps> = ({
                   </span>
                   <span className="text-center text-lg font-semibold">
                     Which dependency gets more credit for
+                    {' '}
                     {category}
                     's success?
                   </span>
