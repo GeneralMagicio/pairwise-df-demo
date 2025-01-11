@@ -34,6 +34,7 @@ import { useAuth } from '@/app/utils/wallet/AuthProvider';
 import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRightIcon';
 import { RationaleBox } from './RationaleBox';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
+import { useCategory } from '../utils/data-fetching/category';
 
 const SliderMax = 10;
 const SliderBase = 2;
@@ -122,6 +123,7 @@ export default function Home() {
   const { data, isLoading } = useGetPairwisePairs(cid);
   const prevProgress = usePrevious(progress);
 
+  const { data: categoryResp } = useCategory(cid);
   // const { mutateAsync: markProjectCoI } = useMarkCoi();
   const { mutateAsync: vote } = useUpdateProjectVote({ categoryId: cid });
   const { mutateAsync: undo } = useUpdateProjectUndo({
@@ -275,10 +277,7 @@ export default function Home() {
   // };
   const handleVote = async (chosenId: number | null) => {
     if (rationale === null || rationale.trim().length < 70) {
-      if (shownValue !== 0)
-        setRationaleError('Min 70 characters required');
-      else
-        setRationaleError('Why do you think these 2 are equally important');
+      setRationaleError('Min 70 characters required');
       return;
     }
     try {
@@ -383,6 +382,7 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col">
+
       <Modal
         isOpen={
           revertingBack
@@ -412,13 +412,27 @@ export default function Home() {
         <HeaderRF6
           progress={progress * 100}
           category={data.name}
+          projImage={categoryResp?.collection.image}
           isFirstSelection={false}
+          showBackButton
         />
       </div>
       <div className="relative flex h-full grow">
         <div className="relative grow">
-          <div className="flex w-full">
-            <div className="relative flex grow items-center justify-between gap-8 px-8 pt-2">
+          <div className="glex flex w-full flex-col">
+
+            <div className="mt-6 text-center text-2xl font-semibold">
+              Which dependency gets more credit for
+              {' '}
+              <span>
+                {categoryResp?.collection.name}
+                {' '}
+                success?
+              </span>
+              {' '}
+              success?
+            </div>
+            <div className="relative flex grow items-center justify-between gap-8 px-8">
               <div className="relative w-[49%]">
                 <ProjectCard
                   key={project1.RF6Id}
@@ -509,7 +523,7 @@ export default function Home() {
                       onChange={e => setRationale(e.target.value)}
                       rows={2}
                       className="w-full resize-none rounded-md border border-[#D0D5DD] p-2 shadow-sm focus:outline-none focus:ring-2 "
-                      placeholder={shownValue === 0 ? 'Why do you want to skip this comparison?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
+                      placeholder={shownValue === 0 ? 'Why do you think these 2 are equally important?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
                     />
                     <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-[#475467]">
                       {' '}
@@ -574,10 +588,11 @@ export default function Home() {
                       );
                     })}
                   </div>
-                  <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
+                  {/* <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
                     <div>Feeling stuck?</div>
-                    <button className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-[#344054]">View other juror evaluations</button>
-                  </div>
+                    <button className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold
+                    text-[#344054]">View other juror evaluations</button>
+                  </div> */}
                 </div>
               )
             : (

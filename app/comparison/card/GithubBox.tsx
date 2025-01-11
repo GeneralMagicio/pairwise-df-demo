@@ -33,8 +33,8 @@ enum Tab {
 }
 const tabs = {
   [Tab.METRICS]: 'Metrics',
-  [Tab.AISUMMARY]: 'AI Summary',
-  [Tab.WHEREUSED]: 'Where it is used',
+  // [Tab.AISUMMARY]: 'AI Summary',
+  // [Tab.WHEREUSED]: 'Where it is used',
 };
 const GithubBox: FC<Props> = ({ forkCount, starCount, totalFundingUsd, language,
 }) => {
