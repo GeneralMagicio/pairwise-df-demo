@@ -424,10 +424,8 @@ export default function Home() {
             <div className="mt-6 text-center text-2xl font-semibold">
               Which dependency gets more credit for
               {' '}
-              <span>
+              <span className="font-bold">
                 {categoryResp?.collection.name}
-                {' '}
-                success?
               </span>
               {' '}
               success?
