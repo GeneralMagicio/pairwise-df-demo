@@ -147,9 +147,9 @@ const AllocationPage = () => {
               : (
                   categories
                   && categories.length > 0 && (
-                    <div className="flex flex-col gap-4">
+                    <div className="grid grid-cols-3 grid-rows-3 gap-4">
 
-                      {categories.map((cat) => {
+                      {categories.sort((c1, c2) => c1.name.localeCompare(c2.name)).map((cat) => {
                         const rank = categoriesRanking?.find(
                           el => el.id === cat.id
                         );
