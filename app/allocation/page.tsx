@@ -77,15 +77,15 @@ const AllocationPage = () => {
   };
 
   const handleScoreProjects = (id: RankItem['id']) => () => {
-    console.log(id);
+    // console.log(id);
     // setSelectedCategoryId(id);
     router.push(`/comparison/${id}`);
   };
 
-  const handleEdit = (id: RankItem['id']) => {
-    // setSelectedCategoryId(id);
-    router.push(`/allocation/${id}`);
-  };
+  // const handleEdit = (id: RankItem['id']) => {
+  //   // setSelectedCategoryId(id);
+  //   router.push(`/allocation/${id}`);
+  // };
 
   useEffect(() => {
     if (categoryRankings) {
@@ -164,7 +164,7 @@ const AllocationPage = () => {
                             onDelegate={() => {}}
                             onLockClick={handleLock(cat.id)}
                             onScore={handleScoreProjects(cat.id)}
-                            onEdit={() => handleEdit(cat.id)}
+                            onView={() => {}}
                             onPercentageChange={handleNewValue(cat.id)}
                             username=""
                           />

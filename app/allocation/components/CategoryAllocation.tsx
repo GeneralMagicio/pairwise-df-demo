@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import { CollectionProgressStatusEnum } from '@/app/comparison/utils/types';
@@ -25,7 +24,7 @@ interface CategoryAllocationProps extends TCategory {
   image: string
   onDelegate: () => void
   onScore: () => void
-  onEdit: () => void
+  onView: () => void
   onLockClick: () => void
   onPercentageChange: (value: number) => void
 }
@@ -37,17 +36,10 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   projectCount,
   image,
   progress,
-  attestationLink,
   loading,
   onScore,
-  onEdit,
+  onView,
 }) => {
-  const hrefLink
-    = progress === CollectionProgressStatusEnum.Finished
-    || progress === CollectionProgressStatusEnum.Attested
-      ? `/allocation/${id}`
-      : `/comparison/${id}`;
-
   const renderProgressState = () => {
     if (loading) return <Loading />;
     switch (progress) {
@@ -56,7 +48,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         return (
           <VotedCategory
             id={id}
-            budgetEditHandle={onEdit}
+            budgetEditHandle={onView}
           />
         );
       case CollectionProgressStatusEnum.WIP:
@@ -83,13 +75,12 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
           name={name}
           description={description}
           projectCount={projectCount}
-          hrefLink={hrefLink}
           src={image}
           alt={name}
         />
       </div>
 
-      <div className="flex w-full items-center justify-center gap-2 2xl:w-[26%]">
+      <div className="flex w-full items-center justify-center gap-2">
         { renderProgressState()}
       </div>
     </div>
@@ -100,10 +91,9 @@ const ProjectInfo: FC<{
   name: string
   description: string
   projectCount?: number
-  hrefLink: string
   src: string
   alt: string
-}> = ({ name, description, projectCount, hrefLink, src, alt }) => {
+}> = ({ name, description, projectCount, src, alt }) => {
   const posthog = usePostHog();
   return (
     <div
@@ -112,15 +102,14 @@ const ProjectInfo: FC<{
       <div className="flex gap-2">
         <Image className="rounded-full border" src={src} alt={alt} width={36} height={36} />
 
-        <Link
+        <span
           className="flex items-center gap-2 font-medium"
-          href={hrefLink}
           onClick={() => {
             posthog.capture('Explore project', { category: name });
           }}
         >
           {name}
-        </Link>
+        </span>
       </div>
       <p className="text-sm text-gray-400">{shortenText(description, 30)}</p>
       {projectCount && (
