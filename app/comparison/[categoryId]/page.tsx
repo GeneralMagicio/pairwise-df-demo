@@ -36,6 +36,7 @@ import { RationaleBox } from './RationaleBox';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { useCategory } from '../utils/data-fetching/category';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
+import { shortenText } from '../utils/helpers';
 
 const SliderMax = 10;
 const SliderBase = 2;
@@ -96,7 +97,7 @@ export default function Home() {
 
   const [revertingBack, setRevertingBack] = useState(false);
   // const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showFinishModal, setShowFinishModal] = useState(true);
+  const [showFinishModal, setShowFinishModal] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [rationale, setRationale] = useState<string | null>(null);
   const [rationaleError, setRationaleError] = useState<string | null>(null);
@@ -564,7 +565,7 @@ export default function Home() {
                     {tabs && (
                       <div className="flex h-full flex-row items-center gap-3">
                         {Object.entries(tabs).map(([t, text]) => {
-                          return <button key={t} className={`h-full max-w-24 text-wrap break-words px-1 pb-3 text-base font-semibold ${tab === parseInt(t) ? 'border-b border-primary text-main-title' : 'text-gray-placeholder'}`} onClick={() => setTab(parseInt(t))}>{text}</button>;
+                          return <button key={t} className={`h-full max-w-32 text-wrap break-words px-1 pb-3 text-base font-semibold ${tab === parseInt(t) ? 'border-b border-primary text-main-title' : 'text-gray-placeholder'}`} onClick={() => setTab(parseInt(t))}>{shortenText(text, 14)}</button>;
                         })}
                       </div>
                     )}
