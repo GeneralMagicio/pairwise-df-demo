@@ -159,13 +159,8 @@ const AllocationPage = () => {
                             key={cat.name}
                             image={cat.image}
                             locked={rank?.locked || false}
-                            delegations={0}
                             allocationPercentage={rank?.percentage || 0}
                             loading={false}
-                            isBadgeholder={false}
-                            bhCategory=""
-                            isBHCategoryAtessted={false}
-                            categorySlug={cat.name}
                             onDelegate={() => {}}
                             onLockClick={handleLock(cat.id)}
                             onScore={handleScoreProjects(cat.id)}

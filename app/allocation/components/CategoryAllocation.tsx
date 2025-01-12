@@ -8,6 +8,7 @@ import Loading from '@/app/components/Loading';
 import VotedCategory from './ProgressCards/VotedCategory';
 import PendingCategory from './ProgressCards/PendingCategory';
 import { shortenText } from '@/app/comparison/utils/helpers';
+import WipCategory from './ProgressCards/WipCategory';
 
 // Image source map for collections
 // const collectionsImageSrc = new Map<number, string>([
@@ -19,14 +20,9 @@ import { shortenText } from '@/app/comparison/utils/helpers';
 interface CategoryAllocationProps extends TCategory {
   allocationPercentage: number
   locked: boolean
-  delegations: number
   loading: boolean
   username?: string
-  isBadgeholder: boolean
-  bhCategory: string
   image: string
-  isBHCategoryAtessted: boolean
-  categorySlug: string
   onDelegate: () => void
   onScore: () => void
   onEdit: () => void
@@ -42,12 +38,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   image,
   progress,
   attestationLink,
-  delegations,
   loading,
-  isBadgeholder,
-  bhCategory,
-  categorySlug,
-  isBHCategoryAtessted,
   onScore,
   onEdit,
 }) => {
@@ -66,8 +57,14 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
           <VotedCategory
             id={id}
             attestationLink={attestationLink || ''}
-            delegations={delegations}
             budgetEditHandle={onEdit}
+          />
+        );
+      case CollectionProgressStatusEnum.WIP:
+      case CollectionProgressStatusEnum.WIPThreshold:
+        return (
+          <WipCategory
+            onScore={onScore}
           />
         );
       case CollectionProgressStatusEnum.Pending:
@@ -75,18 +72,13 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         return (
           <PendingCategory
             onScore={onScore}
-            progress={progress}
-            isBadgeholder={isBadgeholder}
-            bhCategory={bhCategory}
-            categorySlug={categorySlug}
-            isBHCategoryAtessted={isBHCategoryAtessted}
           />
         );
     }
   };
 
   return (
-    <div className="flex flex-col justify-between rounded-lg border bg-gray-50 p-4">
+    <div className="flex flex-col justify-between gap-8 rounded-lg border bg-gray-50 p-4">
       <div className="flex w-full space-x-4">
         {/* <ImageContainer src={image} alt={name} /> */}
         <ProjectInfo
@@ -99,10 +91,8 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         />
       </div>
 
-      <div className="flex w-[36%] items-center justify-center gap-2 2xl:w-[26%]">
-        <div className="flex w-4/5 items-start justify-center">
-          { renderProgressState()}
-        </div>
+      <div className="flex w-full items-center justify-center gap-2 2xl:w-[26%]">
+        { renderProgressState()}
       </div>
     </div>
   );
