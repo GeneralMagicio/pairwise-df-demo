@@ -56,7 +56,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         return (
           <VotedCategory
             id={id}
-            attestationLink={attestationLink || ''}
             budgetEditHandle={onEdit}
           />
         );
@@ -80,7 +79,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   return (
     <div className="flex flex-col justify-between gap-8 rounded-lg border bg-gray-50 p-4">
       <div className="flex w-full space-x-4">
-        {/* <ImageContainer src={image} alt={name} /> */}
         <ProjectInfo
           name={name}
           description={description}
@@ -98,12 +96,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   );
 };
 
-// const ImageContainer: FC<{ src: string, alt: string }> = ({ src, alt }) => (
-//   <div className="rounded-lg">
-//     <Image src={src} alt={alt} width={64} height={64} />
-//   </div>
-// );
-
 const ProjectInfo: FC<{
   name: string
   description: string
@@ -118,7 +110,7 @@ const ProjectInfo: FC<{
       className="flex w-full flex-col gap-2"
     >
       <div className="flex gap-2">
-        <Image className="rounded-full border" src={src} alt={alt} width={48} height={48} />
+        <Image className="rounded-full border" src={src} alt={alt} width={36} height={36} />
 
         <Link
           className="flex items-center gap-2 font-medium"
@@ -128,7 +120,6 @@ const ProjectInfo: FC<{
           }}
         >
           {name}
-          {/* <ArrowRightIcon color="#05060B" size={24} /> */}
         </Link>
       </div>
       <p className="text-sm text-gray-400">{shortenText(description, 30)}</p>
