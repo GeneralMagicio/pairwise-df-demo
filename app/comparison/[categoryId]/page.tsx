@@ -35,6 +35,7 @@ import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRightIcon';
 import { RationaleBox } from './RationaleBox';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { useCategory } from '../utils/data-fetching/category';
+import PostVotingModal from '../ballot/modals/PostVotingModal';
 
 const SliderMax = 10;
 const SliderBase = 2;
@@ -95,7 +96,7 @@ export default function Home() {
 
   const [revertingBack, setRevertingBack] = useState(false);
   // const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showFinishModal, setShowFinishModal] = useState(false);
+  const [showFinishModal, setShowFinishModal] = useState(true);
   const [showComments, setShowComments] = useState(false);
   const [rationale, setRationale] = useState<string | null>(null);
   const [rationaleError, setRationaleError] = useState<string | null>(null);
@@ -400,12 +401,12 @@ export default function Home() {
             cancelSelection={() => setShowLowRateModal(false)}
           />
         )} */}
-        {/* {showFinishModal && (
+        {showFinishModal && (
           <PostVotingModal
             cid={data.id}
             categoryLabel={data.name}
           />
-        )} */}
+        )}
       </Modal>
 
       <div>
