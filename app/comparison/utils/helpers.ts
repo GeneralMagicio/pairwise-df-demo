@@ -52,6 +52,16 @@ export const convertCategoryToLabel = (category: JWTPayload['category']) => {
 //   return category in labels ? labels[category] : 30;
 // };
 
+export function shortenText(
+  text: string,
+  length: number = 35,
+): string {
+  if (text.length < length) return text;
+  const shownText = text.slice(0, length);
+
+  return `${shownText}...`;
+}
+
 export function shortenWalletAddress(
   address: string,
   startLength: number = 7,
