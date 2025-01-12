@@ -31,11 +31,19 @@ import StorageLabel from '@/app/lib/localStorage';
 import NotFoundComponent from '@/app/components/404';
 import { NumberBox } from './NumberBox';
 import { useAuth } from '@/app/utils/wallet/AuthProvider';
-import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
-import { ArrowUpIcon } from '@/public/assets/icon-components/ArrowUp';
+import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRightIcon';
+import { RationaleBox } from './RationaleBox';
+import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
+import { useCategory } from '../utils/data-fetching/category';
 
 const SliderMax = 10;
 const SliderBase = 2;
+
+enum Types {
+  Both,
+  Project1,
+  Project2,
+}
 
 const sliderScaleFunction = (x: number, base: number) => Math.floor(Math.pow(base, Math.abs(x)));
 
@@ -115,6 +123,7 @@ export default function Home() {
   const { data, isLoading } = useGetPairwisePairs(cid);
   const prevProgress = usePrevious(progress);
 
+  const { data: categoryResp } = useCategory(cid);
   // const { mutateAsync: markProjectCoI } = useMarkCoi();
   const { mutateAsync: vote } = useUpdateProjectVote({ categoryId: cid });
   const { mutateAsync: undo } = useUpdateProjectUndo({
@@ -169,6 +178,19 @@ export default function Home() {
   //   },
   //   ]);
   // }, []);
+
+  const [tabs, setTabs] = useState<{ [key: number]: string } | undefined>(undefined);
+  const [tab, setTab] = useState<Types>(Types.Both);
+  useEffect(() => {
+    if (project1 && project2) {
+      const tabstext = {
+        [Types.Both]: 'Both',
+        [Types.Project1]: project1.name,
+        [Types.Project2]: project2.name,
+      };
+      setTabs(tabstext);
+    }
+  }, [project1, project2]);
 
   useEffect(() => {
     if (!data || !data.pairs?.length) return;
@@ -255,10 +277,7 @@ export default function Home() {
   // };
   const handleVote = async (chosenId: number | null) => {
     if (rationale === null || rationale.trim().length < 70) {
-      if (shownValue !== 0)
-        setRationaleError('Min 70 characters required');
-      else
-        setRationaleError('Why do you think these 2 are equally important');
+      setRationaleError('Min 70 characters required');
       return;
     }
     try {
@@ -363,6 +382,7 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col">
+
       <Modal
         isOpen={
           revertingBack
@@ -392,13 +412,25 @@ export default function Home() {
         <HeaderRF6
           progress={progress * 100}
           category={data.name}
+          projImage={categoryResp?.collection.image}
           isFirstSelection={false}
+          showBackButton
         />
       </div>
-      <div className="flex h-full grow">
+      <div className="relative flex h-full grow">
         <div className="relative grow">
-          <div className="flex w-full">
-            <div className="relative flex grow items-center justify-between gap-8 px-8 pt-2">
+          <div className="glex flex w-full flex-col">
+
+            <div className="mt-6 text-center text-2xl font-semibold">
+              Which dependency gets more credit for
+              {' '}
+              <span className="font-bold">
+                {categoryResp?.collection.name}
+              </span>
+              {' '}
+              success?
+            </div>
+            <div className="relative flex grow items-center justify-between gap-8 px-8">
               <div className="relative w-[49%]">
                 <ProjectCard
                   key={project1.RF6Id}
@@ -489,7 +521,7 @@ export default function Home() {
                       onChange={e => setRationale(e.target.value)}
                       rows={2}
                       className="w-full resize-none rounded-md border border-[#D0D5DD] p-2 shadow-sm focus:outline-none focus:ring-2 "
-                      placeholder={shownValue === 0 ? 'Why do you want to skip this comparison?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
+                      placeholder={shownValue === 0 ? 'Why do you think these 2 are equally important?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
                     />
                     <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-[#475467]">
                       {' '}
@@ -517,31 +549,56 @@ export default function Home() {
           </footer>
         </div>
         {comments && comments.length && (
-          <div className="mr-3 mt-6 flex w-96 flex-col gap-3 overflow-scroll rounded-xl border border-gray-200 px-4 pb-8 pt-4">
-            <button onClick={() => { setShowComments(!showComments); }} className="flex items-center gap-2 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
-              <Image width={20} height={20} src="/assets/images/people.png" alt="people" />
-              <span>View Other Evaluations</span>
-              {showComments ? <ArrowUpIcon /> : <ArrowDownIcon />}
-            </button>
-            {showComments && comments.filter(({ project1: p1, project2: p2 }) => {
-              return (project1.id === p1.id || project1.id === p2.id) && (project2.id === p2.id || project2.id === p1.id);
-            }).map(({ pickedId, project1: p1, project2: p2, rationale, multiplier }, index) => {
-              return (
-                (
-                  <div key={index} className={`flex flex-col gap-3 rounded-md border border-gray-200 p-5 ${project1.id === p1.id && project2.id === p2.id ? 'bg-purple-50' : ''}`}>
-                    <div className="font-bold">
-                      {pickedId === p1.id
-                        ? `${p1.name} deserves ${multiplier}x more credit than ${p2.name}`
-                        : pickedId === p2.id
-                          ? `${p2.name} deserves ${multiplier}x more credit than ${p1.name}`
-                          : `Skipped comparing ${p1.name} with ${p2.name}`}
-                    </div>
-                    <div className="text-[15px] font-normal text-gray-800">{rationale}</div>
+          showComments
+            ? (
+                <div className="mt-6 flex w-96 flex-col gap-4 overflow-y-scroll rounded-xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
+                  <button onClick={() => { setShowComments(false); }} className="flex w-full items-center justify-between gap-2 rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <Image width={20} height={20} src="/assets/images/smile.svg" alt="people" />
+                    <span>Evaluation Samples</span>
+                    <ArrowRightIcon color="#344054" size={20} />
+                  </button>
+                  <div
+                    className="border-b border-gray-border"
+                  >
+                    {tabs && (
+                      <div className="flex h-full flex-row items-center gap-3">
+                        {Object.entries(tabs).map(([t, text]) => {
+                          return <button key={t} className={`h-full max-w-24 text-wrap break-words px-1 pb-3 text-base font-semibold ${tab === parseInt(t) ? 'border-b border-primary text-main-title' : 'text-gray-placeholder'}`} onClick={() => setTab(parseInt(t))}>{text}</button>;
+                        })}
+                      </div>
+                    )}
                   </div>
-                )
-              );
-            })}
-          </div>
+                  <div className="flex grow flex-col gap-4">
+                    {comments.filter(({ project1: p1, project2: p2 }) => {
+                      return (tab === Types.Project2 || (project1.id === p1.id || project2.id === p1.id))
+                        && (tab === Types.Project1 || (project2.id === p2.id || project1.id === p2.id));
+                    }).map(({ pickedId, project1: p1, project2: p2, rationale, multiplier }
+                      , index) => {
+                      return (
+                        <RationaleBox
+                          key={index}
+                          pickedId={pickedId}
+                          project1={p1}
+                          project2={p2}
+                          rationale={rationale}
+                          multiplier={multiplier}
+                        />
+                      );
+                    })}
+                  </div>
+                  {/* <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
+                    <div>Feeling stuck?</div>
+                    <button className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold
+                    text-[#344054]">View other juror evaluations</button>
+                  </div> */}
+                </div>
+              )
+            : (
+                <button onClick={() => setShowComments(true)} className="z-1 absolute right-0 top-10  flex flex-row gap-3 rounded-md border border-gray-200 bg-white p-3">
+                  <Image width={20} height={20} src="/assets/images/smile.svg" alt="people" />
+                  <ArrowLeft2Icon color="#344054" size={20} />
+                </button>
+              )
         )}
       </div>
     </div>

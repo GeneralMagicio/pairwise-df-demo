@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import { usePathname, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { ConnectButton } from '@/app/utils/wallet/Connect';
 import { PwLogo } from '@/public/assets/icon-components/PairwiseLogo';
 import { ThinExternalLinkIcon } from '@/public/assets/icon-components/ThinExternalLink';
@@ -11,12 +12,15 @@ import { useGetPublicBadges } from '@/app/utils/getBadges';
 import DelegationsModal from './modals/DelegationsModal';
 import { useGetDelegationStatus } from '@/app/utils/getConnectionStatus';
 import StorageLabel from '@/app/lib/localStorage';
+import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 
 interface HeaderProps {
   progress?: number
   category?: string
+  projImage?: string
   // question?: string
   isFirstSelection?: boolean
+  showBackButton?: boolean
 }
 
 const PAIRWISE_REPORT_URL
@@ -25,6 +29,8 @@ const PAIRWISE_REPORT_URL
 const HeaderRF6: FC<HeaderProps> = ({
   progress,
   category,
+  projImage,
+  showBackButton,
   // question,
   isFirstSelection = false,
 }) => {
@@ -155,20 +161,35 @@ const HeaderRF6: FC<HeaderProps> = ({
         )}
       </Modal>
 
-      <div className="relative z-40 flex w-full flex-row justify-between gap-10 border-b bg-white">
-        {!isFirstSelection && (
+      <div className="relative z-40 flex w-full flex-row justify-between gap-6 border-b bg-white px-10 py-6">
+        {!category && !isFirstSelection && (
           <div onClick={() => router.push('/allocation')} className="m-3 flex cursor-pointer items-center">
             <PwLogo />
           </div>
         )}
-        <div className="flex grow items-center justify-start px-6 py-4 md:px-12 lg:px-4">
-
+        {showBackButton && (
+          <button onClick={() => router.back()} className="fles-row flex justify-center gap-1.5 rounded-lg border border-[#D0D5DD] px-4 py-2.5">
+            <ArrowLeft2Icon />
+            <span className="font-semibold">Back</span>
+          </button>
+        )}
+        <div className="flex grow items-center justify-start">
+          <div className="flex flex-row justify-center gap-2 text-dark-600">
+            {projImage && (
+              <span>
+                <Image src={projImage} alt="repo image" width={24} height={24} />
+              </span>
+            )}
+            <span className="font-semibold">
+              {category}
+            </span>
+          </div>
           {/* {category && (
             <span className="rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
               {category}
             </span>
           )} */}
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
 
             {category && (
               <>
@@ -178,6 +199,7 @@ const HeaderRF6: FC<HeaderProps> = ({
                   </span>
                   <span className="text-center text-lg font-semibold">
                     Which dependency gets more credit for
+                    {' '}
                     {category}
                     's success?
                   </span>
@@ -189,26 +211,16 @@ const HeaderRF6: FC<HeaderProps> = ({
                 category ? 'hidden 2xl:flex' : 'flex'
               } items-center gap-4`}
             >
-              {/* {activeBadges.length > 0 && (
-                <button
-                  onClick={() => setIsBadgesModalOpen(true)}
-                  className="mr-3 flex items-center"
-                >
-                  <ActiveBadges activeBadges={activeBadges} />
-                </button>
-              )} */}
 
             </div>
 
-          </div>
+          </div> */}
 
         </div>
-        <div className="mx-2 my-auto">
+        <div className="mx-2 my-auto flex flex-row gap-4">
           <ConnectButton />
-        </div>
-        <div className="mx-2 my-auto">
           <button
-            className="flex items-center justify-center gap-2 rounded-lg border border-gray-200 p-2 text-sm font-semibold"
+            className="flex items-center justify-center gap-2 text-nowrap rounded-lg border border-gray-200 p-2 text-sm font-semibold"
             onClick={() => window.open(PAIRWISE_REPORT_URL, '_blank')}
           >
             Report an issue

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '@/app/utils/axiosInstance';
 import { IProject } from '../types';
 
-interface ProjectRationaleData {
+export interface ProjectRationaleData {
   createdAt: string
   id: number
   multiplier: number
