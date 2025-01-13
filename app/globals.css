@@ -45,7 +45,7 @@ body {
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #F2F3F8;
+  background: #9195A6;
 }
 
 input[type=number]::-webkit-inner-spin-button, 
