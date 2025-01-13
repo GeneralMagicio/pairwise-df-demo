@@ -579,8 +579,8 @@ export default function Home() {
                   </div>
                   <div className="flex grow flex-col gap-4">
                     {comments.filter(({ project1: p1, project2: p2 }) => {
-                      return (tab === Types.Project2 || (project1.id === p1.id || project2.id === p1.id))
-                        && (tab === Types.Project1 || (project2.id === p2.id || project1.id === p2.id));
+                      return (tab === Types.Project2 || (p1.id === project1.id || p2.id === project1.id))
+                        && (tab === Types.Project1 || (p1.id === project2.id || p2.id === project2.id));
                     }).map(({ pickedId, project1: p1, project2: p2, rationale, multiplier }
                       , index) => {
                       return (
