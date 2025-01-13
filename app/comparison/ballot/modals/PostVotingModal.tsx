@@ -33,7 +33,7 @@ const PostVoting: FC<TPostVotingProps> = ({ cid, categoryLabel }) => {
       </p>
 
       <Link
-        href={`/allocation/${cid}`}
+        href="/allocation"
         className="w-full rounded-md bg-primary py-2 text-center text-white"
         onClick={() => {
           posthog.capture('Show my results', {
@@ -41,7 +41,7 @@ const PostVoting: FC<TPostVotingProps> = ({ cid, categoryLabel }) => {
           });
         }}
       >
-        Show my results
+        Main page
       </Link>
     </div>
   );

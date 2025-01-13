@@ -77,15 +77,15 @@ const AllocationPage = () => {
   };
 
   const handleScoreProjects = (id: RankItem['id']) => () => {
-    console.log(id);
+    // console.log(id);
     // setSelectedCategoryId(id);
     router.push(`/comparison/${id}`);
   };
 
-  const handleEdit = (id: RankItem['id']) => {
-    // setSelectedCategoryId(id);
-    router.push(`/allocation/${id}`);
-  };
+  // const handleEdit = (id: RankItem['id']) => {
+  //   // setSelectedCategoryId(id);
+  //   router.push(`/allocation/${id}`);
+  // };
 
   useEffect(() => {
     if (categoryRankings) {
@@ -147,9 +147,9 @@ const AllocationPage = () => {
               : (
                   categories
                   && categories.length > 0 && (
-                    <div className="flex flex-col gap-4">
+                    <div className="grid grid-cols-3 grid-rows-3 gap-4">
 
-                      {categories.map((cat) => {
+                      {categories.sort((c1, c2) => c1.name.localeCompare(c2.name)).map((cat) => {
                         const rank = categoriesRanking?.find(
                           el => el.id === cat.id
                         );
@@ -159,17 +159,12 @@ const AllocationPage = () => {
                             key={cat.name}
                             image={cat.image}
                             locked={rank?.locked || false}
-                            delegations={0}
                             allocationPercentage={rank?.percentage || 0}
                             loading={false}
-                            isBadgeholder={false}
-                            bhCategory=""
-                            isBHCategoryAtessted={false}
-                            categorySlug={cat.name}
                             onDelegate={() => {}}
                             onLockClick={handleLock(cat.id)}
                             onScore={handleScoreProjects(cat.id)}
-                            onEdit={() => handleEdit(cat.id)}
+                            onView={() => {}}
                             onPercentageChange={handleNewValue(cat.id)}
                             username=""
                           />
