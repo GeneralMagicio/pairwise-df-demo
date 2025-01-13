@@ -292,6 +292,8 @@ export default function Home() {
         },
       });
       setRatio(InitRatioValue);
+      setTab(Types.Both);
+      setRationaleError('');
       if (getGetStarted().goodRating && !getGetStarted().postRating) {
         updateGetStarted({ postRating: true });
       }
@@ -513,25 +515,30 @@ export default function Home() {
                       )}
               </div>
               <div className={`flex w-full flex-row ${shownValue ? 'justify-end' : 'justify-center'} px-10`}>
-                <div className="relative flex grow justify-start">
-                  <div className="flex w-4/5 flex-col justify-around gap-2 pl-10">
-                    <div className="font-bold">Rationale</div>
-                    <textarea
-                      value={rationale ?? ''}
-                      onChange={e => setRationale(e.target.value)}
-                      rows={2}
-                      className="w-full resize-none rounded-md border border-[#D0D5DD] p-2 shadow-sm focus:outline-none focus:ring-2 "
-                      placeholder={shownValue === 0 ? 'Why do you think these 2 are equally important?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
-                    />
-                    <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-[#475467]">
-                      {' '}
-                      {rationaleError ? rationaleError : ''}
-                      {' '}
-                    </span>
+                <div className="w-full">
+                  <div className="relative flex grow justify-start">
+                    <div className="flex w-4/5 flex-col justify-around gap-2 pl-10">
+                      <div className="font-bold">Rationale</div>
+                      <textarea
+                        value={rationale ?? ''}
+                        onChange={e => setRationale(e.target.value)}
+                        rows={2}
+                        className="w-full resize-none rounded-md border border-[#D0D5DD] p-2 shadow-sm focus:outline-none focus:ring-2 "
+                        placeholder={shownValue === 0 ? 'Why do you think these 2 are equally important?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
+                      />
+                      <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-[#475467]">
+                        {' '}
+                        {rationaleError ? rationaleError : ''}
+                        {' '}
+                      </span>
+                    </div>
+
                   </div>
+
+                  <div className="h-6"></div>
                 </div>
                 <div className="mb-2 flex">
-                  <div className="mt-auto flex w-full justify-center gap-x-4 align-bottom">
+                  <div className="m-auto flex w-full justify-center gap-x-4 align-bottom">
                     <UndoButton
                       disabled={data?.votedPairs === 0 || isAnyModalOpen()}
                       onClick={handleUndo}
@@ -551,7 +558,7 @@ export default function Home() {
         {comments && comments.length && (
           showComments
             ? (
-                <div className="mt-6 flex w-96 flex-col gap-4 overflow-y-scroll rounded-xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
+                <div className="mt-6 flex w-96 flex-col gap-4 overflow-scroll rounded-xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
                   <button onClick={() => { setShowComments(false); }} className="flex w-full items-center justify-between gap-2 rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
                     <Image width={20} height={20} src="/assets/images/smile.svg" alt="people" />
                     <span>Evaluation Samples</span>
