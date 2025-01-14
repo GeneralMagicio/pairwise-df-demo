@@ -295,7 +295,7 @@ export default function Home() {
       });
       setRatio(InitRatioValue);
       setTab(Types.Both);
-      setRationaleError('');
+      setRationaleError(null);
       if (getGetStarted().goodRating && !getGetStarted().postRating) {
         updateGetStarted({ postRating: true });
       }
@@ -530,6 +530,7 @@ export default function Home() {
                       <div className="font-bold">Rationale</div>
                       <textarea
                         value={rationale ?? ''}
+                        onClick={() => setRationaleError(null)}
                         onChange={e => setRationale(e.target.value)}
                         rows={2}
                         className={`w-full resize-none rounded-md border ${rationaleError ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none focus:ring-2`}

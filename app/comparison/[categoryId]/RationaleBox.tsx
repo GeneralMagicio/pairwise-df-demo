@@ -6,6 +6,9 @@ export const RationaleBox = ({ pickedId, project1: p1, project2: p2, multiplier,
   const [isOverflow, setOverflow] = useState(false);
   const rationaleRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
+    setViewMore(false);
+  }, [p1, p2]);
+  useEffect(() => {
     const detectOverflow = () => {
       if (rationaleRef.current && rationaleRef.current.scrollHeight > rationaleRef.current.clientHeight) {
         setOverflow(true);
