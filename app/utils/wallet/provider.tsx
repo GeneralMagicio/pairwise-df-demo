@@ -2,18 +2,14 @@
 
 import React, { ReactNode } from 'react';
 
-import { createWeb3Modal } from '@web3modal/wagmi/react';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { State } from 'wagmi';
-import { createThirdwebClient } from 'thirdweb';
 // import { ThirdwebProvider } from 'thirdweb/react';
 // import { config, projectId, metadata } from './config';
 import { AuthProvider } from './AuthProvider';
 import {
   activeChain,
-  clientId,
   factoryAddress,
 } from '../../lib/constants';
 
@@ -60,11 +56,11 @@ export default function AppKitProvider({
 }) {
   return (
     // <WagmiProvider config={config} initialState={initialState}>
-      // <ThirdwebProvider>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>{children}</AuthProvider>
-        </QueryClientProvider>
-      // </ThirdwebProvider>
+  // <ThirdwebProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>{children}</AuthProvider>
+    </QueryClientProvider>
+  // </ThirdwebProvider>
     // </WagmiProvider>
   );
 }
