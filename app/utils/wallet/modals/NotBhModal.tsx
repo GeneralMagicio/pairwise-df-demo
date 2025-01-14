@@ -1,5 +1,4 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { usePostHog } from 'posthog-js/react';
@@ -10,6 +9,7 @@ import { WarpcastIcon } from '@/public/assets/icon-components/WarpcastIcon';
 import { WorldIdIcon } from '@/public/assets/icon-components/WorldIdIcon';
 import { useGetConnectionStatus, useGetDelegationStatus } from '../../getConnectionStatus';
 import { CheckIcon } from '@/public/assets/icon-components/Check';
+import { useAuth } from '../AuthProvider';
 
 interface BhModalProps {
   onConnectFarcaster: () => void
@@ -17,7 +17,7 @@ interface BhModalProps {
 }
 
 const BadgeHolderModal: React.FC<BhModalProps> = ({ onConnectFarcaster, open }) => {
-  const { address } = useAccount();
+  const { githubHandle: address } = useAuth();
   const router = useRouter();
   const { data: badges } = useGetPublicBadges();
   const { data: connectionStatus } = useGetConnectionStatus();

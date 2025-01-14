@@ -57,7 +57,21 @@ export const RationaleBox = ({ pickedId, project1: p1, project2: p2, multiplier,
                     {p1.name}
                   </div>
                 )
-              : `Skipped comparing ${p1.name} with ${p2.name}`}
+              : (
+                  <div>
+                    {p1.name}
+                    {' '}
+                    deserves
+                    {' '}
+                    <span className="font-semibold">
+                      1x more credit
+                    </span>
+                    {' '}
+                    than
+                    {' '}
+                    {p2.name}
+                  </div>
+                )}
         </div>
         <div ref={rationaleRef} className={`text-sm font-normal text-[#344054] ${viewMore ? '' : 'line-clamp-2'} text-ellipsis`}>{rationale}</div>
         {isOverflow && !viewMore && <button onClick={() => setViewMore(true)} className="w-full text-start text-sm font-semibold text-[#344054]">Read More..</button>}
