@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, useMemo } from 'react';
-import { useAccount } from 'wagmi';
+// import { useAccount } from 'wagmi';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ConnectButton } from '@/app/utils/wallet/Connect';
@@ -13,6 +13,7 @@ import DelegationsModal from './modals/DelegationsModal';
 import { useGetDelegationStatus } from '@/app/utils/getConnectionStatus';
 import StorageLabel from '@/app/lib/localStorage';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
+import { useAuth } from '@/app/utils/wallet/AuthProvider';
 
 interface HeaderProps {
   progress?: number
@@ -38,8 +39,8 @@ const HeaderRF6: FC<HeaderProps> = ({
   const router = useRouter();
   const { data: badges } = useGetPublicBadges();
   const { data: delegates } = useGetDelegationStatus();
-  const { address, chainId } = useAccount();
-
+  const { githubHandle: address } = useAuth();
+  const chainId = "github";
   const [isBadgesModalOpen, setIsBadgesModalOpen] = useState(false);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isBarFixed, setIsBarFixed] = useState(false);

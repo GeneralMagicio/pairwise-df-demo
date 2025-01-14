@@ -481,7 +481,7 @@ export default function Home() {
                 <div className="ml-3 w-1/5 text-ellipsis">{project2.name}</div>
               </div>
               <NumberBox
-                value={shownValue}
+                value={shownValue?shownValue:1}
                 onChange={handleNumberBoxChange}
                 min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
                 max={sliderScaleFunction(SliderMax, SliderBase)}
@@ -512,8 +512,15 @@ export default function Home() {
                         </p>
                       )
                     : (
-                        <p className="h-6">
-                        </p>
+                      <p className="h-6">
+                      <span style={{ color: 'green' }}>
+                        {project1.name}
+                      </span>
+                      {` deserves 1x more credit than `}
+                      <span style={{ color: 'green' }}>
+                        {project2.name}
+                      </span>
+                    </p>
                       )}
               </div>
               <div className={`flex w-full flex-row ${shownValue ? 'justify-end' : 'justify-center'} px-10`}>
@@ -525,10 +532,10 @@ export default function Home() {
                         value={rationale ?? ''}
                         onChange={e => setRationale(e.target.value)}
                         rows={2}
-                        className="w-full resize-none rounded-md border border-[#D0D5DD] p-2 shadow-sm focus:outline-none focus:ring-2 "
+                        className={`w-full resize-none rounded-md border ${rationaleError?"border-red-500":"border-[#D0D5DD]"} p-2 shadow-sm focus:outline-none focus:ring-2`}
                         placeholder={shownValue === 0 ? 'Why do you think these 2 are equally important?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
                       />
-                      <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-[#475467]">
+                      <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-red-500">
                         {' '}
                         {rationaleError ? rationaleError : ''}
                         {' '}
