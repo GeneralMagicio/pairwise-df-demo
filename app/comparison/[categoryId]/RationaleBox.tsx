@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { ProjectRationaleData } from '../utils/data-fetching/pair';
 
-export const RationaleBox = ({ pickedId, project1: p1, project2: p2, multiplier, rationale }: Pick<ProjectRationaleData, 'pickedId' | 'project1' | 'project2' | 'multiplier' | 'rationale'>) => {
+type RationaleReturnType = Pick<ProjectRationaleData, 'pickedId' | 'project1' | 'project2' | 'multiplier' | 'rationale'> & {repoName?: string,repoImage?: string}
+export const RationaleBox = ({ pickedId, project1: p1, project2: p2, multiplier, rationale, repoImage, repoName }: RationaleReturnType ) => {
   const [viewMore, setViewMore] = useState(false);
   const [isOverflow, setOverflow] = useState(false);
   const rationaleRef = useRef<HTMLDivElement | null>(null);
