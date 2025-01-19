@@ -5,8 +5,8 @@ import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRightIcon';
 interface DateProps {
   stDate: Date | null
   edDate: Date | null
-  onApply: (startDate: Date | null, endDate: Date | null) => void;
-  onCancel: ()=> void;
+  onApply: (startDate: Date | null, endDate: Date | null) => void
+  onCancel: () => void
 }
 const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCancel }) => {
   const [startDate, setStartDate] = useState<Date | null>(stDate);
@@ -19,16 +19,14 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
 
   const applyDateRange = () => {
     console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
-    if(startDate && endDate)
-      onApply(startDate,endDate);
+    if (startDate && endDate)
+      onApply(startDate, endDate);
   };
 
   const setLastWeek = () => {
     const today = new Date();
     const lastWeek = new Date();
     lastWeek.setDate(today.getDate() - 7);
-    today.setHours(0, 0, 0, 0);
-    lastWeek.setHours(0, 0, 0, 0);
     setStartDate(lastWeek);
     setEndDate(today);
   };
@@ -37,8 +35,6 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
     const today = new Date();
     const lastMonth = new Date();
     lastMonth.setMonth(today.getMonth() - 1);
-    today.setHours(0, 0, 0, 0);
-    lastMonth.setHours(0, 0, 0, 0);
     setStartDate(lastMonth);
     setEndDate(today);
   };
@@ -47,8 +43,6 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
     const today = new Date();
     const lastYear = new Date();
     lastYear.setFullYear(today.getFullYear() - 1);
-    today.setHours(0, 0, 0, 0);
-    lastYear.setHours(0, 0, 0, 0);
     setStartDate(lastYear);
     setEndDate(today);
   };
@@ -92,7 +86,12 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
           {[...Array(daysInMonth)].map((_, i) => {
             const day = i + 1;
             const date = new Date(year, month, day);
-            const isSelected = startDate?.getTime() === date.getTime() || endDate?.getTime() === date.getTime();
+
+            const copyStartDate = new Date(startDate??"");
+            copyStartDate.setHours(0,0,0,0);
+            const copyEndDate = new Date(endDate??"");
+            copyEndDate.setHours(0,0,0,0);
+            const isSelected = copyStartDate?.getTime() === date.getTime() || copyEndDate?.getTime() === date.getTime();
 
             const isBetween = isInRange(date);
 
@@ -158,7 +157,7 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
           onClick={() => {
             setStartDate(null);
             setEndDate(null);
-            onApply(null,null);
+            onApply(null, null);
             onCancel();
           }}
           className="grow rounded-md border border-[#D0D5DD] bg-white px-4 py-2 text-[#344054] hover:bg-gray-300"
@@ -168,7 +167,7 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
         <button
           disabled={!(startDate && endDate)}
           onClick={applyDateRange}
-          className={`grow rounded-md border ${(startDate && endDate)?"border-[#D0D5DD] bg-primary text-white  hover:bg-purple-700":"text-[#344054] hover:bg-gray-300 border-[#D0D5DD] bg-white"} px-4 py-2`}
+          className={`grow rounded-md border ${(startDate && endDate) ? 'border-[#D0D5DD] bg-primary text-white  hover:bg-purple-700' : 'border-[#D0D5DD] bg-white text-[#344054] hover:bg-gray-300'} px-4 py-2`}
         >
           Apply
         </button>

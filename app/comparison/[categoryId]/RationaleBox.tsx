@@ -1,9 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { ProjectRationaleData } from '../utils/data-fetching/pair';
 import Image from 'next/image';
+import { ProjectRationaleData } from '../utils/data-fetching/pair';
 
 type RationaleReturnType = Pick<ProjectRationaleData, 'pickedId' | 'project1' | 'project2' | 'multiplier' | 'rationale'> & { repoName?: string, repoImage?: string }
-export const RationaleBox = ({ pickedId, project1: p1, project2: p2, multiplier, rationale, repoImage, repoName }: RationaleReturnType) => {
+export const RationaleBox = ({
+  pickedId,
+  project1: p1,
+  project2: p2,
+  multiplier,
+  rationale,
+  repoImage,
+  repoName }: RationaleReturnType) => {
   const [viewMore, setViewMore] = useState(false);
   const [isOverflow, setOverflow] = useState(false);
   const rationaleRef = useRef<HTMLDivElement | null>(null);
@@ -27,12 +34,14 @@ export const RationaleBox = ({ pickedId, project1: p1, project2: p2, multiplier,
   return (
     (
       <div className="flex flex-col gap-1.5 text-ellipsis rounded-md border border-[#D0D5DD] bg-white px-3.5 py-3">
-        
-        <div className="text-xs font-normal text-dark-600 flex flex-row">
-        {repoImage && repoName && <div className='flex flex-row gap-1.5 h-4 justify-center items-center mr-1'>
-            <Image src={repoImage} alt={repoName} width={16} height={16} />
-            <div className='text-xs text-dark-600 font-semibold'>{repoName}</div>
-          </div>}
+
+        <div className="flex flex-row text-xs font-normal text-dark-600">
+          {repoImage && repoName && (
+            <div className="mr-2 flex h-4 flex-row items-center justify-center gap-1.5">
+              <Image src={repoImage} alt={repoName} width={16} height={16} />
+              <div className="text-xs font-semibold text-dark-600">{repoName}</div>
+            </div>
+          )}
           {pickedId === p1.id
             ? (
                 <div>

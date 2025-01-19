@@ -2,13 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import HeaderRF6 from '../comparison/card/Header-RF6';
-import { ProjectRationaleData, useGetPairwisePairs } from '../comparison/utils/data-fetching/pair';
+import { ProjectRationaleData } from '../comparison/utils/data-fetching/pair';
 import DateRangePicker from '../components/DateRangePicker';
 import { Search } from '@/public/assets/icon-components/Search';
 import { XCloseIcon } from '@/public/assets/icon-components/XClose';
 import { useGetProjectRationales, useGetProjects } from './useProjects';
 import { RationaleBox } from '../comparison/[categoryId]/RationaleBox';
 import Spinner from '../components/Spinner';
+import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/ArrowRight';
+import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
+import Modal from '../utils/Modal';
 
 enum Tab {
   AllEvaluation,
@@ -33,15 +36,15 @@ enum DateTypes {
   Week,
   Month,
 }
-interface ISearchQuery {id: number, name: string}
+interface ISearchQuery { id: number, name: string }
 
 interface FilterBoxProps {
-  searchQueries: ISearchQuery[];
-  setSearchQueries: (ids: ISearchQuery[]) => void;
-  startDate: Date | null;
-  setStartDate: (date: Date | null) => void;
-  endDate: Date | null;
-  setEndDate: (date: Date | null) => void;
+  searchQueries: ISearchQuery[]
+  setSearchQueries: (ids: ISearchQuery[]) => void
+  startDate: Date | null
+  setStartDate: (date: Date | null) => void
+  endDate: Date | null
+  setEndDate: (date: Date | null) => void
 }
 
 const FilterBox: React.FC<FilterBoxProps> = ({
@@ -55,7 +58,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
   const [filterOption, setFilterOption] = useState<DateTypes | null>(null);
   const [filterQuery, setFilterQuery] = useState('');
-  const [searchSuggestions, setSearchSuggestions] = useState<Array<{ id: number; name: string }>>([]);
+  const [searchSuggestions, setSearchSuggestions] = useState<Array<{ id: number, name: string }>>([]);
   const { data: projectData } = useGetProjects();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -63,8 +66,14 @@ const FilterBox: React.FC<FilterBoxProps> = ({
     setSearchQueries(searchQueries.filter((_, i) => i !== index));
   };
 
+  const setDays = (days: number) => {
+    const edDate = new Date();
+    setEndDate(edDate)
+    setStartDate(new Date(edDate.getTime()-days*24* 60 * 60 * 1000))
+  }
+
   const addTag = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" && filterQuery !== '') {
+    if (event.key === 'Enter' && filterQuery !== '') {
       const selectedProject = searchSuggestions[0];
       if (selectedProject) {
         setSearchQueries([...searchQueries, { id: selectedProject.id, name: selectedProject.name }]);
@@ -77,14 +86,15 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setFilterQuery(value);
-    
+
     if (value) {
       const suggestions = projectData
         ?.filter(project => project.name.toLowerCase().includes(value.toLowerCase()))
         .slice(0, 3)
         .map(project => ({ id: project.id, name: project.name })) || [];
       setSearchSuggestions(suggestions);
-    } else {
+    }
+    else {
       setSearchSuggestions([]);
     }
   };
@@ -117,7 +127,10 @@ const FilterBox: React.FC<FilterBoxProps> = ({
               className={`rounded-l-md border border-[#D0D5DD] text-sm font-semibold text-[#344054] ${
                 filterOption === DateTypes.Month ? 'bg-[#F9FAFB]' : 'bg-white'
               } px-4 py-2`}
-              onClick={() => setFilterOption(DateTypes.Month)}
+              onClick={() => {
+                setFilterOption(DateTypes.Month)
+                setDays(30)
+              }}
             >
               30d
             </button>
@@ -125,7 +138,10 @@ const FilterBox: React.FC<FilterBoxProps> = ({
               className={`border border-[#D0D5DD] text-sm font-semibold text-[#344054] ${
                 filterOption === DateTypes.Week ? 'bg-[#F9FAFB]' : 'bg-white'
               } px-4 py-2`}
-              onClick={() => setFilterOption(DateTypes.Week)}
+              onClick={() => {
+                setFilterOption(DateTypes.Week)
+                setDays(7)
+              }}
             >
               7d
             </button>
@@ -133,7 +149,10 @@ const FilterBox: React.FC<FilterBoxProps> = ({
               className={`rounded-r-md border border-[#D0D5DD] text-sm font-semibold text-[#344054] ${
                 filterOption === DateTypes.Day ? 'bg-[#F9FAFB]' : 'bg-white'
               } px-4 py-2`}
-              onClick={() => setFilterOption(DateTypes.Day)}
+              onClick={() => {
+                setFilterOption(DateTypes.Day)
+                setDays(1);
+              }}
             >
               24h
             </button>
@@ -151,28 +170,28 @@ const FilterBox: React.FC<FilterBoxProps> = ({
           </button>
         </div>
 
-        <div className="mt-2 relative">
-          <div className='absolute right-0'>
+        <div className="relative mt-2">
+          <div className="absolute right-0">
 
-      {showDatePicker && (
-        <div className="absolute right-0 mt-2 z-10">
-          <DateRangePicker
-            stDate={startDate}
-            edDate={endDate}
-            onApply={(start, end) => {
-              setStartDate(start);
-              setEndDate(end);
-              setShowDatePicker(false);
-            }}
-            onCancel={()=>{
-              setShowDatePicker(false);
-            }}
-          />
-        </div>
-      )}
+            {showDatePicker && (
+              <div className="absolute right-0 z-10 mt-2">
+                <DateRangePicker
+                  stDate={startDate}
+                  edDate={endDate}
+                  onApply={(start, end) => {
+                    setStartDate(start);
+                    setEndDate(end);
+                    setShowDatePicker(false);
+                  }}
+                  onCancel={() => {
+                    setShowDatePicker(false);
+                  }}
+                />
+              </div>
+            )}
           </div>
           <div className="text-sm text-[#344054]">Search by repo</div>
-          <div className="relative mt-1 h-fit border border-[#D0D5DD] py-2.5 px-3.5 rounded-md">
+          <div className="relative mt-1 h-fit rounded-md border border-[#D0D5DD] px-3.5 py-2.5">
             <div className="absolute inset-y-0 left-0 flex items-center pl-2">
               <Search size={20} />
             </div>
@@ -185,11 +204,11 @@ const FilterBox: React.FC<FilterBoxProps> = ({
               className="h-6 w-full rounded-md pl-8 pr-1 text-lg text-gray-600 transition-shadow placeholder:text-gray-500 focus:border-transparent focus:outline-none"
             />
             {searchSuggestions.length > 0 && (
-              <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                {searchSuggestions.map((suggestion) => (
+              <div className="absolute inset-x-0 z-10 mt-1 rounded-md border border-gray-300 bg-white shadow-lg">
+                {searchSuggestions.map(suggestion => (
                   <div
                     key={suggestion.id}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    className="cursor-pointer px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
                       setSearchQueries([...searchQueries, { id: suggestion.id, name: suggestion.name }]);
                       setFilterQuery('');
@@ -203,24 +222,24 @@ const FilterBox: React.FC<FilterBoxProps> = ({
             )}
           </div>
         </div>
-        <div className='h-6 py-4'>
+        <div className="h-6 py-4">
           {searchQueries.map((tag, index) => (
             <div
               key={`${tag.id}-${index}`}
-              className="inline-flex items-center w-max bg-[#F4F3FF] border-[#D9D6FE] text-[#5925DC] px-1 py-0.5 rounded-full text-sm"
+              className="inline-flex w-max items-center rounded-full border-[#D9D6FE] bg-[#F4F3FF] px-1 py-0.5 text-sm text-[#5925DC]"
             >
-              <div className='mr-0.5'>
+              <div className="mr-0.5">
                 {tag.name}
               </div>
               <button onClick={() => removeTag(index)}>
-                <XCloseIcon size={16} color='#9B8AFB' />
+                <XCloseIcon size={16} color="#9B8AFB" />
               </button>
             </div>
           ))}
         </div>
-        <div className='w-full flex justify-end'>
+        <div className="flex w-full justify-end">
           <button
-            className='text-[#344054] bg-white rounded-lg border border-[#D0D5DD] py-2 px-3'
+            className="rounded-lg border border-[#D0D5DD] bg-white px-3 py-2 text-[#344054]"
             onClick={() => {
               setSearchQueries([]);
               setStartDate(null);
@@ -240,96 +259,131 @@ const EvaluationPage: React.FC = () => {
   const [tab, setTab] = useState<keyof typeof tabs>(Tab.AllEvaluation);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [filteredData, setFilteredData] = useState<ProjectRationale[]>();
   const [searchQueries, setSearchQueries] = useState<ISearchQuery[]>([]);
-  const [showFilterBox,setShowFilterBox] = useState(false);
-  const [page,setPage] = useState(1);
+  const [showFilterBox, setShowFilterBox] = useState(false);
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const { data: rationaleData } = useGetProjectRationales(page, limit,startDate?.toISOString()??"",endDate?.toISOString()??"",searchQueries.map((search)=>search.id),tab==Tab.MyEvaluation);
+  const { data: rationaleData } = useGetProjectRationales(page, limit, startDate?.toISOString() ?? '', endDate?.toISOString() ?? '', searchQueries.map(search => search.id), tab == Tab.MyEvaluation);
 
   useEffect(()=>{
-    if(rationaleData){
+    setPage(1);
+  },[searchQueries,startDate,endDate])
+  useEffect(() => {
+    if (rationaleData) {
       setTotalPages(rationaleData.meta.totalPages);
     }
-  },[rationaleData])
-  if(!rationaleData){
-    return <Spinner/>;
+  }, [rationaleData]);
+  if (!rationaleData) {
+    return <Spinner />;
   }
   return (
-    <div className="px-10 flex h-screen flex-col justify-around">
+    <div className="flex w-full h-screen flex-col justify-around">
       <HeaderRF6 showBackButton={true} allEvaluation={true} />
-
-      <div className="my-9 flex grow flex-row justify-around gap-10">
-        <div className="relative flex min-w-[600px] flex-col gap-4 overflow-auto rounded-2xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
-          <div className="sticky top-0 flex h-9 flex-row gap-4">
-            <div className="grow border-b border-gray-border">
-              {tabs && (
-                <div className="flex h-full flex-row items-center gap-3">
-                  {Object.entries(tabs).map(([t, text]) => (
-                    <button
-                      key={t}
-                      className={`h-full max-w-32 px-1 pb-3 text-sm ${
-                        tab === parseInt(t) ? 'border-b border-primary font-bold text-main-title' : 'font-normal text-dark-600'
-                      }`}
-                      onClick={() => setTab(parseInt(t))}
-                    >
-                      {text}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            <button
-              className="shadow-filter-shadow flex flex-row rounded-md border border-[#D0D5DD] bg-white px-3 py-2"
-              onClick={() => {
-                setShowFilterBox(!showFilterBox);
-              }}
-            >
-              <span className={`gap-1 text-sm font-semibold ${searchQueries.length==0?"text-[#344054]":"text-[#6941C6]"}`}>Filter</span>
-              {searchQueries.length?
-              <div className='px-2 py-0.5 flex flex-row'>
-                <Image width={8} height={8} src="/assets/images/dot.svg" alt="dot"/>
-                <span className='text-xs text-[#5925DC]'>{searchQueries.length}</span>
+      <div className="my-9 ml-10 flex grow flex-row justify-around gap-10">
+        <div className="min-w-[600px] rounded-2xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
+          <div className="relative flex h-full max-h-[680px] flex-col gap-4 overflow-auto pr-4">
+            <div className="top-0 flex h-9 flex-row gap-4">
+              <div className="grow border-b border-gray-border">
+                {tabs && (
+                  <div className="flex h-full flex-row items-center gap-3">
+                    {Object.entries(tabs).map(([t, text]) => (
+                      <button
+                        key={t}
+                        className={`h-full max-w-32 px-1 pb-3 text-sm ${
+                          tab === parseInt(t) ? 'border-b border-primary font-bold text-main-title' : 'font-normal text-dark-600'
+                        }`}
+                        onClick={() => setTab(parseInt(t))}
+                      >
+                        {text}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-              :
-              <Image width={20} height={20} src="/assets/images/filter-lines.svg" alt="Filter" />}
-            </button>
-          </div>
-          {showFilterBox && <div className="relative">
-            <div className="absolute -top-2 right-0">
-              <FilterBox
-                startDate={startDate}
-                endDate={endDate}
-                setEndDate={setEndDate}
-                setStartDate={setStartDate}
-                searchQueries={searchQueries}
-                setSearchQueries={(searches:ISearchQuery[])=>{setSearchQueries(searches)}}
-              />
+              <button
+                className="shadow-filter-shadow flex flex-row rounded-md border border-[#D0D5DD] bg-white px-3 py-2"
+                onClick={() => {
+                  setShowFilterBox(!showFilterBox);
+                }}
+              >
+                <span className={`gap-1 text-sm font-semibold ${searchQueries.length == 0 + searchQueries.length + (startDate!==null && endDate!==null?1:0)? 'text-[#344054]' : 'text-[#6941C6]'}`}>Filter</span>
+                {searchQueries.length + (startDate!==null && endDate!==null?1:0)
+                  ? (
+                      <div className="flex flex-row px-2 py-0.5">
+                        <Image width={8} height={8} src="/assets/images/dot.svg" alt="dot" />
+                        <span className="text-xs text-[#5925DC]">{searchQueries.length + (startDate!==null && endDate!==null?1:0)}</span>
+                      </div>
+                    )
+                  : <Image width={20} height={20} src="/assets/images/filter-lines.svg" alt="Filter" />}
+              </button>
             </div>
-          </div>}
-          <div>
-            <div className="flex grow flex-col gap-4">
-                                {rationaleData && rationaleData.data.map(({ pickedId, project1: p1, project2: p2, rationale, ratio: multiplier,parent  }
-                                  , index) => {
-                                  return (
-                                    <div>
-                                    <RationaleBox
-                                      key={index}
-                                      pickedId={pickedId}
-                                      project1={p1}
-                                      project2={p2}
-                                      rationale={rationale}
-                                      multiplier={multiplier}
-                                      repoImage={parent.image}
-                                      repoName={parent.name}
-                                    />
-                                    </div>
-                                  );
-                                })}
-                              </div>
+
+            {/* <Modal isOpen={showFilterBox} onClose={()=>{}}> */}
+              <div className="relative z-10">
+                <div className="absolute -top-2 right-0">
+                  <FilterBox
+                    startDate={startDate}
+                    endDate={endDate}
+                    setEndDate={setEndDate}
+                    setStartDate={setStartDate}
+                    searchQueries={searchQueries}
+                    setSearchQueries={(searches: ISearchQuery[]) => { setSearchQueries(searches); }}
+                  />
+                </div>
+              </div>
+              {/* </Modal> */}
+            <div>
+              <div className="flex grow flex-col gap-4">
+                {rationaleData
+                && rationaleData.data.map(({ id,pickedId, project1: p1, project2: p2, rationale, ratio: multiplier, parent }
+                  ) => {
+                  return (
+                    <div key={id}>
+                      <RationaleBox
+                        pickedId={pickedId}
+                        project1={p1}
+                        project2={p2}
+                        rationale={rationale}
+                        multiplier={multiplier}
+                        repoImage={parent.image}
+                        repoName={parent.name}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <button
+                onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                disabled={page === 1}
+                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+              >
+
+                <ArrowLeft2Icon size={20} />
+                Previous Page
+              </button>
+              <span className="text-sm text-gray-700">
+                Page
+                {' '}
+                {page}
+                {' '}
+                of
+                {' '}
+                {totalPages}
+              </span>
+              <button
+                onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={page === totalPages}
+                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+              >
+                Next Page
+                <ArrowRight size={20} color="#344054" />
+              </button>
+            </div>
           </div>
         </div>
-        <div className="grow rounded-2xl border border-gray-border px-3 py-4 min-w-[500px]">
+        <div className="mr-10 min-w-[500px] grow rounded-2xl border border-gray-border px-3 py-4">
           {/* <button
             onClick={()=>{}}
             className="mb-2 px-4 py-2 bg-blue-500 text-white rounded-md"
@@ -349,4 +403,3 @@ const EvaluationPage: React.FC = () => {
 };
 
 export default EvaluationPage;
-
