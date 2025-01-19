@@ -31,23 +31,22 @@ enum DateTypes {
   Week,
   Month,
 }
-const FilterBox: React.FC<{searchQueries: number[],setSearchQueries: (ids: number[])=>void}> = ({searchQueries,setSearchQueries}) => {
+interface ISearchQuery {id: number, name: string}
+const FilterBox: React.FC<{searchQueries: ISearchQuery[],setSearchQueries: (ids: ISearchQuery[])=>void}> = ({searchQueries,setSearchQueries}) => {
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
   const [filterOption, setFilterOption] = useState<DateTypes | null>(null);
-  const [tags, setTags] = useState<string[]>([]);
   const [filterQuery,setFilterQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState<Array<{id: number, name: string}>>([]);
   const {data: projectData} = useGetProjects();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const removeTag = (index: number) => {
-    setTags(tags.filter((_, i) => i !== index));
+    setSearchQueries(searchQueries.filter((_, i) => i !== index));
   };
   const addTag = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && filterQuery !== '') {
       const selectedProject = searchSuggestions[0];
       if (selectedProject) {
-        setSearchQueries([...searchQueries, selectedProject.id]);
-        setTags([...tags, selectedProject.name]);
+        setSearchQueries([...searchQueries, {id: selectedProject.id, name: selectedProject.name}]);
         setFilterQuery('');
         setSearchSuggestions([]);
       }
@@ -118,8 +117,7 @@ const FilterBox: React.FC<{searchQueries: number[],setSearchQueries: (ids: numbe
                       key={suggestion.id}
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                       onClick={() => {
-                        setSearchQueries([...searchQueries, suggestion.id]);
-                        setTags([...tags, suggestion.name]);
+                        setSearchQueries([...searchQueries, {id: suggestion.id,name: suggestion.name}]);
                         setFilterQuery('');
                         setSearchSuggestions([]);
                       }}
@@ -131,13 +129,13 @@ const FilterBox: React.FC<{searchQueries: number[],setSearchQueries: (ids: numbe
               )}
             </div>
           </div>
-          <div className='h-6 py-4'>{tags.map((tag, index) => (
+          <div className='h-6 py-4'>{searchQueries.map((tag, index) => (
             <div
-              key={`${tag}-${index}`}
+              key={`${tag.id}-${index}`}
               className="inline-flex items-center w-max bg-[#F4F3FF] border-[#D9D6FE] text-[#5925DC] px-1 py-0.5 rounded-full text-sm"
             >
               <div className='mr-0.5'>
-              {tag}
+              {tag.name}
               </div>
               <button
                 onClick={() => removeTag(index)}
@@ -149,7 +147,6 @@ const FilterBox: React.FC<{searchQueries: number[],setSearchQueries: (ids: numbe
           </div>
           <div className='w-full flex justify-end'>
             <button className='text-[#344054] bg-white rounded-lg border border-[#D0D5DD] py-2 px-3' onClick={()=>{
-              setTags([]);
               setSearchQueries([]);
             }}>
               Clear All
@@ -166,7 +163,7 @@ const EvaluationPage: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [filteredData, setFilteredData] = useState<ProjectRationale[]>();
-  const [searchQueries, setSearchQueries] = useState<number[]>([]);
+  const [searchQueries, setSearchQueries] = useState<ISearchQuery[]>([]);
   const { data: rationaleData } = useGetPairwisePairs(30);
   return (
     <div className="px-10 flex h-screen w-full flex-col justify-around">
@@ -211,7 +208,7 @@ const EvaluationPage: React.FC = () => {
           <div className="relative">
 
             <div className="absolute -top-2 right-0">
-              <FilterBox searchQueries={searchQueries} setSearchQueries={(searches:number[])=>{setSearchQueries(searches)}}/>
+              <FilterBox searchQueries={searchQueries} setSearchQueries={(searches:ISearchQuery[])=>{setSearchQueries(searches)}}/>
             </div>
             <DateRangePicker stDate={null} edDate={null} />
           </div>
