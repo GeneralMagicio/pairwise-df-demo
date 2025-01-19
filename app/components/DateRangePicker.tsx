@@ -5,8 +5,10 @@ import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRightIcon';
 interface DateProps {
   stDate: Date | null
   edDate: Date | null
+  onApply: (startDate: Date | null, endDate: Date | null) => void;
+  onCancel: ()=> void;
 }
-const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate }) => {
+const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCancel }) => {
   const [startDate, setStartDate] = useState<Date | null>(stDate);
   const [endDate, setEndDate] = useState<Date | null>(edDate);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
@@ -17,6 +19,8 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate }) => {
 
   const applyDateRange = () => {
     console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
+    if(startDate && endDate)
+      onApply(startDate,endDate);
   };
 
   const setLastWeek = () => {
@@ -154,14 +158,17 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate }) => {
           onClick={() => {
             setStartDate(null);
             setEndDate(null);
+            onApply(null,null);
+            onCancel();
           }}
           className="grow rounded-md border border-[#D0D5DD] bg-white px-4 py-2 text-[#344054] hover:bg-gray-300"
         >
           Cancel
         </button>
         <button
+          disabled={!(startDate && endDate)}
           onClick={applyDateRange}
-          className="grow rounded-md border border-[#D0D5DD] bg-primary px-4 py-2 text-white hover:bg-purple-700"
+          className={`grow rounded-md border ${(startDate && endDate)?"border-[#D0D5DD] bg-primary text-white  hover:bg-purple-700":"text-[#344054] hover:bg-gray-300 border-[#D0D5DD] bg-white"} px-4 py-2`}
         >
           Apply
         </button>
