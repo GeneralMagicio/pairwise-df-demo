@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { FC } from 'react';
 
 type IconProps = {
   size?: number
 };
-export const ArrowLeftIcon: FC<IconProps> = ({ size = 12}) =>  {
+export const ArrowLeftIcon: FC<IconProps> = ({ size = 12 }) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width={size} height={size}>
       <path

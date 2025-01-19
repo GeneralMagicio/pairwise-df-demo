@@ -375,8 +375,8 @@ const RankingPage = () => {
                 <Spinner />
               )
             : ranking
-            && ranking.progress !== CollectionProgressStatusEnum.Finished
-            && ranking.progress !== CollectionProgressStatusEnum.Attested
+              && ranking.progress !== CollectionProgressStatusEnum.Finished
+              && ranking.progress !== CollectionProgressStatusEnum.Attested
               ? (
                   <div className="flex h-64 items-center justify-center">
                     <p className="text-gray-400">
@@ -462,7 +462,7 @@ const RankingPage = () => {
               ${
     totalShareError
     || (ranking?.progress !== CollectionProgressStatusEnum.Finished
-    && ranking?.progress !== CollectionProgressStatusEnum.Attested)
+      && ranking?.progress !== CollectionProgressStatusEnum.Attested)
       ? 'bg-gray-200 text-gray-400'
       : 'bg-primary text-white'
     }`}
@@ -471,7 +471,7 @@ const RankingPage = () => {
                 !!totalShareError
                 || isSubmitting
                 || (ranking?.progress !== CollectionProgressStatusEnum.Finished
-                && ranking?.progress !== CollectionProgressStatusEnum.Attested)
+                  && ranking?.progress !== CollectionProgressStatusEnum.Attested)
               }
             >
               {isSubmitting
@@ -486,9 +486,9 @@ const RankingPage = () => {
                           !!totalShareError
                           || isSubmitting
                           || (ranking?.progress
-                          !== CollectionProgressStatusEnum.Finished
-                          && ranking?.progress
-                          !== CollectionProgressStatusEnum.Attested)
+                            !== CollectionProgressStatusEnum.Finished
+                            && ranking?.progress
+                            !== CollectionProgressStatusEnum.Attested)
                             ? 'gray'
                             : undefined
                         }
