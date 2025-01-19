@@ -13,3 +13,4 @@ export const getProjects = async (): Promise<IProject[]> => {
       queryFn: () => getProjects(),
     });
   };
+

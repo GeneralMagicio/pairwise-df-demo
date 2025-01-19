@@ -36,25 +36,37 @@ const FilterBox: React.FC<{searchQueries: number[],setSearchQueries: (ids: numbe
   const [filterOption, setFilterOption] = useState<DateTypes | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [filterQuery,setFilterQuery] = useState('');
+  const [searchSuggestions, setSearchSuggestions] = useState<Array<{id: number, name: string}>>([]);
   const {data: projectData} = useGetProjects();
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const removeTag = (index: number) => {
     setTags(tags.filter((_, i) => i !== index));
   };
   const addTag = (event: React.KeyboardEvent) => {
-    if(event.key==="Enter" && filterQuery!==''){
-      if(projectData?.some((projectDat)=>{
-        if(projectDat.name === filterQuery){
-          setSearchQueries([...searchQueries,projectDat.id]);
-        }
-        return projectDat.name === filterQuery;
+    if (event.key === "Enter" && filterQuery !== '') {
+      const selectedProject = searchSuggestions[0];
+      if (selectedProject) {
+        setSearchQueries([...searchQueries, selectedProject.id]);
+        setTags([...tags, selectedProject.name]);
+        setFilterQuery('');
+        setSearchSuggestions([]);
       }
-    ))
-      setFilterQuery('');
-    }
-    else {
-      console.log("No project found");
     }
   }
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setFilterQuery(value);
+    
+    if (value) {
+      const suggestions = projectData
+        ?.filter(project => project.name.toLowerCase().includes(value.toLowerCase()))
+        .slice(0, 3)
+        .map(project => ({ id: project.id, name: project.name })) || [];
+      setSearchSuggestions(suggestions);
+    } else {
+      setSearchSuggestions([]);
+    }
+  };
   return (
     <div className="rounded-md border border-[#D0D5DD] bg-white p-4">
       <div className="text-sm text-[#344054]">Sort by</div>
@@ -94,13 +106,29 @@ const FilterBox: React.FC<{searchQueries: number[],setSearchQueries: (ids: numbe
               <input
                 type="text"
                 value={filterQuery}
-                onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
-                  setFilterQuery(event.target.value);
-                }}
+                onChange={handleInputChange}
                 onKeyDown={addTag}
                 placeholder="Search"
                 className="h-6 w-full rounded-md pl-8 pr-1 text-lg text-gray-600 transition-shadow placeholder:text-gray-500 focus:border-transparent focus:outline-none"
               />
+              {searchSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                  {searchSuggestions.map((suggestion, index) => (
+                    <div
+                      key={suggestion.id}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setSearchQueries([...searchQueries, suggestion.id]);
+                        setTags([...tags, suggestion.name]);
+                        setFilterQuery('');
+                        setSearchSuggestions([]);
+                      }}
+                    >
+                      {suggestion.name}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div className='h-6 py-4'>{tags.map((tag, index) => (
@@ -122,7 +150,7 @@ const FilterBox: React.FC<{searchQueries: number[],setSearchQueries: (ids: numbe
           <div className='w-full flex justify-end'>
             <button className='text-[#344054] bg-white rounded-lg border border-[#D0D5DD] py-2 px-3' onClick={()=>{
               setTags([]);
-              (0);
+              setSearchQueries([]);
             }}>
               Clear All
             </button>
@@ -140,9 +168,6 @@ const EvaluationPage: React.FC = () => {
   const [filteredData, setFilteredData] = useState<ProjectRationale[]>();
   const [searchQueries, setSearchQueries] = useState<number[]>([]);
   const { data: rationaleData } = useGetPairwisePairs(30);
-  const [numFilters,setNumberFilters] = useState<number>(0);
-
-  console.log(numFilters)
   return (
     <div className="px-10 flex h-screen w-full flex-col justify-around">
       <HeaderRF6 showBackButton={true} allEvaluation={true} />
@@ -173,11 +198,11 @@ const EvaluationPage: React.FC = () => {
 
               }}
             >
-              <span className={`gap-1 text-sm font-semibold ${numFilters==0?"text-[#344054]":"text-[#6941C6]"}`}>Filter</span>
-              {numFilters?
+              <span className={`gap-1 text-sm font-semibold ${searchQueries.length==0?"text-[#344054]":"text-[#6941C6]"}`}>Filter</span>
+              {searchQueries.length?
               <div className='px-2 py-0.5 flex flex-row'>
                 <Image width={8} height={8} src="/assets/images/dot.svg" alt="dot"/>
-                <span className='text-xs text-[#5925DC]'>{numFilters}</span>
+                <span className='text-xs text-[#5925DC]'>{searchQueries.length}</span>
               </div>
               :
               <Image width={20} height={20} src="/assets/images/filter-lines.svg" alt="Filter" />}
@@ -211,3 +236,4 @@ const EvaluationPage: React.FC = () => {
 };
 
 export default EvaluationPage;
+
