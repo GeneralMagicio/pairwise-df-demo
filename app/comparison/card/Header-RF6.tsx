@@ -53,7 +53,7 @@ const HeaderRF6: FC<HeaderProps> = ({
   const [isBarFixed, setIsBarFixed] = useState(false);
 
   const roundNumber = (votes: number) => Math.min(6, Math.floor(votes / RoundSize) + 1);
-  const comparisonsFromCompletion = (votes: number) => votes % RoundSize;
+  const comparisonsFromCompletion = (votes: number) => votes % RoundSize + 1;
 
   const activeBadges = useMemo(() => {
     if (!badges || !Object.keys(badges).length) return [];
@@ -151,6 +151,8 @@ const HeaderRF6: FC<HeaderProps> = ({
     setIsDelegateModalOpen(false);
   };
 
+  console.log(projImage, name);
+
   return (
     <>
       <Modal
@@ -191,6 +193,16 @@ const HeaderRF6: FC<HeaderProps> = ({
           </span>
         )}
 
+        {
+          projImage && category && (
+            <div className="flex items-center gap-2">
+              <img src={projImage} alt={category} width={25} height={25} className="rounded-full" />
+              <h4 className="font-bold">
+                {category}
+              </h4>
+            </div>
+          )
+        }
         <div className="flex grow items-center justify-start">
           {votes && (
             <div className="flex flex-row items-center justify-center gap-8 text-dark-600">

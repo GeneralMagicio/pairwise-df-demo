@@ -49,6 +49,7 @@ const InitRatioValue = { value: 0, type: 'slider' } as { value: number, type: 's
 export default function Home() {
   const { categoryId } = useParams() ?? {};
   // const queryClient = useQueryClient();
+  const router = useRouter();
   const { githubHandle } = useAuth();
   // const wallet = useActiveWallet();
 
@@ -226,6 +227,10 @@ export default function Home() {
     setRoundComplete(false);
   };
 
+  const onFinishVoting = () => {
+    router.push('/allocation');
+  };
+
   // const showCoI1 = () => {
   //   if (!wallet) {
   //     setShowLoginModal(true);
@@ -385,6 +390,7 @@ export default function Home() {
             isOpen={roundComplete}
             onClose={roundCompleteClose}
             onNextRound={roundCompleteClose}
+            onFinishVoting={onFinishVoting}
           />
         )}
         {/* {showLowRateModal && (
