@@ -1,7 +1,6 @@
 import React, { FC, useState, useEffect, useMemo } from 'react';
 // import { useAccount } from 'wagmi';
 import { usePathname, useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { ConnectButton } from '@/app/utils/wallet/Connect';
 import { PwLogo } from '@/public/assets/icon-components/PairwiseLogo';
 import { ThinExternalLinkIcon } from '@/public/assets/icon-components/ThinExternalLink';
@@ -23,13 +22,19 @@ interface HeaderProps {
   isFirstSelection?: boolean
   showBackButton?: boolean
   allEvaluation?: boolean
+  votes?: number
+  total?: number
 }
+
+export const RoundSize = 5;
 
 const PAIRWISE_REPORT_URL
   = 'https://github.com/GeneralMagicio/pairwise-df-demo/issues/new?assignees=MoeNick&labels=&projects=&template=report-an-issue.md&title=%5BFeedback%5D+';
 
 const HeaderRF6: FC<HeaderProps> = ({
   progress,
+  votes,
+  total,
   category,
   projImage,
   showBackButton,
@@ -46,6 +51,9 @@ const HeaderRF6: FC<HeaderProps> = ({
   const [isBadgesModalOpen, setIsBadgesModalOpen] = useState(false);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isBarFixed, setIsBarFixed] = useState(false);
+
+  const roundNumber = (votes: number) => Math.min(6, Math.floor(votes / RoundSize) + 1);
+  const comparisonsFromCompletion = (votes: number) => votes % RoundSize;
 
   const activeBadges = useMemo(() => {
     if (!badges || !Object.keys(badges).length) return [];
@@ -177,54 +185,27 @@ const HeaderRF6: FC<HeaderProps> = ({
           </button>
         )}
 
+        {allEvaluation && (
+          <span className="text-xl font-bold">
+            All Evaluations
+          </span>
+        )}
+
         <div className="flex grow items-center justify-start">
-          {allEvaluation && (
-            <span className="text-xl font-bold">
-              All Evaluations
-            </span>
-          )}
-          <div className="flex flex-row justify-center gap-2 text-dark-600">
-            {projImage && (
-              <span>
-                <Image src={projImage} alt="repo image" width={24} height={24} />
+          {votes && (
+            <div className="flex flex-row items-center justify-center gap-8 text-dark-600">
+              <span className="text-lg font-bold">
+                Voting Round
+                {` ${roundNumber(votes)}`}
               </span>
-            )}
-            <span className="font-semibold">
-              {category}
-            </span>
-          </div>
-          {/* {category && (
-            <span className="rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
-              {category}
-            </span>
-          )} */}
-          {/* <div className="flex items-center gap-4">
-
-            {category && (
-              <>
-                <div className={`py-2 ${isFirstSelection ? 'px-0' : 'px-4'}`}>
-                  <span className="mr-4 rounded-full bg-gray-200 px-3 py-1 text-center text-sm text-dark-500">
-                    {category}
-                  </span>
-                  <span className="text-center text-lg font-semibold">
-                    Which dependency gets more credit for
-                    {' '}
-                    {category}
-                    's success?
-                  </span>
-                </div>
-              </>
-            )}
-            <div
-              className={`${
-                category ? 'hidden 2xl:flex' : 'flex'
-              } items-center gap-4`}
-            >
-
+              <span>
+                {`${comparisonsFromCompletion(votes)} `}
+                out of
+                {` ${RoundSize} `}
+                comparisons
+              </span>
             </div>
-
-          </div> */}
-
+          )}
         </div>
         <div className="mx-2 my-auto flex flex-row gap-4">
           <ConnectButton />
@@ -237,24 +218,6 @@ const HeaderRF6: FC<HeaderProps> = ({
           </button>
         </div>
       </div>
-      {category && (
-        <div
-          className={`h-1.5 w-full bg-gray-100 ${
-            isBarFixed ? 'fixed left-0 top-0 z-50 w-full' : ''
-          }`}
-        >
-          <div
-            className="relative h-full bg-primary"
-            style={{ width: `${progress}%` }}
-          >
-
-            <div className={`${!isBarFixed ? 'shadow-tooltip-shadow absolute right-0 top-0 z-50 -translate-y-1/2 rounded-md border-gray-border bg-white px-3 py-2 text-[#344054]' : 'hidden'}`}>
-              {progress?.toFixed(2)}
-              %
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

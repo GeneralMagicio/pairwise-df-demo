@@ -7,7 +7,7 @@ import { redirect, useParams, useRouter } from 'next/navigation';
 import { usePostHog } from 'posthog-js/react';
 import Image from 'next/image';
 import { ProjectCard } from '../card/ProjectCard';
-import HeaderRF6 from '../card/Header-RF6';
+import HeaderRF6, { RoundSize } from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
 // import Modals from '@/app/utils/wallet/Modals';
 import {
@@ -37,6 +37,7 @@ import PostVotingModal from '../ballot/modals/PostVotingModal';
 import { shortenText } from '../utils/helpers';
 import { SliderBase, SliderMax } from './constant';
 import { CustomSlider, sliderScaleFunction } from './SliderComponent';
+import RoundComplete from '@/app/allocation/components/RoundCompleteModal';
 enum Types {
   Both,
   Project1,
@@ -66,6 +67,8 @@ export default function Home() {
   const [revertingBack, setRevertingBack] = useState(false);
   // const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
+  const [roundComplete, setRoundComplete] = useState(false);
+  const [roundCompleteModalCanBeSet, setRoundCompleteModalCanBeSet] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [rationale, setRationale] = useState<string | null>(null);
   const [rationaleError, setRationaleError] = useState<string | null>(null);
@@ -129,6 +132,12 @@ export default function Home() {
   //     console.error(e);
   //   }
   // };
+
+  useEffect(() => {
+    if (roundCompleteModalCanBeSet && data?.votedPairs && data.votedPairs % RoundSize === 0) {
+      setRoundComplete(true);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (bypassPrevProgress && data) {
@@ -213,6 +222,10 @@ export default function Home() {
     else return Math.sign(ratio.value) * Math.log(Math.abs(ratio.value)) / Math.log(SliderBase);
   };
 
+  const roundCompleteClose = () => {
+    setRoundComplete(false);
+  };
+
   // const showCoI1 = () => {
   //   if (!wallet) {
   //     setShowLoginModal(true);
@@ -263,6 +276,7 @@ export default function Home() {
           rationale: rationale,
         },
       });
+      setRoundCompleteModalCanBeSet(true);
       setRatio(InitRatioValue);
       setTab(Types.Both);
       setRationaleError(null);
@@ -361,10 +375,18 @@ export default function Home() {
         isOpen={
           revertingBack
           || showFinishModal
+          || roundComplete
         }
         onClose={() => {}}
       >
         {revertingBack && <RevertLoadingModal />}
+        {roundComplete && (
+          <RoundComplete
+            isOpen={roundComplete}
+            onClose={roundCompleteClose}
+            onNextRound={roundCompleteClose}
+          />
+        )}
         {/* {showLowRateModal && (
           <LowRateModal
             proceedWithSelection={async () => {
@@ -385,6 +407,8 @@ export default function Home() {
       <div>
         <HeaderRF6
           progress={progress * 100}
+          total={data.totalPairs}
+          votes={data.votedPairs}
           category={data.name}
           projImage={categoryResp?.collection.image}
           isFirstSelection={false}
