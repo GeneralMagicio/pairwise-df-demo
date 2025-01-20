@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import HeaderRF6 from '../comparison/card/Header-RF6';
 import DateRangePicker from '../components/DateRangePicker';
@@ -12,10 +12,11 @@ import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/Ar
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { SliderBox } from './SliderRationaleBox';
 import { useUpdateRationaleVote } from '../comparison/utils/data-fetching/vote';
+import type React from 'react';
 
 enum Tab {
-  AllEvaluation,
-  MyEvaluation,
+  AllEvaluation = 0,
+  MyEvaluation = 1,
 }
 
 const tabs = {
@@ -24,15 +25,18 @@ const tabs = {
 };
 
 enum SortOption {
-  Newest,
-  Latest,
+  Newest = 0,
+  Latest = 1,
 }
 enum DateTypes {
-  Day,
-  Week,
-  Month,
+  Day = 0,
+  Week = 1,
+  Month = 2,
 }
-interface ISearchQuery { id: number, name: string }
+interface ISearchQuery {
+  id: number
+  name: string
+}
 
 interface FilterBoxProps {
   searchQueries: ISearchQuery[]
@@ -60,6 +64,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   const [searchSuggestions, setSearchSuggestions] = useState<Array<{ id: number, name: string }>>([]);
   const { data: projectData } = useGetProjects();
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0);
 
   const removeTag = (index: number) => {
     setSearchQueries(searchQueries.filter((_, i) => i !== index));
@@ -71,30 +76,53 @@ const FilterBox: React.FC<FilterBoxProps> = ({
     setStartDate(new Date(edDate.getTime() - days * 24 * 60 * 60 * 1000));
   };
 
-  const addTag = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && filterQuery !== '') {
-      const selectedProject = searchSuggestions[0];
-      if (selectedProject) {
-        setSearchQueries([...searchQueries, { id: selectedProject.id, name: selectedProject.name }]);
-        setFilterQuery('');
-        setSearchSuggestions([]);
-      }
-    }
-  };
+  // const addTag = (event: React.KeyboardEvent) => {
+  //   if (event.key === 'Enter' && filterQuery !== '') {
+  //     const selectedProject = searchSuggestions[0];
+  //     if (selectedProject) {
+  //       setSearchQueries([...searchQueries, { id: selectedProject.id, name: selectedProject.name }]);
+  //       setFilterQuery('');
+  //       setSearchSuggestions([]);
+  //     }
+  //   }
+  // };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setFilterQuery(value);
+    setSelectedSuggestionIndex(0);
 
     if (value) {
-      const suggestions = projectData
-        ?.filter(project => project.name.toLowerCase().includes(value.toLowerCase()))
-        .slice(0, 3)
-        .map(project => ({ id: project.id, name: project.name })) || [];
+      const suggestions
+        = projectData
+          ?.filter(project => project.name.toLowerCase().includes(value.toLowerCase()))
+          .slice(0, 3)
+          .map(project => ({ id: project.id, name: project.name })) || [];
       setSearchSuggestions(suggestions);
     }
     else {
       setSearchSuggestions([]);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setSelectedSuggestionIndex(prevIndex => (prevIndex + 1) % searchSuggestions.length);
+    }
+    else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setSelectedSuggestionIndex(prevIndex => (prevIndex - 1 + searchSuggestions.length) % searchSuggestions.length);
+    }
+    else if (event.key === 'Enter' && filterQuery !== '') {
+      event.preventDefault();
+      const selectedProject = searchSuggestions[selectedSuggestionIndex];
+      if (selectedProject) {
+        setSearchQueries([...searchQueries, { id: selectedProject.id, name: selectedProject.name }]);
+        setFilterQuery('');
+        setSearchSuggestions([]);
+        setSelectedSuggestionIndex(0);
+      }
     }
   };
 
@@ -171,7 +199,6 @@ const FilterBox: React.FC<FilterBoxProps> = ({
 
         <div className="relative mt-2">
           <div className="absolute right-0">
-
             {showDatePicker && (
               <div className="absolute right-0 z-10 mt-2">
                 <DateRangePicker
@@ -198,16 +225,18 @@ const FilterBox: React.FC<FilterBoxProps> = ({
               type="text"
               value={filterQuery}
               onChange={handleInputChange}
-              onKeyDown={addTag}
+              onKeyDown={handleKeyDown}
               placeholder="Search"
               className="h-6 w-full rounded-md pl-8 pr-1 text-lg text-gray-600 transition-shadow placeholder:text-gray-500 focus:border-transparent focus:outline-none"
             />
             {searchSuggestions.length > 0 && (
               <div className="absolute inset-x-0 z-10 mt-1 rounded-md border border-gray-300 bg-white shadow-lg">
-                {searchSuggestions.map(suggestion => (
+                {searchSuggestions.map((suggestion, index) => (
                   <div
                     key={suggestion.id}
-                    className="cursor-pointer px-4 py-2 hover:bg-gray-100"
+                    className={`cursor-pointer px-4 py-2 ${
+                      index === selectedSuggestionIndex ? 'bg-gray-100' : 'hover:bg-gray-100'
+                    }`}
                     onClick={() => {
                       setSearchQueries([...searchQueries, { id: suggestion.id, name: suggestion.name }]);
                       setFilterQuery('');
@@ -227,9 +256,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
               key={`${tag.id}-${index}`}
               className="inline-flex w-max items-center rounded-full border-[#D9D6FE] bg-[#F4F3FF] px-1 py-0.5 text-sm text-[#5925DC]"
             >
-              <div className="mr-0.5">
-                {tag.name}
-              </div>
+              <div className="mr-0.5">{tag.name}</div>
               <button onClick={() => removeTag(index)}>
                 <XCloseIcon size={16} color="#9B8AFB" />
               </button>
@@ -255,8 +282,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
 
 const limit = 10;
 const formatTime = (date: Date | null): string => {
-  if (!date)
-    return '';
+  if (!date) return '';
   return date.toISOString();
 };
 const EvaluationPage: React.FC = () => {
@@ -276,7 +302,7 @@ const EvaluationPage: React.FC = () => {
     endDate?.toISOString() ?? '',
     searchQueries.map(search => search.id),
     tab == Tab.MyEvaluation,
-    (sortOption===SortOption.Newest)?"desc":"asc",
+    sortOption === SortOption.Newest ? 'desc' : 'asc',
   );
 
   const { mutateAsync: vote } = useUpdateRationaleVote({
@@ -286,12 +312,12 @@ const EvaluationPage: React.FC = () => {
     createdAtLte: formatTime(startDate),
     projectIds: searchQueries.map(search => search.id),
     myEvaluation: tab === Tab.MyEvaluation,
-    orderBy: (sortOption===SortOption.Newest)?"desc":"asc",
+    orderBy: sortOption === SortOption.Newest ? 'desc' : 'asc',
   });
 
   const handleVote = async (rationale: string, project1Id: number, project2Id: number, shownValue: number) => {
     try {
-      const chosenId = (shownValue === 1) ? null : (shownValue > 1) ? project2Id : project1Id;
+      const chosenId = shownValue === 1 ? null : shownValue > 1 ? project2Id : project1Id;
       await vote({
         data: {
           project1Id,
@@ -333,9 +359,11 @@ const EvaluationPage: React.FC = () => {
                       <button
                         key={t}
                         className={`h-full max-w-32 px-1 pb-3 text-sm ${
-                          tab === parseInt(t) ? 'border-b border-primary font-bold text-main-title' : 'font-normal text-dark-600'
+                          tab === Number.parseInt(t)
+                            ? 'border-b border-primary font-bold text-main-title'
+                            : 'font-normal text-dark-600'
                         }`}
-                        onClick={() => setTab(parseInt(t))}
+                        onClick={() => setTab(Number.parseInt(t))}
                       >
                         {text}
                       </button>
@@ -349,15 +377,23 @@ const EvaluationPage: React.FC = () => {
                   setShowFilterBox(!showFilterBox);
                 }}
               >
-                <span className={`gap-1 text-sm font-semibold ${searchQueries.length == 0 + searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0) ? 'text-[#344054]' : 'text-[#6941C6]'}`}>Filter</span>
+                <span
+                  className={`gap-1 text-sm font-semibold ${searchQueries.length == 0 + searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0) ? 'text-[#344054]' : 'text-[#6941C6]'}`}
+                >
+                  Filter
+                </span>
                 {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)
                   ? (
                       <div className="flex flex-row px-2 py-0.5">
                         <Image width={8} height={8} src="/assets/images/dot.svg" alt="dot" />
-                        <span className="text-xs text-[#5925DC]">{searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)}</span>
+                        <span className="text-xs text-[#5925DC]">
+                          {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)}
+                        </span>
                       </div>
                     )
-                  : <Image width={20} height={20} src="/assets/images/filter-lines.svg" alt="Filter" />}
+                  : (
+                      <Image width={20} height={20} src="/assets/images/filter-lines.svg" alt="Filter" />
+                    )}
               </button>
             </div>
 
@@ -371,8 +407,10 @@ const EvaluationPage: React.FC = () => {
                     setEndDate={setEndDate}
                     setStartDate={setStartDate}
                     searchQueries={searchQueries}
-                    setSearchQueries={(searches: ISearchQuery[]) => { setSearchQueries(searches); }}
-                    setSortOption={(opt: SortOption)=>setSortOption(opt)}
+                    setSearchQueries={(searches: ISearchQuery[]) => {
+                      setSearchQueries(searches);
+                    }}
+                    setSortOption={(opt: SortOption) => setSortOption(opt)}
                     sortOption={sortOption}
                   />
                 </div>
@@ -382,43 +420,32 @@ const EvaluationPage: React.FC = () => {
             <div>
               <div className="flex grow flex-col gap-4">
                 {rationaleData
-                && rationaleData.data.map(({
-                  id,
-                  pickedId,
-                  project1: p1,
-                  project2: p2,
-                  rationale,
-                  ratio: multiplier,
-                  parent }, index
-                ) => {
-                  return (
-                    <div
-                      key={id}
-                      onClick={() => setSelectedRationale(index + 1)}
-                      className="cursor-pointer"
-                    >
-                      <RationaleBox
-                        pickedId={pickedId}
-                        project1={p1}
-                        project2={p2}
-                        rationale={rationale}
-                        multiplier={multiplier}
-                        repoImage={parent.image}
-                        repoName={parent.name}
-                        selected={selectedRationale === index + 1}
-                      />
-                    </div>
-                  );
-                })}
+                && rationaleData.data.map(
+                  ({ id, pickedId, project1: p1, project2: p2, rationale, ratio: multiplier, parent }, index) => {
+                    return (
+                      <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
+                        <RationaleBox
+                          pickedId={pickedId}
+                          project1={p1}
+                          project2={p2}
+                          rationale={rationale}
+                          multiplier={multiplier}
+                          repoImage={parent.image}
+                          repoName={parent.name}
+                          selected={selectedRationale === index + 1}
+                        />
+                      </div>
+                    );
+                  },
+                )}
               </div>
             </div>
-            <div className="relative mt-4 flex items-center justify-between bottom-0">
+            <div className="relative bottom-0 mt-4 flex items-center justify-between">
               <button
                 onClick={() => setPage(prev => Math.max(prev - 1, 1))}
                 disabled={page === 1}
                 className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
               >
-
                 <ArrowLeft2Icon size={20} />
                 Previous Page
               </button>
@@ -453,32 +480,29 @@ const EvaluationPage: React.FC = () => {
                         <Image
                           width={36}
                           height={36}
-                          src={rationaleData.data[selectedRationale - 1].project1.image}
+                          src={rationaleData.data[selectedRationale - 1].project1.image || '/placeholder.svg'}
                           alt={rationaleData.data[selectedRationale - 1].project1.name}
                         />
                       </div>
-                      <div className="max-w-24">
-                        {rationaleData.data[selectedRationale - 1].project1.name}
-                      </div>
+                      <div className="max-w-24">{rationaleData.data[selectedRationale - 1].project1.name}</div>
                     </div>
                     <div className="flex w-fit flex-col justify-center gap-2">
                       <div className="flex w-full justify-center">
                         <Image
                           width={36}
                           height={36}
-                          src={rationaleData.data[selectedRationale - 1].project2.image}
+                          src={rationaleData.data[selectedRationale - 1].project2.image || '/placeholder.svg'}
                           alt={rationaleData.data[selectedRationale - 1].project2.name}
                         />
                       </div>
-                      <div className="max-w-24">
-                        {rationaleData.data[selectedRationale - 1].project2.name}
-                      </div>
+                      <div className="max-w-24">{rationaleData.data[selectedRationale - 1].project2.name}</div>
                     </div>
                   </div>
                   <div className="h-max w-full">
                     <SliderBox
                       shownValue={
-                        rationaleData.data[selectedRationale - 1].ratio ?? 1
+                        rationaleData.data[selectedRationale - 1].ratio
+                        ?? 1
                         * (rationaleData.data[selectedRationale - 1].pickedId
                           === rationaleData.data[selectedRationale - 1].project1.id
                           ? -1
@@ -504,7 +528,6 @@ const EvaluationPage: React.FC = () => {
                     />
                   </div>
                 </div>
-
               </div>
             </div>
 

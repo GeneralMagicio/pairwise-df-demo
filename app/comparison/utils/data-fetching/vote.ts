@@ -45,7 +45,7 @@ export const useUpdateProjectVote = ({
 };
 
 export const useUpdateRationaleVote = ({
-  page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation,orderBy
+  page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation, orderBy,
 }: {
   page: number
   limit: number
