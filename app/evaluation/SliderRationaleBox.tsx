@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { CustomSlider, SliderMax, SliderBase, sliderScaleFunction } from '@/app/comparison/[categoryId]/page';
+import { CustomSlider, sliderScaleFunction } from '@/app/comparison/[categoryId]/SliderComponent';
 import { NumberBox } from '../comparison/[categoryId]/NumberBox';
 import { IProjectRationale } from './useProjects';
 
+import { SliderBase, SliderMax } from '@/app/comparison/[categoryId]/constant';
 interface ComparisonBoxProps {
   shownValue: number
   canBeEditable?: boolean

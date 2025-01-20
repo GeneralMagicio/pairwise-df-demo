@@ -171,7 +171,7 @@ const HeaderRF6: FC<HeaderProps> = ({
           </div>
         )}
         {showBackButton && (
-          <button onClick={() => router.push("/allocation")} className="fles-row flex justify-center gap-1.5 rounded-lg border border-[#D0D5DD] px-4 py-2.5">
+          <button onClick={() => router.push('/allocation')} className="fles-row flex justify-center gap-1.5 rounded-lg border border-[#D0D5DD] px-4 py-2.5">
             <ArrowLeft2Icon color="#344054" />
             <span className="text-base font-semibold text-[#344054]">Back</span>
           </button>
