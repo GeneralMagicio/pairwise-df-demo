@@ -45,7 +45,7 @@ export const useUpdateProjectVote = ({
 };
 
 export const useUpdateRationaleVote = ({
-  page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation,
+  page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation,orderBy
 }: {
   page: number
   limit: number
@@ -53,6 +53,7 @@ export const useUpdateRationaleVote = ({
   createdAtLte: string
   projectIds: number[]
   myEvaluation: boolean
+  orderBy: string
 }) => {
   const queryClient = useQueryClient();
 
@@ -63,7 +64,7 @@ export const useUpdateRationaleVote = ({
         queryKey: ['pairwise-pairs', undefined],
       });
       queryClient.refetchQueries({
-        queryKey: ['project-rationale-evaluation', page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation],
+        queryKey: ['project-rationale-evaluation', page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation, orderBy],
       });
     },
   });

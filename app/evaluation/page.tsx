@@ -41,6 +41,8 @@ interface FilterBoxProps {
   setStartDate: (date: Date | null) => void
   endDate: Date | null
   setEndDate: (date: Date | null) => void
+  sortOption: SortOption
+  setSortOption: (opt: SortOption) => void
 }
 
 const FilterBox: React.FC<FilterBoxProps> = ({
@@ -50,8 +52,9 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   setStartDate,
   endDate,
   setEndDate,
+  sortOption,
+  setSortOption,
 }) => {
-  const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
   const [filterOption, setFilterOption] = useState<DateTypes | null>(null);
   const [filterQuery, setFilterQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState<Array<{ id: number, name: string }>>([]);
@@ -264,8 +267,17 @@ const EvaluationPage: React.FC = () => {
   const [showFilterBox, setShowFilterBox] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const { data: rationaleData } = useGetProjectRationales(page, limit, startDate?.toISOString() ?? '', endDate?.toISOString() ?? '', searchQueries.map(search => search.id), tab == Tab.MyEvaluation);
   const [selectedRationale, setSelectedRationale] = useState(1);
+  const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
+  const { data: rationaleData } = useGetProjectRationales(
+    page,
+    limit,
+    startDate?.toISOString() ?? '',
+    endDate?.toISOString() ?? '',
+    searchQueries.map(search => search.id),
+    tab == Tab.MyEvaluation,
+    (sortOption===SortOption.Newest)?"desc":"asc",
+  );
 
   const { mutateAsync: vote } = useUpdateRationaleVote({
     page,
@@ -273,7 +285,9 @@ const EvaluationPage: React.FC = () => {
     createdAtGte: formatTime(endDate),
     createdAtLte: formatTime(startDate),
     projectIds: searchQueries.map(search => search.id),
-    myEvaluation: tab === Tab.MyEvaluation });
+    myEvaluation: tab === Tab.MyEvaluation,
+    orderBy: (sortOption===SortOption.Newest)?"desc":"asc",
+  });
 
   const handleVote = async (rationale: string, project1Id: number, project2Id: number, shownValue: number) => {
     try {
@@ -358,6 +372,8 @@ const EvaluationPage: React.FC = () => {
                     setStartDate={setStartDate}
                     searchQueries={searchQueries}
                     setSearchQueries={(searches: ISearchQuery[]) => { setSearchQueries(searches); }}
+                    setSortOption={(opt: SortOption)=>setSortOption(opt)}
+                    sortOption={sortOption}
                   />
                 </div>
               </div>
@@ -396,7 +412,7 @@ const EvaluationPage: React.FC = () => {
                 })}
               </div>
             </div>
-            <div className="mt-4 flex items-center justify-between">
+            <div className="relative mt-4 flex items-center justify-between bottom-0">
               <button
                 onClick={() => setPage(prev => Math.max(prev - 1, 1))}
                 disabled={page === 1}

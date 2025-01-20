@@ -8,6 +8,7 @@ export interface IRationaleQuery {
   createdAtLte: string
   projectIds: number[]
   myEvaluation: boolean
+  orderBy: string
 }
 export interface IProjectRationale {
   id: number
@@ -126,9 +127,10 @@ export const useGetProjectRationales = (page: number,
   createdAtGte: string,
   createdAtLte: string,
   projectIds: number[],
-  myEvaluation: boolean) => {
+  myEvaluation: boolean,
+  orderBy: string) => {
   return useQuery({
-    queryKey: ['project-rationale-evaluation', page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation],
+    queryKey: ['project-rationale-evaluation', page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation, orderBy],
     queryFn: () => getProjectRationales({
       page,
       limit,
@@ -136,6 +138,7 @@ export const useGetProjectRationales = (page: number,
       createdAtLte,
       projectIds,
       myEvaluation,
+      orderBy,
     }),
   });
 };
