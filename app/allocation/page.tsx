@@ -126,9 +126,8 @@ const AllocationPage = () => {
         <div className="flex max-w-[72%] flex-col gap-3">
           <h2 className="text-3xl font-bold"> Deep Funding </h2>
           <p className="text-gray-400">
-            In Deep Funding, most of the work gets done by a public market of allocators,
-            that suggest proposed weights of edges in a graph,
-            which answer the question “what percent of the credit for A belongs to B?”.
+            Select the Github repo whose codebase you are most familiar with.
+            Your job is voting on how important its package dependencies are relative to one another.
           </p>
         </div>
         <div className="flex justify-between gap-4">
