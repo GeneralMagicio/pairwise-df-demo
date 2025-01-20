@@ -8,6 +8,7 @@ export type TCategory = {
   description: string
   image: string
   projectCount: number
+  votedPairs: number
   progress: CollectionProgressStatus
   attestationLink: string | null
 };
