@@ -92,7 +92,6 @@ export default function Home() {
   const [aiMode1, setAiMode1] = useState(false);
   const [aiMode2, setAiMode2] = useState(false);
 
-  const router = useRouter();
   const posthog = usePostHog();
 
   const cid = Number(categoryId);
