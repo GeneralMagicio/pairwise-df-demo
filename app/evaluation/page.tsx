@@ -504,7 +504,7 @@ const EvaluationPage: React.FC = () => {
                         rationaleData.data[selectedRationale - 1].ratio
                         ?? 1
                         * (rationaleData.data[selectedRationale - 1].pickedId
-                          === rationaleData.data[selectedRationale - 1].project1.id
+                        === rationaleData.data[selectedRationale - 1].project1.id
                           ? -1
                           : 1)
                       }
@@ -513,14 +513,14 @@ const EvaluationPage: React.FC = () => {
                       rationale={rationaleData.data[selectedRationale - 1].rationale}
                       project1={
                         (rationaleData.data[selectedRationale - 1].pickedId
-                          ?? rationaleData.data[selectedRationale - 1].project1Id)
+                        ?? rationaleData.data[selectedRationale - 1].project1Id)
                         === rationaleData.data[selectedRationale - 1].project1Id
                           ? rationaleData.data[selectedRationale - 1].project1
                           : rationaleData.data[selectedRationale - 1].project2
                       }
                       project2={
                         (rationaleData.data[selectedRationale - 1].pickedId
-                          ?? rationaleData.data[selectedRationale - 1].project1Id)
+                        ?? rationaleData.data[selectedRationale - 1].project1Id)
                         === rationaleData.data[selectedRationale - 1].project2Id
                           ? rationaleData.data[selectedRationale - 1].project1
                           : rationaleData.data[selectedRationale - 1].project2
