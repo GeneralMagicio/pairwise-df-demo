@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { redirect, useParams } from 'next/navigation';
+import { redirect, useParams, useRouter } from 'next/navigation';
 // import { useQueryClient } from '@tanstack/react-query';
 // import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
@@ -119,6 +119,8 @@ export default function Home() {
   // const [coi2, setCoi2] = useState(false);
   const [aiMode1, setAiMode1] = useState(false);
   const [aiMode2, setAiMode2] = useState(false);
+
+  const router = useRouter();
   const posthog = usePostHog();
 
   const cid = Number(categoryId);
@@ -603,11 +605,12 @@ export default function Home() {
                       );
                     })}
                   </div>
-                  {/* <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
-                    <div>Feeling stuck?</div>
-                    <button className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold
-                    text-[#344054]">View other juror evaluations</button>
-                  </div> */}
+                  <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
+                    <button onClick={()=>{
+                      router.push("/evaluation")
+                    }}className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold
+                    text-[#344054]">View All Evaluations</button>
+                  </div>
                 </div>
               )
             : (

@@ -73,7 +73,7 @@ export function SliderBox({
           />
         </div>
 
-        <div className="mb-8 flex w-full items-center justify-between gap-4">
+        <div className="mb-8 mt-2 flex w-full items-center justify-between gap-4">
           <span className="flex-1 text-right text-sm">
             <span className="max-w-24 font-semibold">{project1.name}</span>
             {' '}
