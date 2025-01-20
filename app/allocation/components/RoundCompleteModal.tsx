@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { XCloseIcon } from '@/public/assets/icon-components/XClose';
 
