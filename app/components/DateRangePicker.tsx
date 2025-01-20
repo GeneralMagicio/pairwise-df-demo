@@ -87,10 +87,10 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
             const day = i + 1;
             const date = new Date(year, month, day);
 
-            const copyStartDate = new Date(startDate??"");
-            copyStartDate.setHours(0,0,0,0);
-            const copyEndDate = new Date(endDate??"");
-            copyEndDate.setHours(0,0,0,0);
+            const copyStartDate = new Date(startDate ?? '');
+            copyStartDate.setHours(0, 0, 0, 0);
+            const copyEndDate = new Date(endDate ?? '');
+            copyEndDate.setHours(0, 0, 0, 0);
             const isSelected = copyStartDate?.getTime() === date.getTime() || copyEndDate?.getTime() === date.getTime();
 
             const isBetween = isInRange(date);

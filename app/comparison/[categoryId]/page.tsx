@@ -38,8 +38,8 @@ import { useCategory } from '../utils/data-fetching/category';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import { shortenText } from '../utils/helpers';
 
-const SliderMax = 10;
-const SliderBase = 2;
+export const SliderMax = 10;
+export const SliderBase = 2;
 
 enum Types {
   Both,
@@ -47,9 +47,9 @@ enum Types {
   Project2,
 }
 
-const sliderScaleFunction = (x: number, base: number) => Math.floor(Math.pow(base, Math.abs(x)));
+export const sliderScaleFunction = (x: number, base: number) => Math.floor(Math.pow(base, Math.abs(x)));
 
-const CustomSlider = styled(Slider, {
+export const CustomSlider = styled(Slider, {
   shouldForwardProp: prop => prop !== 'val',
 })<{ val: number }>(({ val }) => {
   const max = SliderMax;

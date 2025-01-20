@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import HeaderRF6 from '../comparison/card/Header-RF6';
-import { ProjectRationaleData } from '../comparison/utils/data-fetching/pair';
 import DateRangePicker from '../components/DateRangePicker';
 import { Search } from '@/public/assets/icon-components/Search';
 import { XCloseIcon } from '@/public/assets/icon-components/XClose';
@@ -11,7 +10,7 @@ import { RationaleBox } from '../comparison/[categoryId]/RationaleBox';
 import Spinner from '../components/Spinner';
 import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/ArrowRight';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
-import Modal from '../utils/Modal';
+import { SliderBox } from './SliderRationaleBox';
 
 enum Tab {
   AllEvaluation,
@@ -23,10 +22,6 @@ const tabs = {
   [Tab.MyEvaluation]: 'My evaluations',
 };
 
-type ProjectRationale = ProjectRationaleData & {
-  categoryName?: string
-  categoryImage?: string
-};
 enum SortOption {
   Newest,
   Latest,
@@ -68,9 +63,9 @@ const FilterBox: React.FC<FilterBoxProps> = ({
 
   const setDays = (days: number) => {
     const edDate = new Date();
-    setEndDate(edDate)
-    setStartDate(new Date(edDate.getTime()-days*24* 60 * 60 * 1000))
-  }
+    setEndDate(edDate);
+    setStartDate(new Date(edDate.getTime() - days * 24 * 60 * 60 * 1000));
+  };
 
   const addTag = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && filterQuery !== '') {
@@ -128,8 +123,8 @@ const FilterBox: React.FC<FilterBoxProps> = ({
                 filterOption === DateTypes.Month ? 'bg-[#F9FAFB]' : 'bg-white'
               } px-4 py-2`}
               onClick={() => {
-                setFilterOption(DateTypes.Month)
-                setDays(30)
+                setFilterOption(DateTypes.Month);
+                setDays(30);
               }}
             >
               30d
@@ -139,8 +134,8 @@ const FilterBox: React.FC<FilterBoxProps> = ({
                 filterOption === DateTypes.Week ? 'bg-[#F9FAFB]' : 'bg-white'
               } px-4 py-2`}
               onClick={() => {
-                setFilterOption(DateTypes.Week)
-                setDays(7)
+                setFilterOption(DateTypes.Week);
+                setDays(7);
               }}
             >
               7d
@@ -150,7 +145,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
                 filterOption === DateTypes.Day ? 'bg-[#F9FAFB]' : 'bg-white'
               } px-4 py-2`}
               onClick={() => {
-                setFilterOption(DateTypes.Day)
+                setFilterOption(DateTypes.Day);
                 setDays(1);
               }}
             >
@@ -264,10 +259,12 @@ const EvaluationPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const { data: rationaleData } = useGetProjectRationales(page, limit, startDate?.toISOString() ?? '', endDate?.toISOString() ?? '', searchQueries.map(search => search.id), tab == Tab.MyEvaluation);
-
-  useEffect(()=>{
+  const [selectedRationale, setSelectedRationale] = useState(1);
+  console.log(rationaleData?.data[selectedRationale]);
+  useEffect(() => {
     setPage(1);
-  },[searchQueries,startDate,endDate])
+    setSelectedRationale(1);
+  }, [searchQueries, startDate, endDate]);
   useEffect(() => {
     if (rationaleData) {
       setTotalPages(rationaleData.meta.totalPages);
@@ -277,10 +274,10 @@ const EvaluationPage: React.FC = () => {
     return <Spinner />;
   }
   return (
-    <div className="flex w-full h-screen flex-col justify-around">
+    <div className="flex h-screen w-full min-h-fit flex-col justify-around pb-10">
       <HeaderRF6 showBackButton={true} allEvaluation={true} />
       <div className="my-9 ml-10 flex grow flex-row justify-around gap-10">
-        <div className="min-w-[600px] rounded-2xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
+        <div className="w-[600px] rounded-2xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
           <div className="relative flex h-full max-h-[680px] flex-col gap-4 overflow-auto pr-4">
             <div className="top-0 flex h-9 flex-row gap-4">
               <div className="grow border-b border-gray-border">
@@ -306,12 +303,12 @@ const EvaluationPage: React.FC = () => {
                   setShowFilterBox(!showFilterBox);
                 }}
               >
-                <span className={`gap-1 text-sm font-semibold ${searchQueries.length == 0 + searchQueries.length + (startDate!==null && endDate!==null?1:0)? 'text-[#344054]' : 'text-[#6941C6]'}`}>Filter</span>
-                {searchQueries.length + (startDate!==null && endDate!==null?1:0)
+                <span className={`gap-1 text-sm font-semibold ${searchQueries.length == 0 + searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0) ? 'text-[#344054]' : 'text-[#6941C6]'}`}>Filter</span>
+                {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)
                   ? (
                       <div className="flex flex-row px-2 py-0.5">
                         <Image width={8} height={8} src="/assets/images/dot.svg" alt="dot" />
-                        <span className="text-xs text-[#5925DC]">{searchQueries.length + (startDate!==null && endDate!==null?1:0)}</span>
+                        <span className="text-xs text-[#5925DC]">{searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)}</span>
                       </div>
                     )
                   : <Image width={20} height={20} src="/assets/images/filter-lines.svg" alt="Filter" />}
@@ -319,6 +316,7 @@ const EvaluationPage: React.FC = () => {
             </div>
 
             {/* <Modal isOpen={showFilterBox} onClose={()=>{}}> */}
+            {showFilterBox && (
               <div className="relative z-10">
                 <div className="absolute -top-2 right-0">
                   <FilterBox
@@ -331,14 +329,26 @@ const EvaluationPage: React.FC = () => {
                   />
                 </div>
               </div>
-              {/* </Modal> */}
+            )}
+            {/* </Modal> */}
             <div>
               <div className="flex grow flex-col gap-4">
                 {rationaleData
-                && rationaleData.data.map(({ id,pickedId, project1: p1, project2: p2, rationale, ratio: multiplier, parent }
-                  ) => {
+                && rationaleData.data.map(({
+                  id,
+                  pickedId,
+                  project1: p1,
+                  project2: p2,
+                  rationale,
+                  ratio: multiplier,
+                  parent }, index
+                ) => {
                   return (
-                    <div key={id}>
+                    <div
+                      key={id}
+                      onClick={() => setSelectedRationale(index + 1)}
+                      className="cursor-pointer"
+                    >
                       <RationaleBox
                         pickedId={pickedId}
                         project1={p1}
@@ -347,6 +357,7 @@ const EvaluationPage: React.FC = () => {
                         multiplier={multiplier}
                         repoImage={parent.image}
                         repoName={parent.name}
+                        selected={selectedRationale === index + 1}
                       />
                     </div>
                   );
@@ -383,19 +394,81 @@ const EvaluationPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="mr-10 min-w-[500px] grow rounded-2xl border border-gray-border px-3 py-4">
-          {/* <button
-            onClick={()=>{}}
-            className="mb-2 px-4 py-2 bg-blue-500 text-white rounded-md"
-          >
-            Sort by Newest
-          </button>
-          <button
-            onClick={()=>{}}
-            className="mb-2 px-4 py-2 ml-2 bg-gray-500 text-white rounded-md"
-          >
-            Sort by Oldest
-          </button> */}
+        <div className="flex min-w-[500px] grow flex-col gap-6 pr-10">
+          <div className="grow rounded-2xl border border-gray-300 p-5">
+            <div className="overflow-auto h-full pr-4">
+              <div className="flex flex-col justify-center gap-4 h-full">
+                <div className="flex flex-row justify-around">
+                  <div className="flex w-fit flex-col justify-center gap-2">
+                    <div className='w-full flex justify-center'>
+                    <Image
+                      width={36}
+                      height={36}
+                      src={rationaleData.data[selectedRationale - 1].project1.image}
+                      alt={rationaleData.data[selectedRationale - 1].project1.name}
+                    />
+                    </div>
+                    <div className='max-w-24'>
+                      {rationaleData.data[selectedRationale - 1].project1.name}
+                    </div>
+                  </div>
+                  <div className="flex w-fit flex-col justify-center gap-2">
+                  <div className='w-full flex justify-center'>
+                    <Image
+                      width={36}
+                      height={36}
+                      src={rationaleData.data[selectedRationale - 1].project2.image}
+                      alt={rationaleData.data[selectedRationale - 1].project2.name}
+                    />
+                    </div>
+                    <div className='max-w-24'>
+                      {rationaleData.data[selectedRationale - 1].project2.name}
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full h-max">
+                  <SliderBox
+                    shownValue={
+                      rationaleData.data[selectedRationale - 1].ratio ?? 1
+                      * (rationaleData.data[selectedRationale - 1].pickedId === rationaleData.data[selectedRationale - 1].project1.id ? -1 : 1)
+                    }
+                    canBeEditable={tab === Tab.MyEvaluation}
+                    rationale={rationaleData.data[selectedRationale - 1].rationale}
+                    project1={
+                      rationaleData.data[selectedRationale - 1].pickedId === rationaleData.data[selectedRationale - 1].project1Id
+                        ? rationaleData.data[selectedRationale - 1].project1.name
+                        : rationaleData.data[selectedRationale - 1].project2.name
+                    }
+                    project2={
+                      rationaleData.data[selectedRationale - 1].pickedId === rationaleData.data[selectedRationale - 1].project2Id
+                        ? rationaleData.data[selectedRationale - 1].project1.name
+                        : rationaleData.data[selectedRationale - 1].project2.name
+                    }
+                  />
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <button
+              disabled={selectedRationale === 1}
+              className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+              onClick={() => setSelectedRationale(selectedRationale - 1)}
+            >
+              <ArrowLeft2Icon size={20} />
+              Previous
+            </button>
+            <button
+              disabled={selectedRationale === rationaleData.data.length}
+              onClick={() => setSelectedRationale(selectedRationale + 1)}
+              className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+            >
+              View Next
+              <ArrowRight size={20} color="#344054" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
