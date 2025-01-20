@@ -32,11 +32,8 @@ const PAIRWISE_REPORT_URL
   = 'https://github.com/GeneralMagicio/pairwise-df-demo/issues/new?assignees=MoeNick&labels=&projects=&template=report-an-issue.md&title=%5BFeedback%5D+';
 
 const HeaderRF6: FC<HeaderProps> = ({
-  progress,
   votes,
-  total,
   category,
-  projImage,
   showBackButton,
   // question,
   allEvaluation,
@@ -50,7 +47,6 @@ const HeaderRF6: FC<HeaderProps> = ({
   const chainId = 'github';
   const [isBadgesModalOpen, setIsBadgesModalOpen] = useState(false);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
-  const [isBarFixed, setIsBarFixed] = useState(false);
 
   const roundNumber = (votes: number) => Math.min(6, Math.floor(votes / RoundSize) + 1);
   const comparisonsFromCompletion = (votes: number) => votes % RoundSize;
@@ -85,25 +81,6 @@ const HeaderRF6: FC<HeaderProps> = ({
     }
     return activeBadgesArray;
   }, [badges]);
-
-  useEffect(() => {
-    const HEADER_HEIGHT = 80;
-
-    const handleScroll = () => {
-      if (window.scrollY > HEADER_HEIGHT) {
-        setIsBarFixed(true);
-      }
-      else {
-        setIsBarFixed(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   useEffect(() => {
     if (!category || !chainId || !delegates) return;
