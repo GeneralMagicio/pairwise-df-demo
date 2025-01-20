@@ -39,7 +39,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   loading,
   onScore,
   onView,
-  votedPairs,
 }) => {
   const renderProgressState = () => {
     if (loading) return <Loading />;
@@ -57,8 +56,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         return (
           <WipCategory
             onScore={onScore}
-            votedPairs={votedPairs}
-            totalPairs={projectCount}
           />
         );
       case CollectionProgressStatusEnum.Pending:
