@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { redirect, useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 // import { useQueryClient } from '@tanstack/react-query';
 // import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
@@ -364,7 +364,7 @@ export default function Home() {
 
   if (!cid) return <NotFoundComponent />;
 
-  if (!githubHandle) return redirect('/');
+  // if (!githubHandle) return redirect('/');
 
   if (!project1 || !project2 || !data) return <div>No data</div>;
 
