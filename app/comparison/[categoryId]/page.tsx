@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { redirect, useParams } from 'next/navigation';
+import { redirect, useParams, useRouter } from 'next/navigation';
 // import { useQueryClient } from '@tanstack/react-query';
 // import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
-import Slider from '@mui/material/Slider';
-import { styled } from '@mui/material/styles';
 import Image from 'next/image';
 import { ProjectCard } from '../card/ProjectCard';
 import HeaderRF6 from '../card/Header-RF6';
@@ -37,43 +35,13 @@ import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { useCategory } from '../utils/data-fetching/category';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import { shortenText } from '../utils/helpers';
-
-const SliderMax = 10;
-const SliderBase = 2;
-
+import { SliderBase, SliderMax } from './constant';
+import { CustomSlider, sliderScaleFunction } from './SliderComponent';
 enum Types {
   Both,
   Project1,
   Project2,
 }
-
-const sliderScaleFunction = (x: number, base: number) => Math.floor(Math.pow(base, Math.abs(x)));
-
-const CustomSlider = styled(Slider, {
-  shouldForwardProp: prop => prop !== 'val',
-})<{ val: number }>(({ val }) => {
-  const max = SliderMax;
-  return ({
-    'color': '#EAECF0',
-    '& .MuiSlider-valueLabel': {
-      color: '#000000',
-      backgroundColor: '#EAECF0',
-      border: '1px solid #EAECF0',
-    },
-    '& .MuiSlider-thumb': {
-      backgroundColor: '#FFFFFF',
-      border: '1.5px solid #7F56D9',
-    },
-    '& .MuiSlider-track': {
-      background: (val > 0) ? `linear-gradient(to right, #EAECF0 0%, #EAECF0 ${max / (max + val) * 100}%, #7F56D9 ${max / (max + val) * 100}%, #7F56D9 100%)` : '#FFFFFF`',
-      border: 'transparent',
-    },
-    '& .MuiSlider-rail': {
-      background: (val > 0) ? '#EAECF0' : `linear-gradient(to right, #EAECF0 0%, #EAECF0 ${(max + val) / max * 50}%, #7F56D9 ${(max + val) / max * 50}%, #7F56D9 50%, #EAECF0 50%, #EAECF0 100%)`,
-      opacity: 1,
-    },
-  });
-});
 
 const InitRatioValue = { value: 0, type: 'slider' } as { value: number, type: 'slider' | 'input' };
 
@@ -119,6 +87,8 @@ export default function Home() {
   // const [coi2, setCoi2] = useState(false);
   const [aiMode1, setAiMode1] = useState(false);
   const [aiMode2, setAiMode2] = useState(false);
+
+  const router = useRouter();
   const posthog = usePostHog();
 
   const cid = Number(categoryId);
@@ -465,7 +435,7 @@ export default function Home() {
                   <CustomSlider
                     val={convertInputValueToSlider()}
                     value={convertInputValueToSlider()}
-                    scale={x => sliderScaleFunction(x, SliderBase)}
+                    scale={(x: number) => sliderScaleFunction(x, SliderBase)}
                     min={-1 * SliderMax}
                     step={1}
                     max={SliderMax}
@@ -603,11 +573,17 @@ export default function Home() {
                       );
                     })}
                   </div>
-                  {/* <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
-                    <div>Feeling stuck?</div>
-                    <button className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold
-                    text-[#344054]">View other juror evaluations</button>
-                  </div> */}
+                  <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
+                    <button
+                      onClick={() => {
+                        router.push('/evaluation');
+                      }}
+                      className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold
+                    text-[#344054]"
+                    >
+                      View All Evaluations
+                    </button>
+                  </div>
                 </div>
               )
             : (

@@ -22,6 +22,7 @@ interface HeaderProps {
   // question?: string
   isFirstSelection?: boolean
   showBackButton?: boolean
+  allEvaluation?: boolean
 }
 
 const PAIRWISE_REPORT_URL
@@ -33,6 +34,7 @@ const HeaderRF6: FC<HeaderProps> = ({
   projImage,
   showBackButton,
   // question,
+  allEvaluation,
   isFirstSelection = false,
 }) => {
   const path = usePathname();
@@ -163,18 +165,24 @@ const HeaderRF6: FC<HeaderProps> = ({
       </Modal>
 
       <div className="relative z-40 flex w-full flex-row justify-between gap-6 border-b bg-white px-10 py-6">
-        {!category && !isFirstSelection && (
+        {!allEvaluation && !category && !isFirstSelection && (
           <div onClick={() => router.push('/allocation')} className="m-3 flex cursor-pointer items-center">
             <PwLogo />
           </div>
         )}
         {showBackButton && (
-          <button onClick={() => router.back()} className="fles-row flex justify-center gap-1.5 rounded-lg border border-[#D0D5DD] px-4 py-2.5">
-            <ArrowLeft2Icon />
-            <span className="font-semibold">Back</span>
+          <button onClick={() => router.push('/allocation')} className="fles-row flex justify-center gap-1.5 rounded-lg border border-[#D0D5DD] px-4 py-2.5">
+            <ArrowLeft2Icon color="#344054" />
+            <span className="text-base font-semibold text-[#344054]">Back</span>
           </button>
         )}
+
         <div className="flex grow items-center justify-start">
+          {allEvaluation && (
+            <span className="text-xl font-bold">
+              All Evaluations
+            </span>
+          )}
           <div className="flex flex-row justify-center gap-2 text-dark-600">
             {projImage && (
               <span>
