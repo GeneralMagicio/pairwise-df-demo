@@ -36,6 +36,35 @@ export const useUpdateProjectVote = ({
       queryClient.refetchQueries({
         queryKey: ['pairwise-pairs', categoryId],
       });
+      queryClient.refetchQueries({
+        queryKey: ['project-rationale-evaluation'],
+        exact: false,
+      });
+    },
+  });
+};
+
+export const useUpdateRationaleVote = ({
+  page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation,
+}: {
+  page: number
+  limit: number
+  createdAtGte: string
+  createdAtLte: string
+  projectIds: number[]
+  myEvaluation: boolean
+}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateProjectVote,
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ['pairwise-pairs', undefined],
+      });
+      queryClient.refetchQueries({
+        queryKey: ['project-rationale-evaluation', page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation],
+      });
     },
   });
 };

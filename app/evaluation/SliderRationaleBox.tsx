@@ -4,24 +4,34 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { CustomSlider, SliderMax, SliderBase, sliderScaleFunction } from '@/app/comparison/[categoryId]/page';
 import { NumberBox } from '../comparison/[categoryId]/NumberBox';
+import { IProjectRationale } from './useProjects';
 
 interface ComparisonBoxProps {
   shownValue: number
   canBeEditable?: boolean
   rationale: string
-  project1: string
-  project2: string
+  project1: IProjectRationale
+  project2: IProjectRationale
+  handleVote: (rationale: string, project1Id: number, project2Id: number, shownValue: number) => void
 }
 
-export function SliderBox({ shownValue, canBeEditable = false, rationale, project1, project2 }: ComparisonBoxProps) {
+export function SliderBox({
+  shownValue,
+  canBeEditable = false,
+  rationale,
+  project1,
+  project2,
+  handleVote }: ComparisonBoxProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [ratio, setRatio] = useState({ value: shownValue, type: 'input' as 'slider' | 'input' });
   const [editedRationale, setEditedRationale] = useState(rationale);
+  const [rationaleError, setRationaleError] = useState<string | null>(null);
 
   console.log(shownValue);
   useEffect(() => {
     setRatio({ value: shownValue, type: 'input' });
-  }, [shownValue]);
+    setEditedRationale(rationale);
+  }, [shownValue, rationale]);
 
   const convertInputValueToSlider = () => {
     if (ratio.type === 'slider') return ratio.value;
@@ -44,7 +54,7 @@ export function SliderBox({ shownValue, canBeEditable = false, rationale, projec
     = ratio.type === 'slider' ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase) : ratio.value;
 
   return (
-    <div className="grow relative h-full w-full">
+    <div className="relative size-full grow">
       <div className="relative rounded-lg">
         <div className="relative w-full">
           <div className="absolute left-1/2 top-0 h-9 w-0 border-2 border-dashed border-primary" />
@@ -65,7 +75,7 @@ export function SliderBox({ shownValue, canBeEditable = false, rationale, projec
 
         <div className="mb-8 flex w-full items-center justify-between gap-4">
           <span className="flex-1 text-right text-sm">
-            <span className="font-semibold max-w-24">{project1}</span>
+            <span className="max-w-24 font-semibold">{project1.name}</span>
             {' '}
             deserves
           </span>
@@ -81,30 +91,39 @@ export function SliderBox({ shownValue, canBeEditable = false, rationale, projec
           <span className="flex-1 text-left text-sm">
             more credit than
             {' '}
-            <span className="font-semibold max-w-24">{project2}</span>
+            <span className="max-w-24 font-semibold">{project2.name}</span>
           </span>
         </div>
 
-        <div className="flex h-full flex-col space-y-2">
+        <div className="relative flex h-full flex-col space-y-2">
           <label className="font-medium">Rationale</label>
           <textarea
             value={isEditing ? editedRationale : rationale}
             onChange={e => setEditedRationale(e.target.value)}
+            onClick={() => setRationaleError(null)}
             disabled={!isEditing}
             cols={10}
-            className="size-full min-h-[200px] grow resize-none rounded-md border border-gray-300 px-3.5 py-3 focus:border-primary focus:outline-none"
+            className={`min-h-48 w-full resize-none rounded-md border ${rationaleError ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none`}
             placeholder="Enter your rationale..."
           />
+
+          <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-red-500">
+            {' '}
+            {rationaleError ? rationaleError : ''}
+            {' '}
+          </span>
         </div>
 
       </div>
       {isEditing
         ? (
-            <div className="absolute bottom-4 right-0 mt-4 flex justify-end gap-2">
+            <div className="absolute -bottom-20 right-0 mt-4 flex justify-end gap-2">
               <button
                 className="rounded-lg  border border-gray-300 px-4 py-2.5 text-gray-600"
                 onClick={() => {
                   setIsEditing(false);
+                  setEditedRationale(rationale);
+                  setRatio({ value: shownValue, type: 'input' });
                 }}
               >
                 Discard
@@ -113,6 +132,11 @@ export function SliderBox({ shownValue, canBeEditable = false, rationale, projec
                 className="rounded-lg bg-primary px-4  py-2.5 text-white hover:bg-primary/90"
                 onClick={() => {
                   setIsEditing(false);
+                  if (editedRationale === null || editedRationale.trim().length < 70) {
+                    setRationaleError('Min 70 characters required');
+                    return;
+                  }
+                  handleVote(editedRationale, project1.id, project2.id, ratio.value);
                 }}
               >
                 Save changes
@@ -122,7 +146,7 @@ export function SliderBox({ shownValue, canBeEditable = false, rationale, projec
         : (
             canBeEditable && (
               <button
-                className="absolute bottom-4 right-4 flex flex-row gap-1.5 rounded-lg bg-primary px-4 py-2.5"
+                className="absolute -bottom-20 right-4 flex flex-row gap-1.5 rounded-lg bg-primary px-4 py-2.5"
                 onClick={() => setIsEditing(true)}
               >
                 <Image src="/assets/images/pencil.svg" alt="pencil" width={16} height={16} />

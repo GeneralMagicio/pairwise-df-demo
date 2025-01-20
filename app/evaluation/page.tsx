@@ -11,6 +11,7 @@ import Spinner from '../components/Spinner';
 import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/ArrowRight';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { SliderBox } from './SliderRationaleBox';
+import { useUpdateRationaleVote } from '../comparison/utils/data-fetching/vote';
 
 enum Tab {
   AllEvaluation,
@@ -250,6 +251,11 @@ const FilterBox: React.FC<FilterBoxProps> = ({
 };
 
 const limit = 10;
+const formatTime = (date: Date | null): string => {
+  if (!date)
+    return '';
+  return date.toISOString();
+};
 const EvaluationPage: React.FC = () => {
   const [tab, setTab] = useState<keyof typeof tabs>(Tab.AllEvaluation);
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -260,7 +266,33 @@ const EvaluationPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const { data: rationaleData } = useGetProjectRationales(page, limit, startDate?.toISOString() ?? '', endDate?.toISOString() ?? '', searchQueries.map(search => search.id), tab == Tab.MyEvaluation);
   const [selectedRationale, setSelectedRationale] = useState(1);
-  console.log(rationaleData?.data[selectedRationale]);
+
+  const { mutateAsync: vote } = useUpdateRationaleVote({
+    page,
+    limit,
+    createdAtGte: formatTime(endDate),
+    createdAtLte: formatTime(startDate),
+    projectIds: searchQueries.map(search => search.id),
+    myEvaluation: tab === Tab.MyEvaluation });
+
+  const handleVote = async (rationale: string, project1Id: number, project2Id: number, shownValue: number) => {
+    try {
+      const chosenId = (shownValue === 1) ? null : (shownValue > 1) ? project2Id : project1Id;
+      await vote({
+        data: {
+          project1Id,
+          project2Id,
+          project1Val: chosenId === project1Id ? Math.abs(shownValue) : -1 * Math.abs(shownValue),
+          project2Val: chosenId === project2Id ? Math.abs(shownValue) : -1 * Math.abs(shownValue),
+          pickedId: chosenId,
+          rationale: rationale,
+        },
+      });
+    }
+    catch (e) {
+      console.error(e);
+    }
+  };
   useEffect(() => {
     setPage(1);
     setSelectedRationale(1);
@@ -274,9 +306,9 @@ const EvaluationPage: React.FC = () => {
     return <Spinner />;
   }
   return (
-    <div className="flex h-screen w-full min-h-fit flex-col justify-around pb-10">
+    <div className="flex h-screen w-full min-w-fit flex-col justify-around pb-10">
       <HeaderRF6 showBackButton={true} allEvaluation={true} />
-      <div className="my-9 ml-10 flex grow flex-row justify-around gap-10">
+      <div className="my-9 ml-10 flex min-w-max grow flex-row justify-start gap-10 pr-10">
         <div className="w-[600px] rounded-2xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
           <div className="relative flex h-full max-h-[680px] flex-col gap-4 overflow-auto pr-4">
             <div className="top-0 flex h-9 flex-row gap-4">
@@ -394,82 +426,92 @@ const EvaluationPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="flex min-w-[500px] grow flex-col gap-6 pr-10">
-          <div className="grow rounded-2xl border border-gray-300 p-5">
-            <div className="overflow-auto h-full pr-4">
-              <div className="flex flex-col justify-center gap-4 h-full">
-                <div className="flex flex-row justify-around">
-                  <div className="flex w-fit flex-col justify-center gap-2">
-                    <div className='w-full flex justify-center'>
-                    <Image
-                      width={36}
-                      height={36}
-                      src={rationaleData.data[selectedRationale - 1].project1.image}
-                      alt={rationaleData.data[selectedRationale - 1].project1.name}
-                    />
+        {rationaleData.data.length > 0 && (
+          <div className="flex min-w-[500px] grow flex-col gap-6 pr-10">
+            <div className="grow rounded-2xl border border-gray-300 p-5">
+              <div className="h-full overflow-auto pr-4">
+                <div className="flex h-full flex-col justify-center gap-4">
+                  <div className="flex flex-row justify-around">
+                    <div className="flex w-fit flex-col justify-center gap-2">
+                      <div className="flex w-full justify-center">
+                        <Image
+                          width={36}
+                          height={36}
+                          src={rationaleData.data[selectedRationale - 1].project1.image}
+                          alt={rationaleData.data[selectedRationale - 1].project1.name}
+                        />
+                      </div>
+                      <div className="max-w-24">
+                        {rationaleData.data[selectedRationale - 1].project1.name}
+                      </div>
                     </div>
-                    <div className='max-w-24'>
-                      {rationaleData.data[selectedRationale - 1].project1.name}
+                    <div className="flex w-fit flex-col justify-center gap-2">
+                      <div className="flex w-full justify-center">
+                        <Image
+                          width={36}
+                          height={36}
+                          src={rationaleData.data[selectedRationale - 1].project2.image}
+                          alt={rationaleData.data[selectedRationale - 1].project2.name}
+                        />
+                      </div>
+                      <div className="max-w-24">
+                        {rationaleData.data[selectedRationale - 1].project2.name}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex w-fit flex-col justify-center gap-2">
-                  <div className='w-full flex justify-center'>
-                    <Image
-                      width={36}
-                      height={36}
-                      src={rationaleData.data[selectedRationale - 1].project2.image}
-                      alt={rationaleData.data[selectedRationale - 1].project2.name}
+                  <div className="h-max w-full">
+                    <SliderBox
+                      shownValue={
+                        rationaleData.data[selectedRationale - 1].ratio ?? 1
+                        * (rationaleData.data[selectedRationale - 1].pickedId
+                          === rationaleData.data[selectedRationale - 1].project1.id
+                          ? -1
+                          : 1)
+                      }
+                      handleVote={handleVote}
+                      canBeEditable={tab === Tab.MyEvaluation}
+                      rationale={rationaleData.data[selectedRationale - 1].rationale}
+                      project1={
+                        (rationaleData.data[selectedRationale - 1].pickedId
+                          ?? rationaleData.data[selectedRationale - 1].project1Id)
+                        === rationaleData.data[selectedRationale - 1].project1Id
+                          ? rationaleData.data[selectedRationale - 1].project1
+                          : rationaleData.data[selectedRationale - 1].project2
+                      }
+                      project2={
+                        (rationaleData.data[selectedRationale - 1].pickedId
+                          ?? rationaleData.data[selectedRationale - 1].project1Id)
+                        === rationaleData.data[selectedRationale - 1].project2Id
+                          ? rationaleData.data[selectedRationale - 1].project1
+                          : rationaleData.data[selectedRationale - 1].project2
+                      }
                     />
-                    </div>
-                    <div className='max-w-24'>
-                      {rationaleData.data[selectedRationale - 1].project2.name}
-                    </div>
                   </div>
                 </div>
-                <div className="w-full h-max">
-                  <SliderBox
-                    shownValue={
-                      rationaleData.data[selectedRationale - 1].ratio ?? 1
-                      * (rationaleData.data[selectedRationale - 1].pickedId === rationaleData.data[selectedRationale - 1].project1.id ? -1 : 1)
-                    }
-                    canBeEditable={tab === Tab.MyEvaluation}
-                    rationale={rationaleData.data[selectedRationale - 1].rationale}
-                    project1={
-                      rationaleData.data[selectedRationale - 1].pickedId === rationaleData.data[selectedRationale - 1].project1Id
-                        ? rationaleData.data[selectedRationale - 1].project1.name
-                        : rationaleData.data[selectedRationale - 1].project2.name
-                    }
-                    project2={
-                      rationaleData.data[selectedRationale - 1].pickedId === rationaleData.data[selectedRationale - 1].project2Id
-                        ? rationaleData.data[selectedRationale - 1].project1.name
-                        : rationaleData.data[selectedRationale - 1].project2.name
-                    }
-                  />
-                </div>
-              </div>
 
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <button
+                disabled={selectedRationale === 1}
+                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+                onClick={() => setSelectedRationale(selectedRationale - 1)}
+              >
+                <ArrowLeft2Icon size={20} />
+                Previous
+              </button>
+              <button
+                disabled={selectedRationale === rationaleData.data.length}
+                onClick={() => setSelectedRationale(selectedRationale + 1)}
+                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+              >
+                View Next
+                <ArrowRight size={20} color="#344054" />
+              </button>
             </div>
           </div>
-
-          <div className="flex items-center justify-between">
-            <button
-              disabled={selectedRationale === 1}
-              className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
-              onClick={() => setSelectedRationale(selectedRationale - 1)}
-            >
-              <ArrowLeft2Icon size={20} />
-              Previous
-            </button>
-            <button
-              disabled={selectedRationale === rationaleData.data.length}
-              onClick={() => setSelectedRationale(selectedRationale + 1)}
-              className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
-            >
-              View Next
-              <ArrowRight size={20} color="#344054" />
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
