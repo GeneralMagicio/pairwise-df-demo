@@ -181,7 +181,7 @@ const HeaderRF6: FC<HeaderProps> = ({
           )
         }
         <div className="flex grow items-center justify-start">
-          {votes && (
+          {typeof votes === 'number' && (
             <div className="flex flex-row items-center justify-center gap-8 text-dark-600">
               <span className="text-lg font-bold">
                 Voting Round
