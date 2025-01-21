@@ -7,14 +7,13 @@ import { NumberBox } from '../comparison/[categoryId]/NumberBox';
 import { IProjectRationale } from './useProjects';
 
 import { SliderBase, SliderMax } from '@/app/comparison/[categoryId]/constant';
-import SmallSpinner from '../components/SmallSpinner';
 interface ComparisonBoxProps {
   shownValue: number
   canBeEditable?: boolean
   rationale: string
   project1: IProjectRationale
   project2: IProjectRationale
-  handleVote: (rationale: string, project1Id: number, project2Id: number, shownValue: number) => void
+  handleVote: (rationale: string, project1Id: number, project2Id: number, shownValue: number) => Promise<void>
 }
 
 export function SliderBox({
@@ -57,8 +56,6 @@ export function SliderBox({
   const displayValue
     = ratio.type === 'slider' ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase) : ratio.value;
 
-  if (isLoading)
-    return <SmallSpinner />;
   return (
     <div className="relative size-full grow">
       <div className="relative rounded-lg">
@@ -164,24 +161,22 @@ export function SliderBox({
               </button>
               <button
                 className="rounded-lg bg-primary px-4  py-2.5 text-white hover:bg-primary/90"
-                onClick={() => {
-                  setIsEditing(false);
+                onClick={async () => {
                   if (editedRationale === null || editedRationale.trim().length < 70) {
                     setRationaleError('Min 70 characters required');
                     return;
                   }
                   setIsLoading(true);
-                  setTimeout(() => {
-                    setIsLoading(false);
-                  }, 300);
-                  handleVote(editedRationale,
+                  await handleVote(editedRationale,
                     project1.id,
                     project2.id,
                     ratio.type === 'slider' ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase) : ratio.value
                   );
+                  setIsLoading(false);
+                  setIsEditing(false);
                 }}
               >
-                Save changes
+                {!isLoading ? 'Save changes' : 'Saving...'}
               </button>
             </div>
           )
