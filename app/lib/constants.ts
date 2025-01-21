@@ -38,7 +38,7 @@ export const activeChain = getActiveChain(
 );
 export const factoryAddress
   = process.env.NEXT_PUBLIC_THIRDWEB_FACTORY_ADDRESS
-  || '0xE424DC62723a40FCE052c5300699C28A3bD7cc01';
+    || '0xE424DC62723a40FCE052c5300699C28A3bD7cc01';
 export const clientId
   = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID
-  || 'ab996cc033833508e203e80eecca234f';
+    || 'ab996cc033833508e203e80eecca234f';

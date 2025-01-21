@@ -2,11 +2,11 @@ import { CheckIcon } from '@/public/assets/icon-components/Check';
 
 type TVotedCategoryProps = {
   id: number
-  budgetEditHandle: () => void
+  viewMyEvaluations: () => void
 };
 
 const VotedCategory = ({
-  budgetEditHandle,
+  viewMyEvaluations,
 }: TVotedCategoryProps) => {
   return (
     <div className="flex w-full items-center justify-center gap-4">
@@ -18,7 +18,7 @@ const VotedCategory = ({
       </div>
       <button
         className="flex w-full items-center justify-center gap-2 rounded-md border py-3 font-semibold"
-        onClick={budgetEditHandle}
+        onClick={viewMyEvaluations}
       >
         View
       </button>

@@ -17,7 +17,7 @@ export const ConnectButton = () => {
   const posthog = usePostHog();
   const { data: url, isLoading } = useGithubURL();
 
-  const logout = async () => {
+  const logout = () => {
     signOut();
   };
   // const { signMessageAsync } = useSignMessage()
