@@ -306,8 +306,7 @@ const EvaluationPage: React.FC = () => {
 
   const handleVote = async (rationale: string, project1Id: number, project2Id: number, shownValue: number) => {
     try {
-      rationaleData;
-      const chosenId = shownValue === 1 ? null : shownValue > 1 ? project2Id : project1Id;
+      const chosenId = [0, 1].includes(shownValue) ? null : shownValue > 1 ? project2Id : project1Id;
       await vote({
         data: {
           project1Id,
@@ -433,7 +432,7 @@ const EvaluationPage: React.FC = () => {
                     return (
                       <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
                         <RationaleBox
-                          pickedId={pickedId ?? p1.id}
+                          pickedId={pickedId}
                           project1={p1}
                           project2={p2}
                           rationale={rationale}
