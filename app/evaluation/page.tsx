@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import HeaderRF6 from '../comparison/card/Header-RF6';
 import DateRangePicker from '../components/DateRangePicker';
@@ -75,17 +75,6 @@ const FilterBox: React.FC<FilterBoxProps> = ({
     setEndDate(edDate);
     setStartDate(new Date(edDate.getTime() - days * 24 * 60 * 60 * 1000));
   };
-
-  // const addTag = (event: React.KeyboardEvent) => {
-  //   if (event.key === 'Enter' && filterQuery !== '') {
-  //     const selectedProject = searchSuggestions[0];
-  //     if (selectedProject) {
-  //       setSearchQueries([...searchQueries, { id: selectedProject.id, name: selectedProject.name }]);
-  //       setFilterQuery('');
-  //       setSearchSuggestions([]);
-  //     }
-  //   }
-  // };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -317,13 +306,14 @@ const EvaluationPage: React.FC = () => {
 
   const handleVote = async (rationale: string, project1Id: number, project2Id: number, shownValue: number) => {
     try {
+      console.log(rationale, project1Id, project2Id, shownValue);
       const chosenId = shownValue === 1 ? null : shownValue > 1 ? project2Id : project1Id;
       await vote({
         data: {
           project1Id,
           project2Id,
-          project1Val: chosenId === project1Id ? Math.abs(shownValue) : -1 * Math.abs(shownValue),
-          project2Val: chosenId === project2Id ? Math.abs(shownValue) : -1 * Math.abs(shownValue),
+          project1Val: -Number(shownValue),
+          project2Val: Number(shownValue),
           pickedId: chosenId,
           rationale: rationale,
         },
@@ -342,9 +332,28 @@ const EvaluationPage: React.FC = () => {
       setTotalPages(rationaleData.meta.totalPages);
     }
   }, [rationaleData]);
+  const filterBoxRef = useRef<HTMLDivElement>(null);
+  const fliterButtonRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (filterBoxRef.current
+        && !filterBoxRef.current.contains(event.target as Node)
+        && fliterButtonRef.current && !fliterButtonRef.current.contains(event.target as Node)) {
+        setShowFilterBox(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   if (!rationaleData) {
     return <Spinner />;
   }
+
+  console.log(rationaleData.data[selectedRationale - 1]);
   return (
     <div className="flex h-screen w-full min-w-fit flex-col justify-around pb-10">
       <HeaderRF6 showBackButton={true} allEvaluation={true} />
@@ -371,35 +380,36 @@ const EvaluationPage: React.FC = () => {
                   </div>
                 )}
               </div>
-              <button
-                className="shadow-filter-shadow flex flex-row rounded-md border border-[#D0D5DD] bg-white px-3 py-2"
-                onClick={() => {
-                  setShowFilterBox(!showFilterBox);
-                }}
-              >
-                <span
-                  className={`gap-1 text-sm font-semibold ${searchQueries.length == 0 + searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0) ? 'text-[#344054]' : 'text-[#6941C6]'}`}
+              <div ref={fliterButtonRef}>
+                <button
+                  className={`shadow-filter-shadow flex flex-row rounded-md border ${(searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)) ? 'border-[#D6BBFB]' : 'border-[#D0D5DD]'} gap-1 bg-white px-3 py-2`}
+                  onClick={() => {
+                    setShowFilterBox(!showFilterBox);
+                  }}
                 >
-                  Filter
-                </span>
-                {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)
-                  ? (
-                      <div className="flex flex-row px-2 py-0.5">
-                        <Image width={8} height={8} src="/assets/images/dot.svg" alt="dot" />
-                        <span className="text-xs text-[#5925DC]">
-                          {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)}
-                        </span>
-                      </div>
-                    )
-                  : (
-                      <Image width={20} height={20} src="/assets/images/filter-lines.svg" alt="Filter" />
-                    )}
-              </button>
+                  <span
+                    className={`gap-1 text-sm font-semibold ${(searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)) ? 'text-[#6941C6]' : 'text-[#344054]'}`}
+                  >
+                    Filter
+                  </span>
+                  {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)
+                    ? (
+                        <div className="flex w-8 flex-row rounded-full border border-[#D9D6FE] px-2 py-0.5">
+                          <Image width={8} height={8} src="/assets/images/dot.svg" alt="dot" />
+                          <span className="text-xs text-[#5925DC]">
+                            {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)}
+                          </span>
+                        </div>
+                      )
+                    : (
+                        <Image width={20} height={20} src="/assets/images/filter-lines.svg" alt="Filter" />
+                      )}
+                </button>
+              </div>
             </div>
 
-            {/* <Modal isOpen={showFilterBox} onClose={()=>{}}> */}
             {showFilterBox && (
-              <div className="relative z-10">
+              <div className="relative z-10" ref={filterBoxRef}>
                 <div className="absolute -top-2 right-0">
                   <FilterBox
                     startDate={startDate}
@@ -416,7 +426,6 @@ const EvaluationPage: React.FC = () => {
                 </div>
               </div>
             )}
-            {/* </Modal> */}
             <div>
               <div className="flex grow flex-col gap-4">
                 {rationaleData
@@ -425,7 +434,7 @@ const EvaluationPage: React.FC = () => {
                     return (
                       <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
                         <RationaleBox
-                          pickedId={pickedId}
+                          pickedId={pickedId ?? p1.id}
                           project1={p1}
                           project2={p2}
                           rationale={rationale}
