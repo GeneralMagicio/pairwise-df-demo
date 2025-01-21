@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import HeaderRF6, { MaximumRepoComparisons } from '../comparison/card/Header-RF6';
+import HeaderRF6 from '../comparison/card/Header-RF6';
 // import Modal from '../utils/Modal';
 import CategoryAllocation from './components/CategoryAllocation';
 import ConnectBox from './components/ConnectBox';
@@ -126,8 +126,9 @@ const AllocationPage = () => {
         <div className="flex max-w-[72%] flex-col gap-3">
           <h2 className="text-3xl font-bold"> Deep Funding </h2>
           <p className="text-gray-400">
-            Select the Github repo whose codebase you are most familiar with.
-            Your job is voting on how important its package dependencies are relative to one another.
+            In Deep Funding, most of the work gets done by a public market of allocators,
+            that suggest proposed weights of edges in a graph,
+            which answer the question “what percent of the credit for A belongs to B?”.
           </p>
         </div>
         <div className="flex justify-between gap-4">
@@ -155,7 +156,6 @@ const AllocationPage = () => {
                         return (
                           <CategoryAllocation
                             {...cat}
-                            progress={cat.votedPairs >= MaximumRepoComparisons ? 'Finished' : cat.progress}
                             key={cat.name}
                             image={cat.image}
                             locked={rank?.locked || false}
@@ -164,7 +164,7 @@ const AllocationPage = () => {
                             onDelegate={() => {}}
                             onLockClick={handleLock(cat.id)}
                             onScore={handleScoreProjects(cat.id)}
-                            onView={() => { router.push('/evaluation'); }}
+                            onView={() => {}}
                             onPercentageChange={handleNewValue(cat.id)}
                             username=""
                           />

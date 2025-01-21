@@ -53,7 +53,7 @@ const SimpleInfoBox: FC<Props> = ({
         shouldCollapse ? 'cursor-pointer' : ''
       }`}
       {...(shouldCollapse
-        && getToggleProps())}
+      && getToggleProps())}
     >
       <div
         className={`flex items-center justify-between ${

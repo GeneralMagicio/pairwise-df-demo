@@ -77,7 +77,6 @@ const config: Config = {
       },
       boxShadow: {
         'tooltip-shadow': 'box-shadow: 0px 4px 6px -2px #10182808,box-shadow: 0px 12px 16px -4px #10182814',
-        'filter-shadow': 'box-shadow: 0px 1px 2px 0px #1018280F,box-shadow: 0px 1px 3px 0px #1018281A',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

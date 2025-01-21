@@ -39,7 +39,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   loading,
   onScore,
   onView,
-  votedPairs,
 }) => {
   const renderProgressState = () => {
     if (loading) return <Loading />;
@@ -49,7 +48,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         return (
           <VotedCategory
             id={id}
-            viewMyEvaluations={onView}
+            budgetEditHandle={onView}
           />
         );
       case CollectionProgressStatusEnum.WIP:
@@ -57,8 +56,6 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         return (
           <WipCategory
             onScore={onScore}
-            votedPairs={votedPairs}
-            totalPairs={projectCount}
           />
         );
       case CollectionProgressStatusEnum.Pending:
@@ -117,7 +114,7 @@ const ProjectInfo: FC<{
       <p className="text-sm text-gray-400">{shortenText(description, 30)}</p>
       {projectCount && (
         <p className="mt-2 w-fit rounded-full bg-gray-200 px-2 py-1 text-xs font-medium text-gray-700">
-          {`${projectCount} dependencies`}
+          {`${projectCount} project${projectCount > 1 ? 's' : ''}`}
         </p>
       )}
     </div>

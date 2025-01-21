@@ -1,7 +1,11 @@
-// import { optimismSepolia } from 'thirdweb/chains';
+import { useState, useEffect } from 'react';
+import { optimismSepolia } from 'thirdweb/chains';
 import { type Address } from 'viem';
+import { useActiveWallet } from 'thirdweb/react';
+import { ethers6Adapter } from 'thirdweb/adapters/ethers6';
 import { axiosInstance } from '@/app/utils/axiosInstance';
-// import { client } from '@/app/utils/wallet/provider';
+import { client } from '@/app/utils/wallet/provider';
+import { activeChain } from '@/app/lib/constants';
 
 export type EASConfig = {
   EASDeployment: Address
@@ -20,59 +24,59 @@ export function generateRandomString(length: number): string {
   return result;
 }
 
-// type Signer = Awaited<ReturnType<typeof ethers6Adapter.signer.toEthers>>;
+type Signer = Awaited<ReturnType<typeof ethers6Adapter.signer.toEthers>>;
 
-// export function useSigner() {
-//   const wallet = useActiveWallet();
+export function useSigner() {
+  const wallet = useActiveWallet();
 
-//   const [signer, setSigner] = useState<Signer>();
+  const [signer, setSigner] = useState<Signer>();
 
-//   useEffect(() => {
-//     async function getSigner() {
-//       console.log('In useSigner');
-//       if (!wallet) return;
+  useEffect(() => {
+    async function getSigner() {
+      console.log('In useSigner');
+      if (!wallet) return;
 
-//       console.log('wallet', wallet);
-//       const account = wallet.getAccount();
+      console.log('wallet', wallet);
+      const account = wallet.getAccount();
 
-//       console.log('account', account);
-//       if (!account) return;
+      console.log('account', account);
+      if (!account) return;
 
-//       const ethersSigner = await ethers6Adapter.signer.toEthers({
-//         client,
-//         chain: activeChain,
-//         account,
-//       });
+      const ethersSigner = await ethers6Adapter.signer.toEthers({
+        client,
+        chain: activeChain,
+        account,
+      });
 
-//       setSigner(ethersSigner);
-//     }
+      setSigner(ethersSigner);
+    }
 
-//     getSigner();
-//   }, [wallet]);
-//   return signer;
-// }
+    getSigner();
+  }, [wallet]);
+  return signer;
+}
 
-// interface Config extends EASConfig {
-//   explorer: string
-//   gqlUrl: string
-// }
+interface Config extends EASConfig {
+  explorer: string
+  gqlUrl: string
+}
 
-// export const EASNetworks: Record<number, Config> = {
-//   // Optimism
-//   10: {
-//     EASDeployment: '0x4200000000000000000000000000000000000021',
-//     SchemaRegistry: '0x4200000000000000000000000000000000000020',
-//     explorer: 'https://optimism.easscan.org',
-//     gqlUrl: 'https://optimism.easscan.org/graphql',
-//   },
-//   // Optimism Sepolia
-//   [optimismSepolia.id]: {
-//     EASDeployment: '0x4200000000000000000000000000000000000021',
-//     SchemaRegistry: '0x4200000000000000000000000000000000000020',
-//     explorer: 'https://optimism-sepolia.easscan.org',
-//     gqlUrl: 'https://optimism-sepolia.easscan.org/graphql',
-//   },
-// };
+export const EASNetworks: Record<number, Config> = {
+  // Optimism
+  10: {
+    EASDeployment: '0x4200000000000000000000000000000000000021',
+    SchemaRegistry: '0x4200000000000000000000000000000000000020',
+    explorer: 'https://optimism.easscan.org',
+    gqlUrl: 'https://optimism.easscan.org/graphql',
+  },
+  // Optimism Sepolia
+  [optimismSepolia.id]: {
+    EASDeployment: '0x4200000000000000000000000000000000000021',
+    SchemaRegistry: '0x4200000000000000000000000000000000000020',
+    explorer: 'https://optimism-sepolia.easscan.org',
+    gqlUrl: 'https://optimism-sepolia.easscan.org/graphql',
+  },
+};
 
 export const SCHEMA_UID = process.env.NEXT_PUBLIC_EAS_SCHEMA_UID || '0x8c12749f56c911dbc13a6a6685b6964c3ea03023f246137e9c53ba97974e4b75';
 
