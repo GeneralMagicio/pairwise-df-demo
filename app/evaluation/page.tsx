@@ -284,7 +284,7 @@ const EvaluationPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedRationale, setSelectedRationale] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
-  const { data: rationaleData } = useGetProjectRationales(
+  const { data: rationaleData, isLoading } = useGetProjectRationales(
     page,
     limit,
     startDate?.toISOString() ?? '',
@@ -306,7 +306,7 @@ const EvaluationPage: React.FC = () => {
 
   const handleVote = async (rationale: string, project1Id: number, project2Id: number, shownValue: number) => {
     try {
-      console.log(rationale, project1Id, project2Id, shownValue);
+      rationaleData 
       const chosenId = shownValue === 1 ? null : shownValue > 1 ? project2Id : project1Id;
       await vote({
         data: {
@@ -349,7 +349,7 @@ const EvaluationPage: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  if (!rationaleData) {
+  if (!rationaleData || isLoading) {
     return <Spinner />;
   }
 
@@ -448,7 +448,7 @@ const EvaluationPage: React.FC = () => {
                 )}
               </div>
             </div>
-            <div className="relative bottom-0 mt-4 flex items-center justify-between">
+            <div className="sticky bg-[#F9FAFB] bottom-0 mt-4 flex items-center justify-between">
               <button
                 onClick={() => setPage(prev => Math.max(prev - 1, 1))}
                 disabled={page === 1}
