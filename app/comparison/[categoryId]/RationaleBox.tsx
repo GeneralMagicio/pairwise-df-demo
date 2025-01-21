@@ -82,15 +82,12 @@ export const RationaleBox = ({
                   <div>
                     {p1.name}
                     {' '}
-                    deserves
-                    {' '}
-                    <span className="font-semibold">
-                      1x more credit
-                    </span>
-                    {' '}
-                    than
+                    and
                     {' '}
                     {p2.name}
+                    <span className="ml-1 font-semibold">
+                      deserve equal credit
+                    </span>
                   </div>
                 )}
         </div>

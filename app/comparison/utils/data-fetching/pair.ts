@@ -6,7 +6,7 @@ export interface ProjectRationaleData {
   createdAt: string
   id: number
   multiplier: number
-  pickedId: number
+  pickedId: number | null
   project1Id: number
   project2Id: number
   project1: { id: number, name: string }
