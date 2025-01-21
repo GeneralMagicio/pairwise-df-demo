@@ -509,8 +509,9 @@ const EvaluationPage: React.FC = () => {
                   <div className="h-max w-full">
                     <SliderBox
                       shownValue={
-                        (Number(rationaleData.data[selectedRationale - 1].ratio)
-                          ?? 1)
+                        (rationaleData.data[selectedRationale - 1].ratio
+                          ? Number(rationaleData.data[selectedRationale - 1].ratio)
+                          : 1)
                         * (rationaleData.data[selectedRationale - 1].pickedId
                           === rationaleData.data[selectedRationale - 1].project1.id
                           ? -1
