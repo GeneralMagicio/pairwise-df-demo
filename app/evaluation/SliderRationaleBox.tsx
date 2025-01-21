@@ -74,26 +74,54 @@ export function SliderBox({
           />
         </div>
 
-        <div className="mb-8 mt-2 flex w-full items-center justify-between gap-4">
-          <span className="flex-1 text-right text-sm">
-            <span className="max-w-24 font-semibold">{project1.name}</span>
-            {' '}
-            deserves
-          </span>
-          <div className="relative flex w-32 justify-center">
-            <NumberBox
-              value={displayValue || 1}
-              onChange={handleNumberBoxChange}
-              min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
-              max={sliderScaleFunction(SliderMax, SliderBase)}
-            />
-            <div className="absolute bottom-1 right-3 border-0 bg-transparent">x</div>
-          </div>
-          <span className="flex-1 text-left text-sm">
-            more credit than
-            {' '}
-            <span className="max-w-24 font-semibold">{project2.name}</span>
-          </span>
+        <div className="mx-auto mb-8 mt-2 w-fit">
+          <NumberBox
+            value={displayValue || 1}
+            onChange={handleNumberBoxChange}
+            min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
+            max={sliderScaleFunction(SliderMax, SliderBase)}
+          />
+        </div>
+
+        <div className="mb-4 flex w-full translate-x-2 flex-row gap-3 text-center">
+          <p className="h-6 w-full">
+
+            {displayValue < 0
+              ? (
+                  <>
+                    <span style={{ color: 'green' }}>
+                      {project1.name}
+                    </span>
+                    {` deserves ${-1 * displayValue}x more credit than `}
+                    <span style={{ color: 'green' }}>
+                      {project2.name}
+                    </span>
+                  </>
+                )
+              : displayValue > 0
+                ? (
+                    <>
+                      <span style={{ color: 'green' }}>
+                        {project2.name}
+                      </span>
+                      {` deserves ${displayValue}x more credit than `}
+                      <span style={{ color: 'green' }}>
+                        {project1.name}
+                      </span>
+                    </>
+                  )
+                : (
+                    <>
+                      <span style={{ color: 'green' }}>
+                        {project1.name}
+                      </span>
+                      {' deserves 1x more credit than '}
+                      <span style={{ color: 'green' }}>
+                        {project2.name}
+                      </span>
+                    </>
+                  )}
+          </p>
         </div>
 
         <div className="relative flex h-full flex-col space-y-2">
