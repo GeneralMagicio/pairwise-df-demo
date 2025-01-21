@@ -55,8 +55,8 @@ export function SliderBox({
   const displayValue
     = ratio.type === 'slider' ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase) : ratio.value;
 
-    if(isLoading)
-      return <SmallSpinner/>
+  if (isLoading)
+    return <SmallSpinner />;
   return (
     <div className="relative size-full grow">
       <div className="relative rounded-lg">
@@ -169,9 +169,9 @@ export function SliderBox({
                     return;
                   }
                   setIsLoading(true);
-                  setTimeout(()=>{
+                  setTimeout(() => {
                     setIsLoading(false);
-                  },300)
+                  }, 300);
                   handleVote(editedRationale,
                     project1.id,
                     project2.id,
