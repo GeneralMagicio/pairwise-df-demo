@@ -4,6 +4,7 @@ import GithubBox from './GithubBox';
 import { IProject, ProjectMetadata } from '../utils/types';
 import ProjectDescription from './ProjectDescription';
 import styles from '@/app/styles/Project.module.css';
+import { ExternalLinkIcon } from '@/public/assets/icon-components/ExternalLink';
 
 enum ProjectSection {
   REPOS = 'repos',
@@ -106,6 +107,11 @@ export const ProjectCard: React.FC<Props> = ({
             >
               {metadata.name}
             </h1>
+            {metadata.metadata.id && (
+              <a className="ml-2" href={metadata.metadata.id} target="__blank">
+                <ExternalLinkIcon />
+              </a>
+            )}
           </div>
 
           <div>
