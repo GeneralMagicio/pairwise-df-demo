@@ -24,7 +24,7 @@ export interface IReturnRationaleQuery {
   data: {
     id: number
     userId: number
-    pickedId: number
+    pickedId: number | null
     project1Id: number
     project2Id: number
     ratio: number

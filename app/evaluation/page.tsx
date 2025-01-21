@@ -291,6 +291,7 @@ const EvaluationPage: React.FC = () => {
     sortOption === SortOption.Newest ? "desc" : "asc",
   )
 
+
   const { mutateAsync: vote } = useUpdateRationaleVote({
     page,
     limit,
@@ -346,6 +347,8 @@ const EvaluationPage: React.FC = () => {
   if (!rationaleData) {
     return <Spinner />
   }
+
+  console.log(rationaleData.data[selectedRationale - 1])
   return (
     <div className="flex h-screen w-full min-w-fit flex-col justify-around pb-10">
       <HeaderRF6 showBackButton={true} allEvaluation={true} />
@@ -424,7 +427,7 @@ const EvaluationPage: React.FC = () => {
                       return (
                         <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
                           <RationaleBox
-                            pickedId={pickedId}
+                            pickedId={pickedId??p1.id}
                             project1={p1}
                             project2={p2}
                             rationale={rationale}
