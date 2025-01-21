@@ -137,7 +137,11 @@ export function SliderBox({
                     setRationaleError('Min 70 characters required');
                     return;
                   }
-                  handleVote(editedRationale, project1.id, project2.id, ratio.value);
+                  handleVote(editedRationale,
+                        project1.id,
+                        project2.id,
+                        ratio.type === 'slider' ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase) : ratio.value
+                    );
                 }}
               >
                 Save changes
