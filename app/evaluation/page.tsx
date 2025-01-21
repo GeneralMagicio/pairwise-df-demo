@@ -306,7 +306,6 @@ const EvaluationPage: React.FC = () => {
 
   const handleVote = async (rationale: string, project1Id: number, project2Id: number, shownValue: number) => {
     try {
-      console.log(rationale, project1Id, project2Id, shownValue);
       const chosenId = shownValue === 1 ? null : shownValue > 1 ? project2Id : project1Id;
       await vote({
         data: {
@@ -353,7 +352,6 @@ const EvaluationPage: React.FC = () => {
     return <Spinner />;
   }
 
-  console.log(rationaleData.data[selectedRationale - 1]);
   return (
     <div className="flex h-screen w-full min-w-fit flex-col justify-around pb-10">
       <HeaderRF6 showBackButton={true} allEvaluation={true} />
@@ -449,7 +447,7 @@ const EvaluationPage: React.FC = () => {
                 )}
               </div>
             </div>
-            <div className="relative bottom-0 mt-4 flex items-center justify-between">
+            <div className="sticky bottom-0 mt-4 flex items-center justify-between bg-[#F9FAFB] py-4">
               <button
                 onClick={() => setPage(prev => Math.max(prev - 1, 1))}
                 disabled={page === 1}
