@@ -153,7 +153,6 @@ export function SliderBox({
                 className="rounded-lg  border border-gray-300 px-4 py-2.5 text-gray-600"
                 onClick={() => {
                   setIsEditing(false);
-                  setEditedRationale(rationale);
                   setRatio({ value: shownValue, type: 'input' });
                 }}
               >
