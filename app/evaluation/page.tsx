@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
+import { useQueryClient } from '@tanstack/react-query';
 import HeaderRF6 from '../comparison/card/Header-RF6';
 import DateRangePicker from '../components/DateRangePicker';
 import { Search } from '@/public/assets/icon-components/Search';
@@ -294,6 +295,8 @@ const EvaluationPage: React.FC = () => {
     sortOption === SortOption.Newest ? 'desc' : 'asc',
   );
 
+  const queryClient = useQueryClient();
+
   const { mutateAsync: vote } = useUpdateRationaleVote({
     page,
     limit,
@@ -317,6 +320,7 @@ const EvaluationPage: React.FC = () => {
           rationale: rationale,
         },
       });
+      await queryClient.refetchQueries({ queryKey: ['project-rationale-evaluation'] });
     }
     catch (e) {
       console.error(e);
