@@ -154,6 +154,7 @@ export function SliderBox({
                 onClick={() => {
                   setIsEditing(false);
                   setRatio({ value: shownValue, type: 'input' });
+                  setRationaleError(null);
                 }}
               >
                 Discard
