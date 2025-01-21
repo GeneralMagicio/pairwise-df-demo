@@ -49,7 +49,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
         return (
           <VotedCategory
             id={id}
-            budgetEditHandle={onView}
+            viewMyEvaluations={onView}
           />
         );
       case CollectionProgressStatusEnum.WIP:

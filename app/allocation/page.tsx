@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import HeaderRF6 from '../comparison/card/Header-RF6';
+import HeaderRF6, { MaximumRepoComparisons } from '../comparison/card/Header-RF6';
 // import Modal from '../utils/Modal';
 import CategoryAllocation from './components/CategoryAllocation';
 import ConnectBox from './components/ConnectBox';
@@ -155,6 +155,7 @@ const AllocationPage = () => {
                         return (
                           <CategoryAllocation
                             {...cat}
+                            progress={cat.votedPairs >= MaximumRepoComparisons ? 'Finished' : cat.progress}
                             key={cat.name}
                             image={cat.image}
                             locked={rank?.locked || false}
@@ -163,7 +164,7 @@ const AllocationPage = () => {
                             onDelegate={() => {}}
                             onLockClick={handleLock(cat.id)}
                             onScore={handleScoreProjects(cat.id)}
-                            onView={() => {}}
+                            onView={() => { router.push('/evaluation'); }}
                             onPercentageChange={handleNewValue(cat.id)}
                             username=""
                           />
