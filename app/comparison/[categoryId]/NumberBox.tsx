@@ -11,7 +11,7 @@ export const NumberBox: React.FC<NumberBoxProps> = ({ min, max, value, onChange 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     if (inputValue === '-') {
-      onChange(1);
+      onChange(NaN);
       return;
     }
 
@@ -49,15 +49,19 @@ export const NumberBox: React.FC<NumberBoxProps> = ({ min, max, value, onChange 
     }
   };
 
+  const handle: typeof handleChange  = (event) => {
+    return handleChange(event)??"";
+  }
+
   return (
     <input
       style={{ border: '1px solid #7F56D9', textAlign: 'center', width: '72px' }}
-      type="string"
+      type="text"
       min={min}
       max={max}
       step="0.01"
-      value={isNaN(value) ? '' : value} // Handle NaN (empty) value
-      onChange={handleChange}
+      value={isNaN(value) ? "" : value} // Handle NaN (empty) value
+      onChange={handle}
     />
   );
 };
