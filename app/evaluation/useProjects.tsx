@@ -27,7 +27,7 @@ export interface IReturnRationaleQuery {
     pickedId: number | null
     project1Id: number
     project2Id: number
-    ratio: number
+    ratio: string
     rationale: string
     createdAt: string
     updatedAt: string

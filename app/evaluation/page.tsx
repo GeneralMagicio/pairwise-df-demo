@@ -353,7 +353,6 @@ const EvaluationPage: React.FC = () => {
     return <Spinner />;
   }
 
-  console.log(rationaleData.data[selectedRationale - 1]);
   return (
     <div className="flex h-screen w-full min-w-fit flex-col justify-around pb-10">
       <HeaderRF6 showBackButton={true} allEvaluation={true} />
@@ -438,7 +437,7 @@ const EvaluationPage: React.FC = () => {
                           project1={p1}
                           project2={p2}
                           rationale={rationale}
-                          multiplier={multiplier}
+                          multiplier={Number(multiplier)}
                           repoImage={parent.image}
                           repoName={parent.name}
                           selected={selectedRationale === index + 1}
@@ -510,8 +509,8 @@ const EvaluationPage: React.FC = () => {
                   <div className="h-max w-full">
                     <SliderBox
                       shownValue={
-                        rationaleData.data[selectedRationale - 1].ratio
-                        ?? 1
+                        (Number(rationaleData.data[selectedRationale - 1].ratio)
+                          ?? 1)
                         * (rationaleData.data[selectedRationale - 1].pickedId
                           === rationaleData.data[selectedRationale - 1].project1.id
                           ? -1
@@ -520,20 +519,8 @@ const EvaluationPage: React.FC = () => {
                       handleVote={handleVote}
                       canBeEditable={tab === Tab.MyEvaluation}
                       rationale={rationaleData.data[selectedRationale - 1].rationale}
-                      project1={
-                        (rationaleData.data[selectedRationale - 1].pickedId
-                          ?? rationaleData.data[selectedRationale - 1].project1Id)
-                        === rationaleData.data[selectedRationale - 1].project1Id
-                          ? rationaleData.data[selectedRationale - 1].project1
-                          : rationaleData.data[selectedRationale - 1].project2
-                      }
-                      project2={
-                        (rationaleData.data[selectedRationale - 1].pickedId
-                          ?? rationaleData.data[selectedRationale - 1].project1Id)
-                        === rationaleData.data[selectedRationale - 1].project2Id
-                          ? rationaleData.data[selectedRationale - 1].project1
-                          : rationaleData.data[selectedRationale - 1].project2
-                      }
+                      project1={rationaleData.data[selectedRationale - 1].project1}
+                      project2={rationaleData.data[selectedRationale - 1].project2}
                     />
                   </div>
                 </div>
