@@ -33,6 +33,7 @@ export function SliderBox({
   useEffect(() => {
     setRatio({ value: shownValue, type: 'input' });
     setEditedRationale(rationale);
+    setIsEditing(false);
   }, [shownValue, rationale]);
 
   const convertInputValueToSlider = () => {
