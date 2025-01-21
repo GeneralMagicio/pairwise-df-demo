@@ -138,10 +138,10 @@ export function SliderBox({
                     return;
                   }
                   handleVote(editedRationale,
-                        project1.id,
-                        project2.id,
-                        ratio.type === 'slider' ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase) : ratio.value
-                    );
+                    project1.id,
+                    project2.id,
+                    ratio.type === 'slider' ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase) : ratio.value
+                  );
                 }}
               >
                 Save changes

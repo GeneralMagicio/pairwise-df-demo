@@ -10,7 +10,7 @@ interface NumberBoxProps {
 export const NumberBox: React.FC<NumberBoxProps> = ({ min, max, value, onChange }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
-    if(inputValue==='-'){
+    if (inputValue === '-') {
       onChange(NaN);
       return;
     }
