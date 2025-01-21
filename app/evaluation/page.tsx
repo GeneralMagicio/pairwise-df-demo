@@ -284,7 +284,7 @@ const EvaluationPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedRationale, setSelectedRationale] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
-  const { data: rationaleData } = useGetProjectRationales(
+  const { data: rationaleData, isLoading } = useGetProjectRationales(
     page,
     limit,
     startDate?.toISOString() ?? '',
@@ -348,7 +348,7 @@ const EvaluationPage: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  if (!rationaleData) {
+  if (!rationaleData || isLoading) {
     return <Spinner />;
   }
 
@@ -447,7 +447,7 @@ const EvaluationPage: React.FC = () => {
                 )}
               </div>
             </div>
-            <div className="relative bottom-0 mt-4 flex items-center justify-between">
+            <div className="sticky bottom-0 mt-4 flex items-center justify-between bg-[#F9FAFB]">
               <button
                 onClick={() => setPage(prev => Math.max(prev - 1, 1))}
                 disabled={page === 1}

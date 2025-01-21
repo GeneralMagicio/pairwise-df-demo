@@ -7,6 +7,7 @@ import { NumberBox } from '../comparison/[categoryId]/NumberBox';
 import { IProjectRationale } from './useProjects';
 
 import { SliderBase, SliderMax } from '@/app/comparison/[categoryId]/constant';
+import SmallSpinner from '../components/SmallSpinner';
 interface ComparisonBoxProps {
   shownValue: number
   canBeEditable?: boolean
@@ -27,8 +28,8 @@ export function SliderBox({
   const [ratio, setRatio] = useState({ value: shownValue, type: 'input' as 'slider' | 'input' });
   const [editedRationale, setEditedRationale] = useState(rationale);
   const [rationaleError, setRationaleError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log(shownValue);
   useEffect(() => {
     setRatio({ value: shownValue, type: 'input' });
     setEditedRationale(rationale);
@@ -55,6 +56,8 @@ export function SliderBox({
   const displayValue
     = ratio.type === 'slider' ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase) : ratio.value;
 
+  if (isLoading)
+    return <SmallSpinner />;
   return (
     <div className="relative size-full grow">
       <div className="relative rounded-lg">
@@ -166,6 +169,10 @@ export function SliderBox({
                     setRationaleError('Min 70 characters required');
                     return;
                   }
+                  setIsLoading(true);
+                  setTimeout(() => {
+                    setIsLoading(false);
+                  }, 300);
                   handleVote(editedRationale,
                     project1.id,
                     project2.id,
