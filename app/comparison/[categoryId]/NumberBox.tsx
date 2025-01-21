@@ -11,7 +11,7 @@ export const NumberBox: React.FC<NumberBoxProps> = ({ min, max, value, onChange 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     if (inputValue === '-') {
-      onChange(NaN);
+      onChange(1);
       return;
     }
 
