@@ -76,7 +76,7 @@ export function SliderBox({
 
         <div className="mx-auto mb-8 mt-2 w-fit">
           <NumberBox
-            value={displayValue || 1}
+            value={displayValue === 0 ? 1 : displayValue}
             onChange={handleNumberBoxChange}
             min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
             max={sliderScaleFunction(SliderMax, SliderBase)}

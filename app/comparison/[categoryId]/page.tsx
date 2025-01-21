@@ -496,7 +496,7 @@ export default function Home() {
                 <div className="ml-3 w-1/5 text-ellipsis">{project2.name}</div>
               </div>
               <NumberBox
-                value={shownValue ? shownValue : 1}
+                value={shownValue === 0 ? 1 : shownValue}
                 onChange={handleNumberBoxChange}
                 min={-1 * sliderScaleFunction(SliderMax, SliderBase)}
                 max={sliderScaleFunction(SliderMax, SliderBase)}
