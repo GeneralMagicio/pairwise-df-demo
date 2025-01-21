@@ -172,7 +172,7 @@ export function SliderBox({
                   setIsLoading(true);
                   setTimeout(() => {
                     setIsLoading(false);
-                  }, 1000);
+                  }, 5000);
                   handleVote(editedRationale,
                     project1.id,
                     project2.id,
