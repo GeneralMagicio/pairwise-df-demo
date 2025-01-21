@@ -35,6 +35,7 @@ export function SliderBox({
   }, [shownValue, rationale]);
 
   const convertInputValueToSlider = () => {
+    if (Number.isNaN(ratio.value)) return 0;
     if (ratio.type === 'slider') return ratio.value;
     else return (Math.sign(ratio.value) * Math.log(Math.abs(ratio.value))) / Math.log(SliderBase);
   };
