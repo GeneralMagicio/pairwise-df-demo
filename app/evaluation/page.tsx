@@ -306,7 +306,7 @@ const EvaluationPage: React.FC = () => {
 
   const handleVote = async (rationale: string, project1Id: number, project2Id: number, shownValue: number) => {
     try {
-      rationaleData 
+      rationaleData;
       const chosenId = shownValue === 1 ? null : shownValue > 1 ? project2Id : project1Id;
       await vote({
         data: {
@@ -448,7 +448,7 @@ const EvaluationPage: React.FC = () => {
                 )}
               </div>
             </div>
-            <div className="sticky bg-[#F9FAFB] bottom-0 mt-4 flex items-center justify-between">
+            <div className="sticky bottom-0 mt-4 flex items-center justify-between bg-[#F9FAFB]">
               <button
                 onClick={() => setPage(prev => Math.max(prev - 1, 1))}
                 disabled={page === 1}

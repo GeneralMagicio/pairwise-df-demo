@@ -28,7 +28,6 @@ export function SliderBox({
   const [editedRationale, setEditedRationale] = useState(rationale);
   const [rationaleError, setRationaleError] = useState<string | null>(null);
 
-  console.log(shownValue);
   useEffect(() => {
     setRatio({ value: shownValue, type: 'input' });
     setEditedRationale(rationale);
