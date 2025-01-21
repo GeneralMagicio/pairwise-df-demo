@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ProjectRationaleData } from '../utils/data-fetching/pair';
+import { shortenText } from '../utils/helpers';
 
 type RationaleReturnType = Pick<ProjectRationaleData, 'pickedId' | 'project1' | 'project2' | 'multiplier' | 'rationale'> & { repoName?: string, repoImage?: string, selected?: boolean }
 export const RationaleBox = ({
@@ -47,7 +48,7 @@ export const RationaleBox = ({
           {pickedId === p1.id
             ? (
                 <div>
-                  {p1.name}
+                  {shortenText(p1.name, 15)}
                   {' '}
                   deserves
                   {' '}
@@ -58,13 +59,13 @@ export const RationaleBox = ({
                   {' '}
                   than
                   {' '}
-                  {p2.name}
+                  {shortenText(p2.name, 15)}
                 </div>
               )
             : pickedId === p2.id
               ? (
                   <div>
-                    {p2.name}
+                    {shortenText(p2.name, 15)}
                     {' '}
                     deserves
                     {' '}
@@ -75,16 +76,16 @@ export const RationaleBox = ({
                     {' '}
                     than
                     {' '}
-                    {p1.name}
+                    {shortenText(p1.name, 15)}
                   </div>
                 )
               : (
                   <div>
-                    {p1.name}
+                    {shortenText(p1.name, 15)}
                     {' '}
                     and
                     {' '}
-                    {p2.name}
+                    {shortenText(p2.name, 15)}
                     <span className="ml-1 font-semibold">
                       deserve equal credit
                     </span>
