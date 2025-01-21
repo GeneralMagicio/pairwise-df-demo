@@ -7,7 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { usePostHog } from 'posthog-js/react';
 import Image from 'next/image';
 import { ProjectCard } from '../card/ProjectCard';
-import HeaderRF6, { RoundSize } from '../card/Header-RF6';
+import HeaderRF6, { MaximumRepoComparisons, RoundSize } from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
 // import Modals from '@/app/utils/wallet/Modals';
 import {
@@ -38,6 +38,7 @@ import { shortenText } from '../utils/helpers';
 import { SliderBase, SliderMax } from './constant';
 import { CustomSlider, sliderScaleFunction } from './SliderComponent';
 import RoundComplete from '@/app/allocation/components/RoundCompleteModal';
+import RepoComplete from '@/app/allocation/components/RepoCompleteModal';
 enum Types {
   Both,
   Project1,
@@ -69,6 +70,7 @@ export default function Home() {
   // const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
   const [roundComplete, setRoundComplete] = useState(false);
+  const [repoComplete, setRepoComplete] = useState(false);
   const [roundCompleteModalCanBeSet, setRoundCompleteModalCanBeSet] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [rationale, setRationale] = useState<string | null>(null);
@@ -134,8 +136,15 @@ export default function Home() {
   // };
 
   useEffect(() => {
-    if (roundCompleteModalCanBeSet && data?.votedPairs && data.votedPairs % RoundSize === 0) {
+    if (roundCompleteModalCanBeSet && data?.votedPairs
+      && data.votedPairs < MaximumRepoComparisons && data.votedPairs % RoundSize === 0) {
       setRoundComplete(true);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (data?.votedPairs && data.votedPairs >= MaximumRepoComparisons) {
+      setRepoComplete(true);
     }
   }, [data]);
 
@@ -380,6 +389,7 @@ export default function Home() {
           revertingBack
           || showFinishModal
           || roundComplete
+          || repoComplete
         }
         onClose={() => {}}
       >
@@ -389,6 +399,12 @@ export default function Home() {
             isOpen={roundComplete}
             onClose={roundCompleteClose}
             onNextRound={roundCompleteClose}
+            onFinishVoting={onFinishVoting}
+          />
+        )}
+        {repoComplete && (
+          <RepoComplete
+            isOpen={repoComplete}
             onFinishVoting={onFinishVoting}
           />
         )}

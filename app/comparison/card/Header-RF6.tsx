@@ -27,6 +27,7 @@ interface HeaderProps {
 }
 
 export const RoundSize = 5;
+export const MaximumRepoComparisons = 30;
 
 const PAIRWISE_REPORT_URL
   = 'https://github.com/GeneralMagicio/pairwise-df-demo/issues/new?assignees=MoeNick&labels=&projects=&template=report-an-issue.md&title=%5BFeedback%5D+';
