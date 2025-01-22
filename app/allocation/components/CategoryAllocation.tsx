@@ -56,6 +56,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
       case CollectionProgressStatusEnum.WIPThreshold:
         return (
           <WipCategory
+            id={id}
             onScore={onScore}
             votedPairs={votedPairs}
             totalPairs={projectCount}

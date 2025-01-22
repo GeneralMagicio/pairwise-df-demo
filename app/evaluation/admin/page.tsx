@@ -348,7 +348,7 @@ const EvaluationPage: React.FC = () => {
 
   return (
     <div className="flex h-screen w-full min-w-fit flex-col justify-around pb-10">
-      <HeaderRF6 showBackButton={true} allEvaluation={true} />
+      <HeaderRF6 showBackButton={true} myEvaluation={true} />
       <div className="my-9 ml-10 flex min-w-max grow flex-row justify-start gap-10 pr-10">
         <div className="w-[600px] rounded-2xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
           <div className="relative flex h-full max-h-[680px] flex-col gap-4 overflow-auto pr-4">

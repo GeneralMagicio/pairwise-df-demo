@@ -1,8 +1,11 @@
 import { FC, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
 import { ArrowUpIcon } from '@/public/assets/icon-components/ArrowUp';
-import { PowerIcon } from '@/public/assets/icon-components/Power';
 import { GithubIcon } from '@/public/assets/icon-components/Github';
+import { LogOutIcon } from '@/public/assets/icon-components/Logout';
+import { EditIcon } from '@/public/assets/icon-components/Edit';
 interface Props {
   username: string
   onLogout: () => void
@@ -12,16 +15,17 @@ const LogoutButton: FC<Pick<Props, 'onLogout'>> = ({ onLogout }) => {
   return (
     <button
       onClick={onLogout}
-      className="flex w-full items-center justify-center gap-2 py-2"
+      className="flex w-full items-center justify-start gap-2 p-2.5 py-2"
     >
-      <PowerIcon />
-      <span className="text-primary"> Log out </span>
+      <LogOutIcon />
+      <span className="text-sm text-[#344054]"> Log out </span>
     </button>
   );
 };
 
 const ConnectedButton: FC<Props> = ({ username, onLogout }) => {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="relative">
@@ -36,7 +40,16 @@ const ConnectedButton: FC<Props> = ({ username, onLogout }) => {
         {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
       </button>
       {open && (
-        <div className="absolute left-0 w-44 rounded-lg border border-gray-300 bg-white shadow-md">
+        <div className="absolute right-0 w-56 rounded-lg border border-gray-300 bg-white shadow-md">
+          {pathname === '/allocation' && (
+            <Link
+              href="/evaluation"
+              className="flex w-full items-center justify-start gap-2 p-2.5 py-2"
+            >
+              <EditIcon size="16" />
+              <span className="text-sm text-[#344054]"> My Evaluation </span>
+            </Link>
+          )}
           <LogoutButton onLogout={onLogout} />
         </div>
       )}
