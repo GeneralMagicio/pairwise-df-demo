@@ -10,6 +10,7 @@ export const getCategory = async (id: number): Promise<{ collection: TCategory, 
 export const useCategory = (id: number) => {
   return useQuery({
     queryKey: ['categories', id],
-    queryFn: () => getCategory(id),
+    queryFn: () => (!isNaN(id) ? getCategory(id) : Promise.reject('No ID provided')),
+    enabled: !isNaN(id),
   });
 };
