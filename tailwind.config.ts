@@ -44,6 +44,9 @@ const config: Config = {
           600: '#101828',
           900: '#050608',
         },
+        'deep': {
+          250: '#475467',
+        },
         'status': {
           border: {
             success: '#75E0A7',
@@ -99,10 +102,9 @@ const config: Config = {
       },
 
       screens: {
+        xxsl: { max: '1024px' },
         xsl: { max: '1280px' },
-        // small laptops
         sl: { max: '1550px' },
-        // laptops
         l: { max: '1920px' },
       },
       scale: {

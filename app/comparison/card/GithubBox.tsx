@@ -42,7 +42,7 @@ const GithubBox: FC<Props> = ({ forkCount, starCount, totalFundingUsd, language,
   return (
     <div>
       <div
-        className="mb-5 border-b border-gray-border"
+        className="mb-5 border-b border-gray-border xxsl:mb-2"
       >
         <div className="flex flex-row items-center gap-3">
           {Object.entries(tabs).map(([t, text]) => {
@@ -54,7 +54,7 @@ const GithubBox: FC<Props> = ({ forkCount, starCount, totalFundingUsd, language,
 
         {tab === Tab.METRICS && (
           <>
-            <div className="font-inter mb-2 grid grid-cols-3 gap-2 text-sm font-normal leading-5">
+            <div className="font-inter mb-2 grid grid-cols-2 gap-2 text-sm font-normal leading-5">
               <div title="Total Funding Received" className="flex items-center gap-2 rounded-md bg-gray-100 p-2">
                 <USDIcon />
                 {totalFundingUsd

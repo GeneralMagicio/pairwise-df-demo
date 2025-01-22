@@ -2,29 +2,25 @@
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
-import HeaderRF6 from '../comparison/card/Header-RF6';
-import DateRangePicker from '../components/DateRangePicker';
+import { useParams } from 'next/navigation';
+import HeaderRF6 from '../../comparison/card/Header-RF6';
+import DateRangePicker from '../../components/DateRangePicker';
 import { Search } from '@/public/assets/icon-components/Search';
 import { XCloseIcon } from '@/public/assets/icon-components/XClose';
-import { IReturnRationaleQuery, useGetProjectRationales, useGetProjects } from './useProjects';
-import { RationaleBox } from '../comparison/[categoryId]/RationaleBox';
-import Spinner from '../components/Spinner';
+import { IReturnRationaleQuery, useGetProjectRationales, useGetProjects } from '../useProjects';
+import { RationaleBox } from '../../comparison/[categoryId]/RationaleBox';
+import Spinner from '../../components/Spinner';
 import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/ArrowRight';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
-import { SliderBox } from './SliderRationaleBox';
-import { useUpdateRationaleVote } from '../comparison/utils/data-fetching/vote';
-import SmallSpinner from '../components/SmallSpinner';
+import { SliderBox } from '../SliderRationaleBox';
+import { useUpdateRationaleVote } from '../../comparison/utils/data-fetching/vote';
+import SmallSpinner from '../../components/SmallSpinner';
+import { useCategory } from '@/app/comparison/utils/data-fetching/category';
 import type React from 'react';
-
 enum Tab {
   AllEvaluation = 0,
   MyEvaluation = 1,
 }
-
-const tabs = {
-  [Tab.AllEvaluation]: 'All evaluations',
-  [Tab.MyEvaluation]: 'My evaluations',
-};
 
 enum SortOption {
   Newest = 0,
@@ -277,7 +273,8 @@ const formatTime = (date: Date | null): string => {
   return date.toISOString();
 };
 const EvaluationPage: React.FC = () => {
-  const [tab, setTab] = useState<keyof typeof tabs>(Tab.AllEvaluation);
+  const { repoId } = useParams();
+  const tab = Tab.MyEvaluation;
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [searchQueries, setSearchQueries] = useState<ISearchQuery[]>([]);
@@ -298,6 +295,8 @@ const EvaluationPage: React.FC = () => {
     tab == Tab.MyEvaluation,
     sortOption === SortOption.Newest ? 'desc' : 'asc',
   );
+
+  const { data: initRepo, isError } = useCategory(Number(repoId));
 
   const queryClient = useQueryClient();
 
@@ -334,6 +333,10 @@ const EvaluationPage: React.FC = () => {
     setPage(1);
     setSelectedRationale(1);
   }, [searchQueries, startDate, endDate]);
+  useEffect(() => {
+    if (!isError && initRepo)
+      setSearchQueries([initRepo.collection]);
+  }, [initRepo, isError]);
   useEffect(() => {
     if (rationaleData) {
       setTotalPages(rationaleData.meta.totalPages);
@@ -384,29 +387,13 @@ const EvaluationPage: React.FC = () => {
 
   return (
     <div className="flex h-screen w-full min-w-fit flex-col justify-around pb-10">
-      <HeaderRF6 showBackButton={true} allEvaluation={true} />
+      <HeaderRF6 showBackButton={true} myEvaluation={true} />
       <div className="my-9 ml-10 flex min-w-max grow flex-row justify-start gap-10 pr-10">
         <div className="w-[600px] rounded-2xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
           <div ref={boxRef} className="relative flex h-full max-h-[680px] flex-col gap-4 overflow-auto pr-4">
             <div className="top-0 flex h-9 flex-row gap-4">
-              <div className="grow border-b border-gray-border">
-                {tabs && (
-                  <div className="flex h-full flex-row items-center gap-3">
-                    {Object.entries(tabs).map(([t, text]) => (
-                      <button
-                        key={t}
-                        className={`h-full max-w-32 px-1 pb-3 text-sm ${
-                          tab === Number.parseInt(t)
-                            ? 'border-b border-primary font-bold text-main-title'
-                            : 'font-normal text-dark-600'
-                        }`}
-                        onClick={() => setTab(Number.parseInt(t))}
-                      >
-                        {text}
-                      </button>
-                    ))}
-                  </div>
-                )}
+              <div className="grow border-gray-border">
+                <div className="flex h-full flex-row items-center gap-3" />
               </div>
               <div ref={fliterButtonRef}>
                 <button
@@ -436,25 +423,26 @@ const EvaluationPage: React.FC = () => {
               </div>
             </div>
 
-            {showFilterBox && (
-              <div className="relative z-10" ref={filterBoxRef}>
-                <div className="absolute -top-2 right-0">
-                  <FilterBox
-                    startDate={startDate}
-                    endDate={endDate}
-                    setEndDate={setEndDate}
-                    setStartDate={setStartDate}
-                    searchQueries={searchQueries}
-                    setSearchQueries={(searches: ISearchQuery[]) => {
-                      setSearchQueries(searches);
-                    }}
-                    setSortOption={(opt: SortOption) => setSortOption(opt)}
-                    sortOption={sortOption}
-                  />
+            <div className="relative">
+              {showFilterBox && (
+
+                <div className="relative z-10" ref={filterBoxRef}>
+                  <div className="absolute right-0">
+                    <FilterBox
+                      startDate={startDate}
+                      endDate={endDate}
+                      setEndDate={setEndDate}
+                      setStartDate={setStartDate}
+                      searchQueries={searchQueries}
+                      setSearchQueries={(searches: ISearchQuery[]) => {
+                        setSearchQueries(searches);
+                      }}
+                      setSortOption={(opt: SortOption) => setSortOption(opt)}
+                      sortOption={sortOption}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
-            <div>
+              )}
               <div className="flex grow flex-col gap-4">
                 {accumulatedData
                 && accumulatedData.map(
@@ -477,8 +465,11 @@ const EvaluationPage: React.FC = () => {
                 )}
               </div>
               {isLoadingRationales && (
-                <div className="py-1">
-                  <SmallSpinner />
+                <div className="pt-4">
+                  <div className="flex flex-col gap-4">
+                    <SmallSpinner />
+                    <div className="text-center text-sm text-[#344054]">Loading more evaluations ...</div>
+                  </div>
                 </div>
               )}
             </div>
