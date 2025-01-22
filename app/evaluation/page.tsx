@@ -13,8 +13,8 @@ import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/Ar
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { SliderBox } from './SliderRationaleBox';
 import { useUpdateRationaleVote } from '../comparison/utils/data-fetching/vote';
-import type React from 'react';
 import SmallSpinner from '../components/SmallSpinner';
+import type React from 'react';
 
 enum Tab {
   AllEvaluation = 0,
@@ -284,9 +284,9 @@ const EvaluationPage: React.FC = () => {
   const [showFilterBox, setShowFilterBox] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [accumulatedData, setAccumulatedData] = useState<IReturnRationaleQuery["data"]>([]);
+  const [accumulatedData, setAccumulatedData] = useState<IReturnRationaleQuery['data']>([]);
   const [isLoadingRationales, setIsLoadingRationales] = useState(false);
-  const boxRef = useRef(null as HTMLDivElement|null);
+  const boxRef = useRef(null as HTMLDivElement | null);
   const [selectedRationale, setSelectedRationale] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
   const { data: rationaleData, isLoading } = useGetProjectRationales(
@@ -337,30 +337,33 @@ const EvaluationPage: React.FC = () => {
   useEffect(() => {
     if (rationaleData) {
       setTotalPages(rationaleData.meta.totalPages);
-      if(page === 1)
-        setAccumulatedData(rationaleData.data)
-      else{
-        setAccumulatedData(prevData => [...prevData, ...(rationaleData.data)])
-        setIsLoadingRationales(false)
+      if (page === 1)
+        setAccumulatedData(rationaleData.data);
+      else {
+        setAccumulatedData(prevData => [...prevData, ...(rationaleData.data)]);
+        setIsLoadingRationales(false);
       }
     }
-  }, [rationaleData,page]);
+  }, [rationaleData, page]);
   const filterBoxRef = useRef<HTMLDivElement>(null);
   const fliterButtonRef = useRef<HTMLDivElement>(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     const handleScroll = async () => {
-      if(!isLoadingRationales && page < totalPages && boxRef.current && boxRef.current.clientHeight + boxRef.current.scrollTop +20 > boxRef.current.scrollHeight ){
+      if (!isLoadingRationales
+        && page < totalPages
+        && boxRef.current
+        && boxRef.current.clientHeight + boxRef.current.scrollTop + 20 > boxRef.current.scrollHeight) {
         setIsLoadingRationales(true);
         await queryClient.refetchQueries({ queryKey: ['project-rationale-evaluation'] });
         setPage(page + 1);
       }
+    };
+    if (boxRef.current) {
+      boxRef.current.addEventListener('scroll', handleScroll);
+      return () => boxRef.current?.removeEventListener('scroll', handleScroll);
     }
-   if(boxRef.current){
-    boxRef.current.addEventListener("scroll",handleScroll)
-    return () => boxRef.current?.removeEventListener("scroll", handleScroll);
-   }
-  })
+  });
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (filterBoxRef.current
@@ -375,7 +378,7 @@ const EvaluationPage: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  if ((!rationaleData || isLoading) && page===1) {
+  if ((!rationaleData || isLoading) && page === 1) {
     return <Spinner />;
   }
 
@@ -473,10 +476,12 @@ const EvaluationPage: React.FC = () => {
                   },
                 )}
               </div>
-              {isLoadingRationales && <div>
-                <SmallSpinner/>
-              </div>}
-            </div>      
+              {isLoadingRationales && (
+                <div>
+                  <SmallSpinner />
+                </div>
+              )}
+            </div>
           </div>
         </div>
         {accumulatedData.length > 0 && (
