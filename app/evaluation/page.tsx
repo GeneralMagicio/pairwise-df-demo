@@ -301,7 +301,6 @@ const EvaluationPage: React.FC = () => {
 
   const queryClient = useQueryClient();
 
-  console.log("page number",page);
   const { mutateAsync: vote } = useUpdateRationaleVote({
     page,
     limit,
