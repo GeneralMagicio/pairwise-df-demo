@@ -6,7 +6,7 @@ import HeaderRF6 from '../comparison/card/Header-RF6';
 import DateRangePicker from '../components/DateRangePicker';
 import { Search } from '@/public/assets/icon-components/Search';
 import { XCloseIcon } from '@/public/assets/icon-components/XClose';
-import { useGetProjectRationales, useGetProjects } from './useProjects';
+import { IReturnRationaleQuery, useGetProjectRationales, useGetProjects } from './useProjects';
 import { RationaleBox } from '../comparison/[categoryId]/RationaleBox';
 import Spinner from '../components/Spinner';
 import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/ArrowRight';
@@ -14,6 +14,7 @@ import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { SliderBox } from './SliderRationaleBox';
 import { useUpdateRationaleVote } from '../comparison/utils/data-fetching/vote';
 import type React from 'react';
+import SmallSpinner from '../components/SmallSpinner';
 
 enum Tab {
   AllEvaluation = 0,
@@ -283,6 +284,9 @@ const EvaluationPage: React.FC = () => {
   const [showFilterBox, setShowFilterBox] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [accumulatedData, setAccumulatedData] = useState<IReturnRationaleQuery["data"]>([]);
+  const [isLoadingRationales, setIsLoadingRationales] = useState(false);
+  const boxRef = useRef(null as HTMLDivElement|null);
   const [selectedRationale, setSelectedRationale] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
   const { data: rationaleData, isLoading } = useGetProjectRationales(
@@ -297,6 +301,7 @@ const EvaluationPage: React.FC = () => {
 
   const queryClient = useQueryClient();
 
+  console.log("page number",page);
   const { mutateAsync: vote } = useUpdateRationaleVote({
     page,
     limit,
@@ -333,11 +338,30 @@ const EvaluationPage: React.FC = () => {
   useEffect(() => {
     if (rationaleData) {
       setTotalPages(rationaleData.meta.totalPages);
+      if(page === 1)
+        setAccumulatedData(rationaleData.data)
+      else{
+        setAccumulatedData(prevData => [...prevData, ...(rationaleData.data)])
+        setIsLoadingRationales(false)
+      }
     }
-  }, [rationaleData]);
+  }, [rationaleData,page]);
   const filterBoxRef = useRef<HTMLDivElement>(null);
   const fliterButtonRef = useRef<HTMLDivElement>(null);
 
+  useEffect(()=>{
+    const handleScroll = async () => {
+      if(!isLoadingRationales && page < totalPages && boxRef.current && boxRef.current.clientHeight + boxRef.current.scrollTop +20 > boxRef.current.scrollHeight ){
+        setIsLoadingRationales(true);
+        await queryClient.refetchQueries({ queryKey: ['project-rationale-evaluation'] });
+        setPage(page + 1);
+      }
+    }
+   if(boxRef.current){
+    boxRef.current.addEventListener("scroll",handleScroll)
+    return () => boxRef.current?.removeEventListener("scroll", handleScroll);
+   }
+  })
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (filterBoxRef.current
@@ -352,7 +376,7 @@ const EvaluationPage: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  if (!rationaleData || isLoading) {
+  if ((!rationaleData || isLoading) && page===1) {
     return <Spinner />;
   }
 
@@ -361,7 +385,7 @@ const EvaluationPage: React.FC = () => {
       <HeaderRF6 showBackButton={true} allEvaluation={true} />
       <div className="my-9 ml-10 flex min-w-max grow flex-row justify-start gap-10 pr-10">
         <div className="w-[600px] rounded-2xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
-          <div className="relative flex h-full max-h-[680px] flex-col gap-4 overflow-auto pr-4">
+          <div ref={boxRef} className="relative flex h-full max-h-[680px] flex-col gap-4 overflow-auto pr-4">
             <div className="top-0 flex h-9 flex-row gap-4">
               <div className="grow border-b border-gray-border">
                 {tabs && (
@@ -430,8 +454,8 @@ const EvaluationPage: React.FC = () => {
             )}
             <div>
               <div className="flex grow flex-col gap-4">
-                {rationaleData
-                && rationaleData.data.map(
+                {accumulatedData
+                && accumulatedData.map(
                   ({ id, pickedId, project1: p1, project2: p2, rationale, ratio: multiplier, parent }, index) => {
                     return (
                       <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
@@ -450,37 +474,13 @@ const EvaluationPage: React.FC = () => {
                   },
                 )}
               </div>
-            </div>
-            <div className="sticky bottom-0 mt-4 flex items-center justify-between bg-[#F9FAFB]">
-              <button
-                onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-                disabled={page === 1}
-                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
-              >
-                <ArrowLeft2Icon size={20} />
-                Previous Page
-              </button>
-              <span className="text-sm text-gray-700">
-                Page
-                {' '}
-                {page}
-                {' '}
-                of
-                {' '}
-                {totalPages}
-              </span>
-              <button
-                onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={page === totalPages}
-                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
-              >
-                Next Page
-                <ArrowRight size={20} color="#344054" />
-              </button>
-            </div>
+              {isLoadingRationales && <div>
+                <SmallSpinner/>
+              </div>}
+            </div>      
           </div>
         </div>
-        {rationaleData.data.length > 0 && (
+        {accumulatedData.length > 0 && (
           <div className="flex min-w-[500px] grow flex-col gap-6 pr-10">
             <div className="grow rounded-2xl border border-gray-300 p-5">
               <div className="h-full overflow-auto pr-4">
@@ -491,40 +491,40 @@ const EvaluationPage: React.FC = () => {
                         <Image
                           width={36}
                           height={36}
-                          src={rationaleData.data[selectedRationale - 1].project1.image || '/placeholder.svg'}
-                          alt={rationaleData.data[selectedRationale - 1].project1.name}
+                          src={accumulatedData[selectedRationale - 1].project1.image || '/placeholder.svg'}
+                          alt={accumulatedData[selectedRationale - 1].project1.name}
                         />
                       </div>
-                      <div className="max-w-24">{rationaleData.data[selectedRationale - 1].project1.name}</div>
+                      <div className="max-w-24">{accumulatedData[selectedRationale - 1].project1.name}</div>
                     </div>
                     <div className="flex w-fit flex-col justify-center gap-2">
                       <div className="flex w-full justify-center">
                         <Image
                           width={36}
                           height={36}
-                          src={rationaleData.data[selectedRationale - 1].project2.image || '/placeholder.svg'}
-                          alt={rationaleData.data[selectedRationale - 1].project2.name}
+                          src={accumulatedData[selectedRationale - 1].project2.image || '/placeholder.svg'}
+                          alt={accumulatedData[selectedRationale - 1].project2.name}
                         />
                       </div>
-                      <div className="max-w-24">{rationaleData.data[selectedRationale - 1].project2.name}</div>
+                      <div className="max-w-24">{accumulatedData[selectedRationale - 1].project2.name}</div>
                     </div>
                   </div>
                   <div className="h-max w-full">
                     <SliderBox
                       shownValue={
-                        (rationaleData.data[selectedRationale - 1].ratio
-                          ? Number(rationaleData.data[selectedRationale - 1].ratio)
+                        (accumulatedData[selectedRationale - 1].ratio
+                          ? Number(accumulatedData[selectedRationale - 1].ratio)
                           : 1)
-                        * (rationaleData.data[selectedRationale - 1].pickedId
-                          === rationaleData.data[selectedRationale - 1].project1.id
+                        * (accumulatedData[selectedRationale - 1].pickedId
+                          === accumulatedData[selectedRationale - 1].project1.id
                           ? -1
                           : 1)
                       }
                       handleVote={handleVote}
                       canBeEditable={tab === Tab.MyEvaluation}
-                      rationale={rationaleData.data[selectedRationale - 1].rationale}
-                      project1={rationaleData.data[selectedRationale - 1].project1}
-                      project2={rationaleData.data[selectedRationale - 1].project2}
+                      rationale={accumulatedData[selectedRationale - 1].rationale}
+                      project1={accumulatedData[selectedRationale - 1].project1}
+                      project2={accumulatedData[selectedRationale - 1].project2}
                     />
                   </div>
                 </div>
@@ -541,7 +541,7 @@ const EvaluationPage: React.FC = () => {
                 Previous
               </button>
               <button
-                disabled={selectedRationale === rationaleData.data.length}
+                disabled={selectedRationale === accumulatedData.length}
                 onClick={() => setSelectedRationale(selectedRationale + 1)}
                 className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
               >

@@ -44,20 +44,22 @@ export interface IReturnRationaleQuery {
 }
 
 const getProjectRationales = async (rationaleQuery: IRationaleQuery): Promise<IReturnRationaleQuery> => {
-  const formattedQuery = Object.entries(rationaleQuery).reduce((acc, [key, value]) => {
-    if (value === '' || (Array.isArray(value) && value.length === 0)) {
-      return acc;
-    }
-    if (Array.isArray(value)) {
-      value.forEach((item) => {
-        acc[`${key}[]`] = String(item);
-      });
-    }
-    else {
-      acc[key] = String(value);
-    }
-    return acc;
-  }, {} as Record<string, string>);
+  const formattedQuery = Object.entries(rationaleQuery).reduce(
+    (acc, [key, value]) => {
+      if (value === "" || (Array.isArray(value) && value.length === 0)) {
+        return acc
+      }
+      if (Array.isArray(value)) {
+        value.forEach((item, index) => {
+          acc[`${key}[${index}]`] = String(item)
+        })
+      } else {
+        acc[key] = String(value)
+      }
+      return acc
+    },
+    {} as Record<string, string>,
+  )
   const params = new URLSearchParams(formattedQuery).toString();
   const response = await axiosInstance.get(`/project/rationales?${params}`, { data: rationaleQuery });
 

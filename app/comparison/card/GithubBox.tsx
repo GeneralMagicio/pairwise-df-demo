@@ -3,7 +3,6 @@ import { DevIcon } from '@/public/assets/icon-components/Dev';
 import { ForkIcon } from '@/public/assets/icon-components/Fork';
 import { StarIcon } from '@/public/assets/icon-components/Star';
 import { OpenSourceIcon } from '@/public/assets/icon-components/OpenSource';
-import { QuestionMarkIcon } from '@/public/assets/icon-components/QuestionMark';
 import { ProjectMetadata } from '../utils/types';
 import { formatAmount } from './GrantBox';
 import { USDIcon } from '@/public/assets/icon-components/Usd';
@@ -121,10 +120,6 @@ const GithubBox: FC<Props> = ({ forkCount, starCount, totalFundingUsd, language,
                 <OpenSourceIcon />
                 <span className="text-sm">Open source</span>
               </div>
-            </div>
-            <div className="flex items-center gap-2" title="Data is provided by OSO">
-              <QuestionMarkIcon />
-              <p className="text-sm text-gray-600">About GitHub metrics</p>
             </div>
           </>
         )}
