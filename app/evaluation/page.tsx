@@ -477,7 +477,7 @@ const EvaluationPage: React.FC = () => {
                 )}
               </div>
               {isLoadingRationales && (
-                <div>
+                <div className="py-1">
                   <SmallSpinner />
                 </div>
               )}
