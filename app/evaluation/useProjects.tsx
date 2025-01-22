@@ -43,6 +43,30 @@ export interface IReturnRationaleQuery {
   }
 }
 
+export interface IReturnAdminRationaleQuery {
+  data: {
+    id: number
+    userId: number
+    pickedId: number | null
+    project1Id: number
+    project2Id: number
+    ratio: string
+    user: { ghUsername: string }
+    rationale: string
+    createdAt: string
+    updatedAt: string
+    project1: IProjectRationale
+    project2: IProjectRationale
+    parent: IParentRationale
+  }[]
+  meta: {
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+  }
+}
+
 const getProjectRationales = async (rationaleQuery: IRationaleQuery): Promise<IReturnRationaleQuery> => {
   const formattedQuery = Object.entries(rationaleQuery).reduce(
     (acc, [key, value]) => {
@@ -68,6 +92,31 @@ const getProjectRationales = async (rationaleQuery: IRationaleQuery): Promise<IR
   }
   return response.data;
 };
+
+const getProjectRationalesAdmin = async (rationaleQuery: IRationaleQuery): Promise<IReturnAdminRationaleQuery> => {
+  const formattedQuery = Object.entries(rationaleQuery).reduce((acc, [key, value]) => {
+    if (value === '' || (Array.isArray(value) && value.length === 0)) {
+      return acc;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        acc[`${key}[]`] = String(item);
+      });
+    }
+    else {
+      acc[key] = String(value);
+    }
+    return acc;
+  }, {} as Record<string, string>);
+  const params = new URLSearchParams(formattedQuery).toString();
+  const response = await axiosInstance.get(`/project/rationales/admin?${params}`, { data: rationaleQuery });
+
+  if (response.data.error) {
+    throw new Error(response.data.error);
+  }
+  return response.data;
+};
+
 const getProjects = async (): Promise<IProject[]> => {
   const response = await axiosInstance.get('/mock/projects');
 
@@ -134,6 +183,27 @@ export const useGetProjectRationales = (page: number,
   return useQuery({
     queryKey: ['project-rationale-evaluation', page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation, orderBy],
     queryFn: () => getProjectRationales({
+      page,
+      limit,
+      createdAtGte,
+      createdAtLte,
+      projectIds,
+      myEvaluation,
+      orderBy,
+    }),
+  });
+};
+
+export const useGetProjectRationalesAdmin = (page: number,
+  limit: number,
+  createdAtGte: string,
+  createdAtLte: string,
+  projectIds: number[],
+  myEvaluation: boolean,
+  orderBy: string) => {
+  return useQuery({
+    queryKey: ['project-rationale-evaluation-admin', page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation, orderBy],
+    queryFn: () => getProjectRationalesAdmin({
       page,
       limit,
       createdAtGte,
