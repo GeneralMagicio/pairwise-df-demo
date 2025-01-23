@@ -54,7 +54,9 @@ const RoundComplete: React.FC<RoundCompleteProps> = ({ isOpen, onClose, onNextRo
         {/* Title */}
         <div className="flex flex-col gap-1">
           <h2 className="text-start text-lg font-semibold text-dark-600" id="modal-title">
-            Well done on completing 5<br/>comparisons!
+            Well done on completing 5
+            <br />
+            comparisons!
           </h2>
 
           {/* Message */}

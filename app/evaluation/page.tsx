@@ -332,14 +332,14 @@ const EvaluationPage: React.FC = () => {
     setSelectedRationale(1);
   }, [searchQueries, startDate, endDate]);
   useEffect(() => {
-    setPage(Number(params.get("page")??1))
+    setPage(Number(params.get('page') ?? 1));
     const setInitSearchRepoParams = async () => {
-      setSearchQueries(await Promise.all((params.getAll('projectIds') || []).map(async (projectId)=>{
-      return (await getCategory(Number(projectId))).collection
-      })))
-    }
+      setSearchQueries(await Promise.all((params.getAll('projectIds') || []).map(async (projectId) => {
+        return (await getCategory(Number(projectId))).collection;
+      })));
+    };
     setInitSearchRepoParams();
-    setSortOption((params.get("orderBy")==="asc"?SortOption.Latest: SortOption.Newest))
+    setSortOption((params.get('orderBy') === 'asc' ? SortOption.Latest : SortOption.Newest));
   }, [params]);
   useEffect(() => {
     if (rationaleData) {

@@ -624,8 +624,8 @@ export default function Home() {
                       onClick={() => {
                         router.push('/evaluation');
                       }}
-                      className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold
-                    text-[#344054] border border-[#D0D5DD]"
+                      className="w-full rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5
+                    text-sm font-semibold text-[#344054]"
                     >
                       My Evaluations
                     </button>
