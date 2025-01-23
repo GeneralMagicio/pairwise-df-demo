@@ -32,20 +32,20 @@ const RepoComplete: React.FC<Props> = ({ isOpen, onFinishVoting }) => {
         </div>
 
         {/* Title */}
-        <h2 className="mb-2 text-center text-xl font-bold" id="modal-title">
+        <h2 className="mb-2 text-start text-xl font-bold" id="modal-title">
           Good job!
         </h2>
 
         {/* Message */}
-        <p className="mb-6 text-center text-gray-600">
+        <p className="mb-6 text-start text-deep-250">
           You voted on all 30 comparisons of this repo. Get back to the repositories page and start voting for others.
         </p>
 
         {/* Buttons */}
-        <div className="flex justify-center space-x-4">
+        <div className="mt-8 flex w-full justify-center space-x-4">
           <button
             onClick={onFinishVoting}
-            className="rounded-lg border-2 bg-primary px-4 py-2 text-gray-50 hover:bg-purple-600 focus:outline-none"
+            className="w-full rounded-lg border-2 bg-primary px-4 py-2 text-gray-50 hover:bg-purple-600 focus:outline-none"
           >
             OK
           </button>
