@@ -66,9 +66,8 @@ export interface IReturnAdminRationaleQuery {
     totalPages: number
   }
 }
-
-const getProjectRationales = async (rationaleQuery: IRationaleQuery): Promise<IReturnRationaleQuery> => {
-  const formattedQuery = Object.entries(rationaleQuery).reduce(
+export const formattedQuery = (rationaleQuery: Partial<IRationaleQuery>) =>
+  Object.entries(rationaleQuery).reduce(
     (acc, [key, value]) => {
       if (value === '' || (Array.isArray(value) && value.length === 0)) {
         return acc;
@@ -85,7 +84,8 @@ const getProjectRationales = async (rationaleQuery: IRationaleQuery): Promise<IR
     },
     {} as Record<string, string>,
   );
-  const params = new URLSearchParams(formattedQuery).toString();
+const getProjectRationales = async (rationaleQuery: IRationaleQuery): Promise<IReturnRationaleQuery> => {
+  const params = new URLSearchParams(formattedQuery(rationaleQuery)).toString();
   const response = await axiosInstance.get(`/project/rationales?${params}`, { data: rationaleQuery });
 
   if (response.data.error) {
@@ -119,7 +119,7 @@ const getProjectRationalesAdmin = async (rationaleQuery: IRationaleQuery): Promi
 };
 
 const getProjects = async (): Promise<IProject[]> => {
-  const response = await axiosInstance.get('/mock/projects');
+  const response = await axiosInstance.get('/mock/collections');
 
   if (response.data.error) {
     throw new Error(response.data.error);
