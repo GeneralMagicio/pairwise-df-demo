@@ -622,7 +622,7 @@ export default function Home() {
                   <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
                     <button
                       onClick={() => {
-                        router.push('/evaluation');
+                        router.push(`/evaluation?projectIds=${cid}`);
                       }}
                       className="w-full rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5
                     text-sm font-semibold text-[#344054]"

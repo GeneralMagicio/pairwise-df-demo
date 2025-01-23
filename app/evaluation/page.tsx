@@ -1,13 +1,13 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import HeaderRF6 from '../comparison/card/Header-RF6';
 import DateRangePicker from '../components/DateRangePicker';
 import { Search } from '@/public/assets/icon-components/Search';
 import { XCloseIcon } from '@/public/assets/icon-components/XClose';
-import { IReturnRationaleQuery, useGetProjectRationales, useGetProjects } from './useProjects';
+import { IRationaleQuery, IReturnRationaleQuery, useGetProjectRationales, useGetProjects } from './useProjects';
 import { RationaleBox } from '../comparison/[categoryId]/RationaleBox';
 import Spinner from '../components/Spinner';
 import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/ArrowRight';
@@ -272,6 +272,25 @@ const formatTime = (date: Date | null): string => {
   if (!date) return '';
   return date.toISOString();
 };
+const formattedQuery = (rationaleQuery: Partial<IRationaleQuery>): string => {
+  const params = new URLSearchParams();
+
+  Object.entries(rationaleQuery).forEach(([key, value]) => {
+    if (value === '' || (Array.isArray(value) && value.length === 0)) {
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        params.append(key, String(item));
+      });
+    }
+    else {
+      params.append(key, String(value));
+    }
+  });
+
+  return params.toString();
+};
 const EvaluationPage: React.FC = () => {
   const params = useSearchParams();
   const tab = Tab.MyEvaluation;
@@ -286,6 +305,7 @@ const EvaluationPage: React.FC = () => {
   const boxRef = useRef(null as HTMLDivElement | null);
   const [selectedRationale, setSelectedRationale] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
+  const router = useRouter();
   const { data: rationaleData, isLoading } = useGetProjectRationales(
     page,
     limit,
@@ -297,6 +317,7 @@ const EvaluationPage: React.FC = () => {
   );
 
   const queryClient = useQueryClient();
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const { mutateAsync: vote } = useUpdateRationaleVote({
     page,
@@ -328,18 +349,41 @@ const EvaluationPage: React.FC = () => {
     }
   };
   useEffect(() => {
-    setPage(1);
-    setSelectedRationale(1);
-  }, [searchQueries, startDate, endDate]);
+    if (isLoaded) {
+      const query: Partial<IRationaleQuery> = {};
+      if (searchQueries && searchQueries.length) {
+        query.projectIds = searchQueries.map(proj => proj.id);
+      }
+      if (startDate) {
+        query.createdAtLte = startDate.toISOString();
+      }
+      if (endDate) {
+        query.createdAtGte = endDate.toISOString();
+      }
+      if (sortOption) {
+        query.orderBy = ((sortOption === SortOption.Latest) ? 'asc' : 'desc');
+      }
+      router.push(`/evaluation?${formattedQuery(query)}`);
+    }
+  }, [searchQueries, startDate, endDate, sortOption]);
   useEffect(() => {
-    setPage(Number(params.get('page') ?? 1));
-    const setInitSearchRepoParams = async () => {
-      setSearchQueries(await Promise.all((params.getAll('projectIds') || []).map(async (projectId) => {
-        return (await getCategory(Number(projectId))).collection;
-      })));
-    };
-    setInitSearchRepoParams();
+    setIsLoaded(false);
+  }, []);
+  const setInitSearchRepoParams = useCallback(async () => {
+    const srcQuery = await Promise.all((params.getAll('projectIds') || []).map(async (projectId) => {
+      return (await getCategory(Number(projectId))).collection;
+    }));
+    setSearchQueries(srcQuery);
+    setIsLoaded(true);
+  }, [params]);
+  useEffect(() => {
     setSortOption((params.get('orderBy') === 'asc' ? SortOption.Latest : SortOption.Newest));
+    const createdAtLte = params.get('createdAtLte');
+    const createdAtGte = params.get('createdAtGte');
+    setStartDate(createdAtLte ? new Date(createdAtLte) : null);
+    setEndDate(createdAtGte ? new Date(createdAtGte) : null);
+
+    setInitSearchRepoParams();
   }, [params]);
   useEffect(() => {
     if (rationaleData) {
@@ -385,7 +429,8 @@ const EvaluationPage: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  if ((!rationaleData || isLoading) && page === 1) {
+  if ((!rationaleData || isLoading || !isLoaded
+  ) && page === 1) {
     return <Spinner />;
   }
 
@@ -401,22 +446,22 @@ const EvaluationPage: React.FC = () => {
               </div>
               <div ref={fliterButtonRef}>
                 <button
-                  className={`shadow-filter-shadow flex flex-row rounded-md border ${(searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)) ? 'border-[#D6BBFB]' : 'border-[#D0D5DD]'} gap-1 bg-white px-3 py-2`}
+                  className={`shadow-filter-shadow flex flex-row rounded-md border ${(searchQueries.length + ((startDate !== null || endDate !== null) ? 1 : 0)) ? 'border-[#D6BBFB]' : 'border-[#D0D5DD]'} gap-1 bg-white px-3 py-2`}
                   onClick={() => {
                     setShowFilterBox(!showFilterBox);
                   }}
                 >
                   <span
-                    className={`gap-1 text-sm font-semibold ${(searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)) ? 'text-[#6941C6]' : 'text-[#344054]'}`}
+                    className={`gap-1 text-sm font-semibold ${(searchQueries.length + ((startDate !== null || endDate !== null) ? 1 : 0)) ? 'text-[#6941C6]' : 'text-[#344054]'}`}
                   >
                     Filter
                   </span>
-                  {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)
+                  {searchQueries.length + ((startDate !== null || endDate !== null) ? 1 : 0)
                     ? (
                         <div className="flex w-8 flex-row rounded-full border border-[#D9D6FE] px-2 py-0.5">
                           <Image width={8} height={8} src="/assets/images/dot.svg" alt="dot" />
                           <span className="text-xs text-[#5925DC]">
-                            {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)}
+                            {searchQueries.length + (startDate !== null || endDate !== null ? 1 : 0)}
                           </span>
                         </div>
                       )
