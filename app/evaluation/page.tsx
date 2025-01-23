@@ -272,7 +272,7 @@ const formatTime = (date: Date | null): string => {
   if (!date) return '';
   return date.toISOString();
 };
-export const formattedQuery = (rationaleQuery: Partial<IRationaleQuery>): string => {
+const formattedQuery = (rationaleQuery: Partial<IRationaleQuery>): string => {
   const params = new URLSearchParams();
 
   Object.entries(rationaleQuery).forEach(([key, value]) => {
