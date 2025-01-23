@@ -25,7 +25,7 @@ const WipCategory = ({
         {`Round ${roundNumber(votedPairs)} of ${totalRounds}`}
       </button>
 
-      <a className="text-sm font-semibold text-main-title" href={`/evaluation/${id}`}>
+      <a className="text-sm font-semibold text-main-title" href={`/evaluation?projectIds=${id}`}>
         My Evaluations
       </a>
     </div>

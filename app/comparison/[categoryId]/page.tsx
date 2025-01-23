@@ -625,7 +625,7 @@ export default function Home() {
                         router.push('/evaluation');
                       }}
                       className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold
-                    text-[#344054]"
+                    text-[#344054] border border-[#D0D5DD]"
                     >
                       My Evaluations
                     </button>

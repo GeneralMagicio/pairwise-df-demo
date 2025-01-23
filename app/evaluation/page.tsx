@@ -2,20 +2,20 @@
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
-import HeaderRF6 from '../../comparison/card/Header-RF6';
-import DateRangePicker from '../../components/DateRangePicker';
+import { useSearchParams } from 'next/navigation';
+import HeaderRF6 from '../comparison/card/Header-RF6';
+import DateRangePicker from '../components/DateRangePicker';
 import { Search } from '@/public/assets/icon-components/Search';
 import { XCloseIcon } from '@/public/assets/icon-components/XClose';
-import { IReturnRationaleQuery, useGetProjectRationales, useGetProjects } from '../useProjects';
-import { RationaleBox } from '../../comparison/[categoryId]/RationaleBox';
-import Spinner from '../../components/Spinner';
+import { IReturnRationaleQuery, useGetProjectRationales, useGetProjects } from './useProjects';
+import { RationaleBox } from '../comparison/[categoryId]/RationaleBox';
+import Spinner from '../components/Spinner';
 import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/ArrowRight';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
-import { SliderBox } from '../SliderRationaleBox';
-import { useUpdateRationaleVote } from '../../comparison/utils/data-fetching/vote';
-import SmallSpinner from '../../components/SmallSpinner';
-import { useCategory } from '@/app/comparison/utils/data-fetching/category';
+import { SliderBox } from './SliderRationaleBox';
+import { useUpdateRationaleVote } from '../comparison/utils/data-fetching/vote';
+import SmallSpinner from '../components/SmallSpinner';
+import { getCategory } from '@/app/comparison/utils/data-fetching/category';
 import type React from 'react';
 enum Tab {
   AllEvaluation = 0,
@@ -273,7 +273,7 @@ const formatTime = (date: Date | null): string => {
   return date.toISOString();
 };
 const EvaluationPage: React.FC = () => {
-  const { repoId } = useParams();
+  const params = useSearchParams();
   const tab = Tab.MyEvaluation;
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -295,8 +295,6 @@ const EvaluationPage: React.FC = () => {
     tab == Tab.MyEvaluation,
     sortOption === SortOption.Newest ? 'desc' : 'asc',
   );
-
-  const { data: initRepo, isError } = useCategory(Number(repoId));
 
   const queryClient = useQueryClient();
 
@@ -334,9 +332,15 @@ const EvaluationPage: React.FC = () => {
     setSelectedRationale(1);
   }, [searchQueries, startDate, endDate]);
   useEffect(() => {
-    if (!isError && initRepo)
-      setSearchQueries([initRepo.collection]);
-  }, [initRepo, isError]);
+    setPage(Number(params.get("page")??1))
+    const setInitSearchRepoParams = async () => {
+      setSearchQueries(await Promise.all((params.getAll('projectIds') || []).map(async (projectId)=>{
+      return (await getCategory(Number(projectId))).collection
+      })))
+    }
+    setInitSearchRepoParams();
+    setSortOption((params.get("orderBy")==="asc"?SortOption.Latest: SortOption.Newest))
+  }, [params]);
   useEffect(() => {
     if (rationaleData) {
       setTotalPages(rationaleData.meta.totalPages);
