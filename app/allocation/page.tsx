@@ -164,7 +164,7 @@ const AllocationPage = () => {
                             onDelegate={() => {}}
                             onLockClick={handleLock(cat.id)}
                             onScore={handleScoreProjects(cat.id)}
-                            onView={() => { router.push('/evaluation'); }}
+                            onView={() => { router.push(`/evaluation/${cat.id}`); }}
                             onPercentageChange={handleNewValue(cat.id)}
                             username=""
                           />
