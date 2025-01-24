@@ -493,25 +493,30 @@ const EvaluationPage: React.FC = () => {
                 </div>
               )}
               <div className="flex grow flex-col gap-4">
-                {accumulatedData
-                && accumulatedData.map(
-                  ({ id, pickedId, project1: p1, project2: p2, rationale, ratio: multiplier, parent }, index) => {
-                    return (
-                      <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
-                        <RationaleBox
-                          pickedId={pickedId}
-                          project1={p1}
-                          project2={p2}
-                          rationale={rationale}
-                          multiplier={Number(multiplier)}
-                          repoImage={parent.image}
-                          repoName={parent.name}
-                          selected={selectedRationale === index + 1}
-                        />
+                {accumulatedData && accumulatedData.length > 0
+                  ? accumulatedData.map(
+                      ({ id, pickedId, project1: p1, project2: p2, rationale, ratio: multiplier, parent }, index) => {
+                        return (
+                          <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
+                            <RationaleBox
+                              pickedId={pickedId}
+                              project1={p1}
+                              project2={p2}
+                              rationale={rationale}
+                              multiplier={Number(multiplier)}
+                              repoImage={parent.image}
+                              repoName={parent.name}
+                              selected={selectedRationale === index + 1}
+                            />
+                          </div>
+                        );
+                      },
+                    )
+                  : (
+                      <div className="w-full text-center text-[#344054]">
+                        No Evaluation found
                       </div>
-                    );
-                  },
-                )}
+                    )}
               </div>
               {isLoadingRationales && (
                 <div className="pt-4">
