@@ -322,8 +322,8 @@ const EvaluationPage: React.FC = () => {
   const { mutateAsync: vote } = useUpdateRationaleVote({
     page,
     limit,
-    createdAtGte: formatTime(endDate),
-    createdAtLte: formatTime(startDate),
+    createdAtGte: formatTime(startDate),
+    createdAtLte: formatTime(endDate),
     projectIds: searchQueries.map(search => search.id),
     myEvaluation: tab === Tab.MyEvaluation,
     orderBy: sortOption === SortOption.Newest ? 'desc' : 'asc',
@@ -354,11 +354,11 @@ const EvaluationPage: React.FC = () => {
       if (searchQueries && searchQueries.length) {
         query.projectIds = searchQueries.map(proj => proj.id);
       }
-      if (startDate) {
-        query.createdAtLte = startDate.toISOString();
-      }
       if (endDate) {
-        query.createdAtGte = endDate.toISOString();
+        query.createdAtLte = endDate.toISOString();
+      }
+      if (startDate) {
+        query.createdAtGte = startDate.toISOString();
       }
       if (sortOption) {
         query.orderBy = ((sortOption === SortOption.Latest) ? 'asc' : 'desc');
@@ -380,9 +380,8 @@ const EvaluationPage: React.FC = () => {
     setSortOption((params.get('orderBy') === 'asc' ? SortOption.Latest : SortOption.Newest));
     const createdAtLte = params.get('createdAtLte');
     const createdAtGte = params.get('createdAtGte');
-    setStartDate(createdAtLte ? new Date(createdAtLte) : null);
-    setEndDate(createdAtGte ? new Date(createdAtGte) : null);
-
+    setStartDate(createdAtGte ? new Date(createdAtGte) : null);
+    setEndDate(createdAtLte ? new Date(createdAtLte) : null);
     setInitSearchRepoParams();
   }, [params]);
   useEffect(() => {
