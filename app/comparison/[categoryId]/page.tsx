@@ -441,7 +441,7 @@ export default function Home() {
         <div className="relative grow">
           <div className="glex flex w-full flex-col">
 
-            <div className="mt-6 text-center text-2xl font-semibold">
+            <div className="mt-6 text-center text-2xl font-semibold xsl:mt-4 xsl:text-lg">
               Which dependency gets more credit for
               {' '}
               <span className="font-bold">
@@ -472,11 +472,11 @@ export default function Home() {
             </div>
           </div>
           <footer className="w-full gap-8 rounded-xl px-8">
-            <div className="relative bottom-0 z-50 flex grow flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner sl:py-2">
-              <div className="flex w-3/4 flex-col items-center justify-center gap-4 rounded-xl lg:flex-row xl:gap-8">
+            <div className="relative bottom-0 z-50 flex grow flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner xxsl:gap-1 sl:py-2">
+              <div className="flex w-3/4 flex-col items-center justify-center gap-4 rounded-xl lg:flex-row xl:gap-8 xxsl:gap-1">
                 <div className="mr-3 w-1/5 text-ellipsis">{project1.name}</div>
                 {/* <div>{sliderScaleFunction(SliderMax, SliderBase)}</div> */}
-                <div className="relative mt-5 flex w-1/2 flex-col items-center justify-center gap-4">
+                <div className="gap- relative mt-5 flex w-1/2 flex-col items-center justify-center xxsl:mt-2">
                   <div className="absolute left-[(calc50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
                   <CustomSlider
                     val={convertInputValueToSlider()}
@@ -570,7 +570,7 @@ export default function Home() {
                       onClick={handleUndo}
                     />
                     <button
-                      className="w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+                      className="xxsl: wfit w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
                       onClick={() => { handleVote(shownValue === 0 ? null : shownValue > 0 ? project2.id : project1.id); }}
                     >
                       Next
@@ -622,12 +622,12 @@ export default function Home() {
                   <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
                     <button
                       onClick={() => {
-                        router.push('/evaluation');
+                        router.push(`/evaluation?projectIds=${cid}`);
                       }}
-                      className="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold
-                    text-[#344054]"
+                      className="w-full rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5
+                    text-sm font-semibold text-[#344054]"
                     >
-                      View All Evaluations
+                      My Evaluations
                     </button>
                   </div>
                 </div>

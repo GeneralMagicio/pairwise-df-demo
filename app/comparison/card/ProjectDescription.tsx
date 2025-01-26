@@ -25,11 +25,11 @@ const ProjectDescription: React.FC<ProjectDescriptionProps> = ({ description }) 
   };
 
   return (
-    <div className="mb-1 flex flex-col gap-2">
+    <div className="mb-1 flex flex-col">
       <p
         ref={textRef}
         onClick={toggleExpand}
-        className={`mb-2 cursor-pointer text-base font-normal leading-6 text-slate-600 ${
+        className={`mb-2 cursor-pointer text-base font-normal leading-6 text-slate-600 xxsl:text-sm ${
           !isExpanded && showButtons ? styles.lineClamp : ''
         }`}
       >

@@ -39,7 +39,7 @@ const Section: FC<CollapsibleProps> = ({
 }) => {
   return (
     <>
-      <div id={id} className="mb-2 pt-4">
+      <div id={id} className="mb-2 pt-4 xxsl:mb-1 xxsl:pt-2">
         {title && (
           <div className="flex items-center justify-between gap-4 p-2">
             <button className="text-xl font-medium">{title}</button>
@@ -90,7 +90,7 @@ export const ProjectCard: React.FC<Props> = ({
       bg-gray-50 px-4 pb-8 pt-4 xsl:h-[45vh] sl:h-[50vh]`}
     >
       <div className="gap-2 overflow-y-auto">
-        <div className="mr-4 flex flex-col gap-3">
+        <div className="mr-4 flex flex-col gap-3 xxsl:gap-1">
           {/* Cover Image and Profile Avatar */}
           <div className="relative flex h-auto flex-row items-center">
             <Image

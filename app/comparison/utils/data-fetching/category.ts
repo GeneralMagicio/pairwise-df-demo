@@ -11,5 +11,6 @@ export const useCategory = (id: number) => {
   return useQuery({
     queryKey: ['categories', id],
     queryFn: () => getCategory(id),
+    enabled: !isNaN(id),
   });
 };

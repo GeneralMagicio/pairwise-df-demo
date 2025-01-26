@@ -18,8 +18,7 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
   const firstDayOfMonth = (new Date(year, month, 1).getDay() + 6) % 7;
 
   const applyDateRange = () => {
-    console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
-    if (startDate && endDate)
+    if (startDate || endDate)
       onApply(startDate, endDate);
   };
 
@@ -165,9 +164,9 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
           Cancel
         </button>
         <button
-          disabled={!(startDate && endDate)}
+          disabled={!(startDate || endDate)}
           onClick={applyDateRange}
-          className={`grow rounded-md border ${(startDate && endDate) ? 'border-[#D0D5DD] bg-primary text-white  hover:bg-purple-700' : 'border-[#D0D5DD] bg-white text-[#344054] hover:bg-gray-300'} px-4 py-2`}
+          className={`grow rounded-md border ${(startDate || endDate) ? 'border-[#D0D5DD] bg-primary text-white  hover:bg-purple-700' : 'border-[#D0D5DD] bg-white text-[#344054] hover:bg-gray-300'} px-4 py-2`}
         >
           Apply
         </button>

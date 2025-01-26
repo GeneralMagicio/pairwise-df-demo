@@ -21,7 +21,7 @@ interface HeaderProps {
   // question?: string
   isFirstSelection?: boolean
   showBackButton?: boolean
-  allEvaluation?: boolean
+  myEvaluation?: boolean
   votes?: number
   total?: number
 }
@@ -38,7 +38,7 @@ const HeaderRF6: FC<HeaderProps> = ({
   showBackButton,
   projImage,
   // question,
-  allEvaluation,
+  myEvaluation,
   isFirstSelection = false,
 }) => {
   const path = usePathname();
@@ -152,21 +152,21 @@ const HeaderRF6: FC<HeaderProps> = ({
       </Modal>
 
       <div className="relative z-40 flex w-full flex-row justify-between gap-6 border-b bg-white px-10 py-6">
-        {!allEvaluation && !category && !isFirstSelection && (
+        {!myEvaluation && !category && !isFirstSelection && (
           <div onClick={() => router.push('/allocation')} className="m-3 flex cursor-pointer items-center">
             <PwLogo />
           </div>
         )}
         {showBackButton && (
-          <button onClick={() => router.push('/allocation')} className="fles-row flex justify-center gap-1.5 rounded-lg border border-[#D0D5DD] px-4 py-2.5">
+          <button onClick={() => router.push('/allocation')} className="my-auto flex h-fit flex-row justify-center gap-1.5 rounded-lg border border-[#D0D5DD] px-4 py-2.5">
             <ArrowLeft2Icon color="#344054" />
             <span className="text-base font-semibold text-[#344054]">Back</span>
           </button>
         )}
 
-        {allEvaluation && (
-          <span className="text-xl font-bold">
-            All Evaluations
+        {myEvaluation && (
+          <span className="my-auto h-fit text-xl font-bold">
+            My Evaluations
           </span>
         )}
 

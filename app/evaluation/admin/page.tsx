@@ -1,26 +1,20 @@
 'use client';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSearchParams, useRouter } from 'next/navigation';
-import HeaderRF6 from '../comparison/card/Header-RF6';
-import DateRangePicker from '../components/DateRangePicker';
 import { Search } from '@/public/assets/icon-components/Search';
 import { XCloseIcon } from '@/public/assets/icon-components/XClose';
-import { IRationaleQuery, IReturnRationaleQuery, useGetProjectRationales, useGetProjects } from './useProjects';
-import { RationaleBox } from '../comparison/[categoryId]/RationaleBox';
-import Spinner from '../components/Spinner';
+
 import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/ArrowRight';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
-import { SliderBox } from './SliderRationaleBox';
-import { useUpdateRationaleVote } from '../comparison/utils/data-fetching/vote';
-import SmallSpinner from '../components/SmallSpinner';
-import { getCategory } from '@/app/comparison/utils/data-fetching/category';
-import type React from 'react';
-enum Tab {
-  AllEvaluation = 0,
-  MyEvaluation = 1,
-}
+
+import { useGetProjectRationalesAdmin, useGetProjects } from '../useProjects';
+import DateRangePicker from '@/app/components/DateRangePicker';
+import { useUpdateRationaleVote } from '@/app/comparison/utils/data-fetching/vote';
+import HeaderRF6 from '@/app/comparison/card/Header-RF6';
+import Spinner from '@/app/components/Spinner';
+import { SliderBox } from '../SliderRationaleBox';
+import { AdminRationaleBox } from '@/app/comparison/[categoryId]/AdminRationaleBox';
 
 enum SortOption {
   Newest = 0,
@@ -272,60 +266,34 @@ const formatTime = (date: Date | null): string => {
   if (!date) return '';
   return date.toISOString();
 };
-const formattedQuery = (rationaleQuery: Partial<IRationaleQuery>): string => {
-  const params = new URLSearchParams();
-
-  Object.entries(rationaleQuery).forEach(([key, value]) => {
-    if (value === '' || (Array.isArray(value) && value.length === 0)) {
-      return;
-    }
-    if (Array.isArray(value)) {
-      value.forEach((item) => {
-        params.append(key, String(item));
-      });
-    }
-    else {
-      params.append(key, String(value));
-    }
-  });
-
-  return params.toString();
-};
 const EvaluationPage: React.FC = () => {
-  const params = useSearchParams();
-  const tab = Tab.MyEvaluation;
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [searchQueries, setSearchQueries] = useState<ISearchQuery[]>([]);
   const [showFilterBox, setShowFilterBox] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [accumulatedData, setAccumulatedData] = useState<IReturnRationaleQuery['data']>([]);
-  const [isLoadingRationales, setIsLoadingRationales] = useState(false);
-  const boxRef = useRef(null as HTMLDivElement | null);
   const [selectedRationale, setSelectedRationale] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
-  const router = useRouter();
-  const { data: rationaleData, isLoading } = useGetProjectRationales(
+  const { data: rationaleData, isLoading } = useGetProjectRationalesAdmin(
     page,
     limit,
     startDate?.toISOString() ?? '',
     endDate?.toISOString() ?? '',
     searchQueries.map(search => search.id),
-    tab == Tab.MyEvaluation,
+    false,
     sortOption === SortOption.Newest ? 'desc' : 'asc',
   );
 
   const queryClient = useQueryClient();
-  const [isLoaded, setIsLoaded] = useState(false);
 
   const { mutateAsync: vote } = useUpdateRationaleVote({
     page,
     limit,
-    createdAtGte: formatTime(startDate),
-    createdAtLte: formatTime(endDate),
+    createdAtGte: formatTime(endDate),
+    createdAtLte: formatTime(startDate),
     projectIds: searchQueries.map(search => search.id),
-    myEvaluation: tab === Tab.MyEvaluation,
+    myEvaluation: false,
     orderBy: sortOption === SortOption.Newest ? 'desc' : 'asc',
   });
 
@@ -349,71 +317,17 @@ const EvaluationPage: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (isLoaded) {
-      const query: Partial<IRationaleQuery> = {};
-      if (searchQueries && searchQueries.length) {
-        query.projectIds = searchQueries.map(proj => proj.id);
-      }
-      if (endDate) {
-        query.createdAtLte = endDate.toISOString();
-      }
-      if (startDate) {
-        query.createdAtGte = startDate.toISOString();
-      }
-      if (sortOption) {
-        query.orderBy = ((sortOption === SortOption.Latest) ? 'asc' : 'desc');
-      }
-      router.push(`/evaluation?${formattedQuery(query)}`);
-    }
-  }, [searchQueries, startDate, endDate, sortOption]);
-  useEffect(() => {
-    setIsLoaded(false);
-  }, []);
-  const setInitSearchRepoParams = useCallback(async () => {
-    const srcQuery = await Promise.all((params.getAll('projectIds') || []).map(async (projectId) => {
-      return (await getCategory(Number(projectId))).collection;
-    }));
-    setSearchQueries(srcQuery);
-    setIsLoaded(true);
-  }, [params]);
-  useEffect(() => {
-    setSortOption((params.get('orderBy') === 'asc' ? SortOption.Latest : SortOption.Newest));
-    const createdAtLte = params.get('createdAtLte');
-    const createdAtGte = params.get('createdAtGte');
-    setStartDate(createdAtGte ? new Date(createdAtGte) : null);
-    setEndDate(createdAtLte ? new Date(createdAtLte) : null);
-    setInitSearchRepoParams();
-  }, [params]);
+    setPage(1);
+    setSelectedRationale(1);
+  }, [searchQueries, startDate, endDate]);
   useEffect(() => {
     if (rationaleData) {
       setTotalPages(rationaleData.meta.totalPages);
-      if (page === 1)
-        setAccumulatedData(rationaleData.data);
-      else {
-        setAccumulatedData(prevData => [...prevData, ...(rationaleData.data)]);
-        setIsLoadingRationales(false);
-      }
     }
-  }, [rationaleData, page]);
+  }, [rationaleData]);
   const filterBoxRef = useRef<HTMLDivElement>(null);
   const fliterButtonRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleScroll = async () => {
-      if (!isLoadingRationales
-        && page < totalPages
-        && boxRef.current
-        && boxRef.current.clientHeight + boxRef.current.scrollTop + 20 > boxRef.current.scrollHeight) {
-        setIsLoadingRationales(true);
-        await queryClient.refetchQueries({ queryKey: ['project-rationale-evaluation'] });
-        setPage(page + 1);
-      }
-    };
-    if (boxRef.current) {
-      boxRef.current.addEventListener('scroll', handleScroll);
-      return () => boxRef.current?.removeEventListener('scroll', handleScroll);
-    }
-  });
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (filterBoxRef.current
@@ -428,8 +342,7 @@ const EvaluationPage: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  if ((!rationaleData || isLoading || !isLoaded
-  ) && page === 1) {
+  if (!rationaleData || isLoading) {
     return <Spinner />;
   }
 
@@ -438,29 +351,35 @@ const EvaluationPage: React.FC = () => {
       <HeaderRF6 showBackButton={true} myEvaluation={true} />
       <div className="my-9 ml-10 flex min-w-max grow flex-row justify-start gap-10 pr-10">
         <div className="w-[600px] rounded-2xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
-          <div ref={boxRef} className="relative flex h-full max-h-[680px] flex-col gap-4 overflow-auto pr-4">
+          <div className="relative flex h-full max-h-[680px] flex-col gap-4 overflow-auto pr-4">
             <div className="top-0 flex h-9 flex-row gap-4">
-              <div className="grow border-gray-border">
-                <div className="flex h-full flex-row items-center gap-3" />
+              <div className="grow border-b border-gray-border">
+                <div className="flex h-full flex-row items-center gap-3">
+                  <button
+                    className="h-full max-w-32 border-b border-primary px-1 pb-3 text-sm font-bold text-main-title"
+                  >
+                    Evaluations
+                  </button>
+                </div>
               </div>
               <div ref={fliterButtonRef}>
                 <button
-                  className={`shadow-filter-shadow flex flex-row rounded-md border ${(searchQueries.length + ((startDate !== null || endDate !== null) ? 1 : 0)) ? 'border-[#D6BBFB]' : 'border-[#D0D5DD]'} gap-1 bg-white px-3 py-2`}
+                  className={`shadow-filter-shadow flex flex-row rounded-md border ${(searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)) ? 'border-[#D6BBFB]' : 'border-[#D0D5DD]'} gap-1 bg-white px-3 py-2`}
                   onClick={() => {
                     setShowFilterBox(!showFilterBox);
                   }}
                 >
                   <span
-                    className={`gap-1 text-sm font-semibold ${(searchQueries.length + ((startDate !== null || endDate !== null) ? 1 : 0)) ? 'text-[#6941C6]' : 'text-[#344054]'}`}
+                    className={`gap-1 text-sm font-semibold ${(searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)) ? 'text-[#6941C6]' : 'text-[#344054]'}`}
                   >
                     Filter
                   </span>
-                  {searchQueries.length + ((startDate !== null || endDate !== null) ? 1 : 0)
+                  {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)
                     ? (
                         <div className="flex w-8 flex-row rounded-full border border-[#D9D6FE] px-2 py-0.5">
                           <Image width={8} height={8} src="/assets/images/dot.svg" alt="dot" />
                           <span className="text-xs text-[#5925DC]">
-                            {searchQueries.length + (startDate !== null || endDate !== null ? 1 : 0)}
+                            {searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)}
                           </span>
                         </div>
                       )
@@ -471,64 +390,78 @@ const EvaluationPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="relative">
-              {showFilterBox && (
-
-                <div className="relative z-10" ref={filterBoxRef}>
-                  <div className="absolute right-0">
-                    <FilterBox
-                      startDate={startDate}
-                      endDate={endDate}
-                      setEndDate={setEndDate}
-                      setStartDate={setStartDate}
-                      searchQueries={searchQueries}
-                      setSearchQueries={(searches: ISearchQuery[]) => {
-                        setSearchQueries(searches);
-                      }}
-                      setSortOption={(opt: SortOption) => setSortOption(opt)}
-                      sortOption={sortOption}
-                    />
-                  </div>
+            {showFilterBox && (
+              <div className="relative z-10" ref={filterBoxRef}>
+                <div className="absolute -top-2 right-0">
+                  <FilterBox
+                    startDate={startDate}
+                    endDate={endDate}
+                    setEndDate={setEndDate}
+                    setStartDate={setStartDate}
+                    searchQueries={searchQueries}
+                    setSearchQueries={(searches: ISearchQuery[]) => {
+                      setSearchQueries(searches);
+                    }}
+                    setSortOption={(opt: SortOption) => setSortOption(opt)}
+                    sortOption={sortOption}
+                  />
                 </div>
-              )}
-              <div className="flex grow flex-col gap-4">
-                {accumulatedData && accumulatedData.length > 0
-                  ? accumulatedData.map(
-                      ({ id, pickedId, project1: p1, project2: p2, rationale, ratio: multiplier, parent }, index) => {
-                        return (
-                          <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
-                            <RationaleBox
-                              pickedId={pickedId}
-                              project1={p1}
-                              project2={p2}
-                              rationale={rationale}
-                              multiplier={Number(multiplier)}
-                              repoImage={parent.image}
-                              repoName={parent.name}
-                              selected={selectedRationale === index + 1}
-                            />
-                          </div>
-                        );
-                      },
-                    )
-                  : (
-                      <div className="w-full text-center text-[#344054]">
-                        No Evaluation found
-                      </div>
-                    )}
               </div>
-              {isLoadingRationales && (
-                <div className="pt-4">
-                  <div className="flex flex-col gap-4">
-                    <SmallSpinner />
-                    <div className="text-center text-sm text-[#344054]">Loading more evaluations ...</div>
-                  </div>
-                </div>
-              )}
+            )}
+            <div>
+              <div className="flex grow flex-col gap-4">
+                {rationaleData
+                && rationaleData.data.map(
+                  ({ id, user, pickedId, project1: p1, project2: p2, rationale, ratio: multiplier, parent }, index) => {
+                    return (
+                      <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
+                        <AdminRationaleBox
+                          pickedId={pickedId}
+                          project1={p1}
+                          user={user}
+                          project2={p2}
+                          rationale={rationale}
+                          multiplier={Number(multiplier)}
+                          repoImage={parent.image}
+                          repoName={parent.name}
+                          selected={selectedRationale === index + 1}
+                        />
+                      </div>
+                    );
+                  },
+                )}
+              </div>
+            </div>
+            <div className="sticky bottom-0 mt-4 flex items-center justify-between bg-[#F9FAFB]">
+              <button
+                onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                disabled={page === 1}
+                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+              >
+                <ArrowLeft2Icon size={20} />
+                Previous Page
+              </button>
+              <span className="text-sm text-gray-700">
+                Page
+                {' '}
+                {page}
+                {' '}
+                of
+                {' '}
+                {totalPages}
+              </span>
+              <button
+                onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={page === totalPages}
+                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+              >
+                Next Page
+                <ArrowRight size={20} color="#344054" />
+              </button>
             </div>
           </div>
         </div>
-        {accumulatedData.length > 0 && (
+        {rationaleData.data.length > 0 && (
           <div className="flex min-w-[500px] grow flex-col gap-6 pr-10">
             <div className="grow rounded-2xl border border-gray-300 p-5">
               <div className="h-full overflow-auto pr-4">
@@ -539,40 +472,40 @@ const EvaluationPage: React.FC = () => {
                         <Image
                           width={36}
                           height={36}
-                          src={accumulatedData[selectedRationale - 1].project1.image || '/placeholder.svg'}
-                          alt={accumulatedData[selectedRationale - 1].project1.name}
+                          src={rationaleData.data[selectedRationale - 1].project1.image || '/placeholder.svg'}
+                          alt={rationaleData.data[selectedRationale - 1].project1.name}
                         />
                       </div>
-                      <div className="max-w-24">{accumulatedData[selectedRationale - 1].project1.name}</div>
+                      <div className="max-w-24">{rationaleData.data[selectedRationale - 1].project1.name}</div>
                     </div>
                     <div className="flex w-fit flex-col justify-center gap-2">
                       <div className="flex w-full justify-center">
                         <Image
                           width={36}
                           height={36}
-                          src={accumulatedData[selectedRationale - 1].project2.image || '/placeholder.svg'}
-                          alt={accumulatedData[selectedRationale - 1].project2.name}
+                          src={rationaleData.data[selectedRationale - 1].project2.image || '/placeholder.svg'}
+                          alt={rationaleData.data[selectedRationale - 1].project2.name}
                         />
                       </div>
-                      <div className="max-w-24">{accumulatedData[selectedRationale - 1].project2.name}</div>
+                      <div className="max-w-24">{rationaleData.data[selectedRationale - 1].project2.name}</div>
                     </div>
                   </div>
                   <div className="h-max w-full">
                     <SliderBox
                       shownValue={
-                        (accumulatedData[selectedRationale - 1].ratio
-                          ? Number(accumulatedData[selectedRationale - 1].ratio)
+                        (rationaleData.data[selectedRationale - 1].ratio
+                          ? Number(rationaleData.data[selectedRationale - 1].ratio)
                           : 1)
-                        * (accumulatedData[selectedRationale - 1].pickedId
-                          === accumulatedData[selectedRationale - 1].project1.id
+                        * (rationaleData.data[selectedRationale - 1].pickedId
+                          === rationaleData.data[selectedRationale - 1].project1.id
                           ? -1
                           : 1)
                       }
                       handleVote={handleVote}
-                      canBeEditable={tab === Tab.MyEvaluation}
-                      rationale={accumulatedData[selectedRationale - 1].rationale}
-                      project1={accumulatedData[selectedRationale - 1].project1}
-                      project2={accumulatedData[selectedRationale - 1].project2}
+                      canBeEditable={false}
+                      rationale={rationaleData.data[selectedRationale - 1].rationale}
+                      project1={rationaleData.data[selectedRationale - 1].project1}
+                      project2={rationaleData.data[selectedRationale - 1].project2}
                     />
                   </div>
                 </div>
@@ -589,7 +522,7 @@ const EvaluationPage: React.FC = () => {
                 Previous
               </button>
               <button
-                disabled={selectedRationale === accumulatedData.length}
+                disabled={selectedRationale === rationaleData.data.length}
                 onClick={() => setSelectedRationale(selectedRationale + 1)}
                 className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
               >
