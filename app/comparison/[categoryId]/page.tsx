@@ -15,6 +15,7 @@ import {
   useGetPairwisePairs,
 } from '../utils/data-fetching/pair';
 import {
+  useCreatePairExclusion,
   useUpdateProjectUndo,
   useUpdateProjectVote,
 } from '../utils/data-fetching/vote';
@@ -39,6 +40,7 @@ import { SliderBase, SliderMax } from './constant';
 import { CustomSlider, sliderScaleFunction } from './SliderComponent';
 import RoundComplete from '@/app/allocation/components/RoundCompleteModal';
 import RepoComplete from '@/app/allocation/components/RepoCompleteModal';
+import RefreshButton from '../card/RefreshButton';
 enum Types {
   Both,
   Project1,
@@ -103,6 +105,7 @@ export default function Home() {
   const { data: categoryResp } = useCategory(cid);
   // const { mutateAsync: markProjectCoI } = useMarkCoi();
   const { mutateAsync: vote } = useUpdateProjectVote({ categoryId: cid });
+  const { mutateAsync: excludePair } = useCreatePairExclusion({ categoryId: cid });
   const { mutateAsync: undo } = useUpdateProjectUndo({
     categoryId: cid,
     onSuccess: () => {
@@ -542,7 +545,7 @@ export default function Home() {
               <div className={`flex w-full flex-row ${shownValue ? 'justify-end' : 'justify-center'} px-10`}>
                 <div className="w-full">
                   <div className="relative flex grow justify-start">
-                    <div className="flex w-4/5 flex-col justify-around gap-2 pl-10">
+                    <div className="flex w-[90%] flex-col justify-around gap-2 pl-10">
                       <div className="font-bold">Rationale</div>
                       <textarea
                         value={rationale ?? ''}
@@ -568,6 +571,9 @@ export default function Home() {
                     <UndoButton
                       disabled={data?.votedPairs === 0 || isAnyModalOpen()}
                       onClick={handleUndo}
+                    />
+                    <RefreshButton
+                      onClick={() => { excludePair({ p1Id: project1.id, p2Id: project2.id }); }}
                     />
                     <button
                       className="xxsl: wfit w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
