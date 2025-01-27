@@ -22,6 +22,32 @@ export const updateProjectUndo = (cid: Number | undefined) => {
   return axiosInstance.post('flow/pairs/back', { collectionId: cid });
 };
 
+export const createPairExclusion = (project1Id: number, project2Id: number) => {
+  return axiosInstance.post('flow/exclude', { project1Id, project2Id });
+};
+
+export const useCreatePairExclusion = ({
+  categoryId,
+}: {
+  categoryId: number | undefined
+}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ p1Id, p2Id }: { p1Id: number, p2Id: number }) => createPairExclusion(p1Id, p2Id),
+    onSuccess: () => {
+      if (!categoryId) return;
+      queryClient.refetchQueries({
+        queryKey: ['pairwise-pairs', categoryId],
+      });
+      queryClient.refetchQueries({
+        queryKey: ['project-rationale-evaluation'],
+        exact: false,
+      });
+    },
+  });
+};
+
 export const useUpdateProjectVote = ({
   categoryId,
 }: {
