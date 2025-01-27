@@ -53,8 +53,8 @@ const BallotSuccessModal: React.FC<UnlockBallotProps> = ({ link, onClose }) => {
         <a href={link} className="w-full" target="_blank">
           <button
             disabled={!(confirmed1 && confirmed2)}
-            className="mb-2 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4
-          py-3 text-white transition duration-300 ease-in-out disabled:bg-op-neutral-300 disabled:text-slate-700 sl:p-2"
+            className="mb-2 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-white
+          transition duration-300 ease-in-out hover:bg-main-title focus:bg-primary disabled:bg-op-neutral-300 disabled:text-slate-700 sl:p-2"
           >
             View my Ballot
             <ExternalLinkIcon />

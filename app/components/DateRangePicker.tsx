@@ -104,7 +104,7 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
                     : isBetween
                       ? 'bg-gray-300 text-gray-800'
                       : 'bg-white text-gray-800'
-                } hover:bg-purple-200`}
+                } hover:bg-main-title focus:bg-primary`}
               >
                 <div className="p-1">{day}</div>
               </button>
@@ -159,14 +159,14 @@ const DateRangePicker: React.FC<DateProps> = ({ stDate, edDate, onApply, onCance
             onApply(null, null);
             onCancel();
           }}
-          className="grow rounded-md border border-[#D0D5DD] bg-white px-4 py-2 text-[#344054] hover:bg-gray-300"
+          className="focus:shadow-wite-focus-shadow grow rounded-md border border-[#D0D5DD] bg-white px-4 py-2 text-[#344054] hover:bg-wite-hover focus:bg-white"
         >
           Cancel
         </button>
         <button
           disabled={!(startDate || endDate)}
           onClick={applyDateRange}
-          className={`grow rounded-md border ${(startDate || endDate) ? 'border-[#D0D5DD] bg-primary text-white  hover:bg-purple-700' : 'border-[#D0D5DD] bg-white text-[#344054] hover:bg-gray-300'} px-4 py-2`}
+          className={`grow rounded-md border ${(startDate || endDate) ? 'border-[#D0D5DD] bg-primary text-white  hover:bg-main-title focus:bg-primary' : 'border-[#D0D5DD] bg-white text-[#344054] hover:bg-gray-300'} px-4 py-2  disabled:text-gray-500`}
         >
           Apply
         </button>

@@ -64,7 +64,7 @@ const IntroView: FC<{ setUserAsVisited: Dispatch<void> }> = ({
 const ActionButton: FC<{ onClick: () => void, text: string }> = ({ onClick, text }) => (
   <button
     onClick={onClick}
-    className="mt-10 w-full rounded-lg bg-primary px-8 py-3 text-xl font-bold text-white sm:w-[70%]"
+    className="mt-10 w-full rounded-lg bg-primary px-8 py-3 text-xl font-bold text-white hover:bg-main-title focus:bg-primary sm:w-[70%]"
   >
     {text}
   </button>

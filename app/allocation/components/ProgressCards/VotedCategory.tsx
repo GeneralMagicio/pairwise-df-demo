@@ -17,7 +17,7 @@ const VotedCategory = ({
         <CheckIcon size={15} />
       </div>
       <button
-        className="flex w-full items-center justify-center gap-2 rounded-md border py-3 font-semibold"
+        className="focus:shadow-wite-focus-shadow flex w-full items-center justify-center gap-2 rounded-md border bg-white py-3 font-semibold hover:bg-wite-hover focus:bg-white"
         onClick={viewMyEvaluations}
       >
         View

@@ -34,7 +34,7 @@ const PostVoting: FC<TPostVotingProps> = ({ cid, categoryLabel }) => {
 
       <Link
         href="/allocation"
-        className="w-full rounded-md bg-primary py-2 text-center text-white"
+        className="w-full rounded-md bg-primary py-2 text-center text-white hover:bg-main-title focus:bg-primary"
         onClick={() => {
           posthog.capture('Show my results', {
             category: cid,

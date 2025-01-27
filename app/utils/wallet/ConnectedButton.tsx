@@ -40,7 +40,7 @@ const ConnectedButton: FC<Props> = ({ username, onLogout }) => {
         {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
       </button>
       {open && (
-        <div className="absolute right-0 w-56 rounded-lg border border-gray-300 bg-white shadow-md">
+        <div className="focus:shadow-wite-focus-shadow absolute right-0 w-56 rounded-lg border border-[#D0D5DD] bg-white shadow-md hover:bg-wite-hover focus:bg-white">
           {pathname === '/allocation' && (
             <Link
               href="/evaluation"

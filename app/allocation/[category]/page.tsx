@@ -464,7 +464,7 @@ const RankingPage = () => {
     || (ranking?.progress !== CollectionProgressStatusEnum.Finished
       && ranking?.progress !== CollectionProgressStatusEnum.Attested)
       ? 'bg-gray-200 text-gray-400'
-      : 'bg-primary text-white'
+      : 'bg-primary text-white hover:bg-main-title focus:bg-primary'
     }`}
               onClick={submitVotes}
               disabled={
