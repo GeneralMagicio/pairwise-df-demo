@@ -552,7 +552,7 @@ export default function Home() {
                         // onClick={() => setRationaleError(null)}
                         onChange={e => setRationale(e.target.value)}
                         rows={2}
-                        className={`w-full resize-none rounded-md border ${rationaleError && (rationale?.length ?? 0) < 70 ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none focus:ring-2`}
+                        className={`w-full resize-none rounded-md border ${rationaleError && (rationale?.length ?? 0) < 70 ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none`}
                         placeholder={shownValue === 0 ? 'Why do you think these 2 are equally important?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
                       />
                       <span className={`absolute bottom-0 translate-y-full py-1 text-sm ${((rationale?.length ?? 0) < 70) ? 'text-red-500' : 'text-deep-250'}`}>
