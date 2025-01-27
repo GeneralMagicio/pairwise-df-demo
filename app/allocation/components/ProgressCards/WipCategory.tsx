@@ -14,7 +14,7 @@ const WipCategory = ({
   totalPairs,
 }: TPendingCategoryProps) => {
   const roundNumber = (votes: number) => Math.min(6, Math.floor(votes / RoundSize) + 1);
-  const totalRounds = Math.ceil(totalPairs / RoundSize);
+  const totalRounds = Math.min(6, Math.ceil(totalPairs / RoundSize));
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4">

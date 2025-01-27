@@ -34,6 +34,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
   name,
   description,
   projectCount,
+  totalPairsBeforeThreshold,
   image,
   progress,
   loading,
@@ -59,7 +60,7 @@ const CategoryAllocation: FC<CategoryAllocationProps> = ({
             id={id}
             onScore={onScore}
             votedPairs={votedPairs}
-            totalPairs={projectCount}
+            totalPairs={totalPairsBeforeThreshold}
           />
         );
       case CollectionProgressStatusEnum.Pending:

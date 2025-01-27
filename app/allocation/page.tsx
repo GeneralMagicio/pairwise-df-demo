@@ -155,7 +155,9 @@ const AllocationPage = () => {
                         return (
                           <CategoryAllocation
                             {...cat}
-                            progress={cat.votedPairs >= MaximumRepoComparisons ? 'Finished' : cat.progress}
+                            progress={(cat.votedPairs >= Math.min(cat.totalPairsBeforeThreshold, MaximumRepoComparisons))
+                              ? 'Finished'
+                              : cat.progress}
                             key={cat.name}
                             image={cat.image}
                             locked={rank?.locked || false}

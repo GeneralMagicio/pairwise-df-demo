@@ -20,6 +20,7 @@ export interface IPairwisePairsResponse {
   pairs: IProject[][]
   totalPairs: number
   votedPairs: number
+  totalPairsBeforeThreshold: number
   name: string
   id: number
   rationales: ProjectRationaleData[]

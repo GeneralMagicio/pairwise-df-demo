@@ -144,7 +144,8 @@ export default function Home() {
   }, [data]);
 
   useEffect(() => {
-    if (data?.votedPairs && data.votedPairs >= MaximumRepoComparisons) {
+    if (data?.votedPairs
+      && data.votedPairs >= Math.min(data.totalPairsBeforeThreshold, MaximumRepoComparisons)) {
       setRepoComplete(true);
     }
   }, [data]);
