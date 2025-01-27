@@ -72,13 +72,13 @@ const RoundComplete: React.FC<RoundCompleteProps> = ({ isOpen, onClose, onNextRo
         <div className="flex w-full justify-center space-x-4">
           <button
             onClick={onFinishVoting}
-            className="grow rounded-lg border-2 border-gray-200 bg-gray-50 px-4 py-2 text-gray-700 hover:bg-gray-300 focus:outline-none"
+            className="focus:shadow-wite-focus-shadow grow rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-gray-700 hover:bg-wite-hover focus:bg-white focus:outline-none"
           >
             Finish Voting
           </button>
           <button
             onClick={onNextRound}
-            className="grow rounded-lg bg-primary px-4 py-2 text-white hover:bg-purple-700 focus:outline-none"
+            className="grow rounded-lg bg-primary px-4 py-2 text-white hover:bg-main-title focus:bg-primary focus:outline-none"
           >
             Next Round
           </button>

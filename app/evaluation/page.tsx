@@ -252,7 +252,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
         </div>
         <div className="flex w-full justify-end">
           <button
-            className="rounded-lg border border-[#D0D5DD] bg-white px-3 py-2 text-[#344054]"
+            className="border-[#D0D5DD focus:shadow-wite-focus-shadow rounded-lg border bg-white px-3 py-2 text-[#344054] hover:bg-wite-hover focus:bg-white"
             onClick={() => {
               setSearchQueries([]);
               setStartDate(null);
@@ -445,7 +445,7 @@ const EvaluationPage: React.FC = () => {
               </div>
               <div ref={fliterButtonRef}>
                 <button
-                  className={`shadow-filter-shadow flex flex-row rounded-md border ${(searchQueries.length + ((startDate !== null || endDate !== null) ? 1 : 0)) ? 'border-[#D6BBFB]' : 'border-[#D0D5DD]'} gap-1 bg-white px-3 py-2`}
+                  className={`shadow-filter-shadow focus:shadow-wite-focus-shadow flex flex-row rounded-md border bg-white hover:bg-wite-hover focus:bg-white ${(searchQueries.length + ((startDate !== null || endDate !== null) ? 1 : 0)) ? 'border-[#D6BBFB]' : 'border-[#D0D5DD]'} gap-1 bg-white px-3 py-2`}
                   onClick={() => {
                     setShowFilterBox(!showFilterBox);
                   }}
@@ -582,7 +582,7 @@ const EvaluationPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <button
                 disabled={selectedRationale === 1}
-                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+                className="focus:shadow-wite-focus-shadow flex flex-row justify-center rounded-md border border-[#D0D5DD] bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-wite-hover focus:bg-white"
                 onClick={() => setSelectedRationale(selectedRationale - 1)}
               >
                 <ArrowLeft2Icon size={20} />
@@ -591,7 +591,7 @@ const EvaluationPage: React.FC = () => {
               <button
                 disabled={selectedRationale === accumulatedData.length}
                 onClick={() => setSelectedRationale(selectedRationale + 1)}
-                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
+                className="focus:shadow-wite-focus-shadow flex flex-row justify-center rounded-md border border-[#D0D5DD] bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-wite-hover focus:bg-white"
               >
                 View Next
                 <ArrowRight size={20} color="#344054" />

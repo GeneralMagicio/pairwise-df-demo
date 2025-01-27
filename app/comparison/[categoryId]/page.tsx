@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 // import { useQueryClient } from '@tanstack/react-query';
 // import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
-import Image from 'next/image';
 import { ProjectCard } from '../card/ProjectCard';
 import HeaderRF6, { MaximumRepoComparisons, RoundSize } from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
@@ -30,9 +29,7 @@ import StorageLabel from '@/app/lib/localStorage';
 import NotFoundComponent from '@/app/components/404';
 import { NumberBox } from './NumberBox';
 import { useAuth } from '@/app/utils/wallet/AuthProvider';
-import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRightIcon';
 import { RationaleBox } from './RationaleBox';
-import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { useCategory } from '../utils/data-fetching/category';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import { shortenText } from '../utils/helpers';
@@ -41,6 +38,7 @@ import { CustomSlider, sliderScaleFunction } from './SliderComponent';
 import RoundComplete from '@/app/allocation/components/RoundCompleteModal';
 import RepoComplete from '@/app/allocation/components/RepoCompleteModal';
 import RefreshButton from '../card/RefreshButton';
+import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
 enum Types {
   Both,
   Project1,
@@ -177,7 +175,7 @@ export default function Home() {
   useEffect(() => {
     if (project1 && project2) {
       const tabstext = {
-        [Types.Both]: 'Both',
+        [Types.Both]: 'All',
         [Types.Project1]: project1.name,
         [Types.Project2]: project2.name,
       };
@@ -440,19 +438,20 @@ export default function Home() {
           showBackButton
         />
       </div>
+      <div className="mt-6 text-center text-2xl font-semibold xsl:mt-4 xsl:text-lg">
+        Which dependency gets more credit for
+        {' '}
+        <span className="font-bold">
+          {categoryResp?.collection.name}
+        </span>
+        {' '}
+        success?
+      </div>
       <div className="relative flex h-full grow">
+
         <div className="relative grow">
           <div className="glex flex w-full flex-col">
 
-            <div className="mt-6 text-center text-2xl font-semibold xsl:mt-4 xsl:text-lg">
-              Which dependency gets more credit for
-              {' '}
-              <span className="font-bold">
-                {categoryResp?.collection.name}
-              </span>
-              {' '}
-              success?
-            </div>
             <div className="relative flex grow items-center justify-between gap-8 px-8">
               <div className="relative w-[49%]">
                 <ProjectCard
@@ -549,13 +548,13 @@ export default function Home() {
                       <div className="font-bold">Rationale</div>
                       <textarea
                         value={rationale ?? ''}
-                        onClick={() => setRationaleError(null)}
+                        // onClick={() => setRationaleError(null)}
                         onChange={e => setRationale(e.target.value)}
                         rows={2}
-                        className={`w-full resize-none rounded-md border ${rationaleError ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none focus:ring-2`}
+                        className={`w-full resize-none rounded-md border ${rationaleError && (rationale?.length ?? 0) < 70 ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none focus:ring-2`}
                         placeholder={shownValue === 0 ? 'Why do you think these 2 are equally important?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
                       />
-                      <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-red-500">
+                      <span className={`absolute bottom-0 translate-y-full py-1 text-sm ${((rationale?.length ?? 0) < 70) ? 'text-red-500' : 'text-deep-250'}`}>
                         {' '}
                         {rationaleError ? rationaleError : ''}
                         {' '}
@@ -576,7 +575,7 @@ export default function Home() {
                       onClick={() => { excludePair({ p1Id: project1.id, p2Id: project2.id }); }}
                     />
                     <button
-                      className="xxsl: wfit w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+                      className="xxsl: wfit w-36 rounded-lg bg-primary px-4 py-2.5 text-white hover:bg-main-title focus:bg-primary"
                       onClick={() => { handleVote(shownValue === 0 ? null : shownValue > 0 ? project2.id : project1.id); }}
                     >
                       Next
@@ -587,63 +586,56 @@ export default function Home() {
             </div>
           </footer>
         </div>
-        {comments && comments.length && (
-          showComments
-            ? (
-                <div className="mt-6 flex w-96 flex-col gap-4 overflow-scroll rounded-xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
-                  <button onClick={() => { setShowComments(false); }} className="flex w-full items-center justify-between gap-2 rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
-                    <Image width={20} height={20} src="/assets/images/smile.svg" alt="people" />
-                    <span>Evaluation Samples</span>
-                    <ArrowRightIcon color="#344054" size={20} />
-                  </button>
-                  <div
-                    className="border-b border-gray-border"
-                  >
-                    {tabs && (
-                      <div className="flex h-full flex-row items-center gap-3">
-                        {Object.entries(tabs).map(([t, text]) => {
-                          return <button key={t} className={`h-full max-w-32 text-wrap break-words px-1 pb-3 text-base font-semibold ${tab === parseInt(t) ? 'border-b border-primary text-main-title' : 'text-gray-placeholder'}`} onClick={() => setTab(parseInt(t))}>{shortenText(text, 14)}</button>;
-                        })}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex grow flex-col gap-4">
-                    {comments.filter(({ project1: p1, project2: p2 }) => {
-                      return (tab === Types.Project2 || (p1.id === project1.id || p2.id === project1.id))
-                        && (tab === Types.Project1 || (p1.id === project2.id || p2.id === project2.id));
-                    }).map(({ pickedId, project1: p1, project2: p2, rationale, multiplier }
-                      , index) => {
-                      return (
-                        <RationaleBox
-                          key={index}
-                          pickedId={pickedId}
-                          project1={p1}
-                          project2={p2}
-                          rationale={rationale}
-                          multiplier={multiplier}
-                        />
-                      );
-                    })}
-                  </div>
-                  <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
-                    <button
-                      onClick={() => {
-                        router.push(`/evaluation?projectIds=${cid}`);
-                      }}
-                      className="w-full rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5
-                    text-sm font-semibold text-[#344054]"
-                    >
-                      My Evaluations
-                    </button>
-                  </div>
+        {comments && (
+          <div className="mt-4 flex h-full w-96 flex-col gap-4 overflow-scroll rounded-xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
+            <button onClick={() => { setShowComments(!showComments); }} className="flex w-full items-center justify-center gap-0.5 rounded-md px-3.5 py-2.5 text-sm font-semibold text-deep-250 hover:text-gray-600 focus:outline-none">
+
+              <span>Evaluations</span>
+              <div className={showComments ? 'rotate-180' : 'rotate-0'}><ArrowDownIcon width={20} height={20} color="#475467" /></div>
+            </button>
+            <div
+              className="border-b border-gray-border"
+            >
+              {tabs && (
+                <div className="flex h-full flex-row items-center gap-3">
+                  {Object.entries(tabs).map(([t, text]) => {
+                    return <button key={t} className={`h-full max-w-32 text-wrap break-words px-1 pb-3 text-base font-semibold ${tab === parseInt(t) ? 'border-b border-primary text-main-title' : 'text-gray-placeholder'}`} onClick={() => setTab(parseInt(t))}>{shortenText(text, 14)}</button>;
+                  })}
                 </div>
-              )
-            : (
-                <button onClick={() => setShowComments(true)} className="z-1 absolute right-0 top-10  flex flex-row gap-3 rounded-md border border-gray-200 bg-white p-3">
-                  <Image width={20} height={20} src="/assets/images/smile.svg" alt="people" />
-                  <ArrowLeft2Icon color="#344054" size={20} />
-                </button>
-              )
+              )}
+            </div>
+            <div className="flex grow flex-col gap-4">
+              <div>
+                {showComments && comments.filter(({ project1: p1, project2: p2 }) => {
+                  return (tab === Types.Project2 || (p1.id === project1.id || p2.id === project1.id))
+                    && (tab === Types.Project1 || (p1.id === project2.id || p2.id === project2.id));
+                }).map(({ pickedId, project1: p1, project2: p2, rationale, multiplier }
+                  , index) => {
+                  return (
+                    <RationaleBox
+                      key={index}
+                      pickedId={pickedId}
+                      project1={p1}
+                      project2={p2}
+                      rationale={rationale}
+                      multiplier={multiplier}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+            <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
+              <button
+                onClick={() => {
+                  router.push(`/evaluation?projectIds=${cid}`);
+                }}
+                className="w-full rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5
+                    text-sm font-semibold text-[#344054]"
+              >
+                My Evaluations
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

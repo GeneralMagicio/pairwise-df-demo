@@ -246,7 +246,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
         </div>
         <div className="flex w-full justify-end">
           <button
-            className="rounded-lg border border-[#D0D5DD] bg-white px-3 py-2 text-[#344054]"
+            className="focus:shadow-wite-focus-shadow rounded-lg border border-[#D0D5DD] bg-white px-3 py-2 text-[#344054] hover:bg-wite-hover focus:bg-white"
             onClick={() => {
               setSearchQueries([]);
               setStartDate(null);
@@ -370,7 +370,7 @@ const EvaluationPage: React.FC = () => {
                   }}
                 >
                   <span
-                    className={`gap-1 text-sm font-semibold ${(searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)) ? 'text-[#6941C6]' : 'text-[#344054]'}`}
+                    className={`focus:shadow-wite-focus-shadow gap-1 bg-white text-sm font-semibold hover:bg-wite-hover focus:bg-white ${(searchQueries.length + (startDate !== null && endDate !== null ? 1 : 0)) ? 'text-[#6941C6]' : 'text-[#344054]'}`}
                   >
                     Filter
                   </span>

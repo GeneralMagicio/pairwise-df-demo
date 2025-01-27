@@ -47,6 +47,12 @@ const config: Config = {
         'deep': {
           250: '#475467',
         },
+        'wite': {
+          hover: '#F9FAFB',
+          disabled: {
+            border: '#EAECF0',
+          },
+        },
         'status': {
           border: {
             success: '#75E0A7',
@@ -73,6 +79,7 @@ const config: Config = {
         },
         'main': {
           title: '#6941C6',
+          hover: '#53389E',
         },
       },
       fontFamily: {
@@ -81,6 +88,7 @@ const config: Config = {
       boxShadow: {
         'tooltip-shadow': 'box-shadow: 0px 4px 6px -2px #10182808,box-shadow: 0px 12px 16px -4px #10182814',
         'filter-shadow': 'box-shadow: 0px 1px 2px 0px #1018280F,box-shadow: 0px 1px 3px 0px #1018281A',
+        'wite-focus-shadow': 'box-shadow: 0px 0px 0px 4px #98A2B324,box-shadow: 0px 1px 2px 0px #1018280D',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

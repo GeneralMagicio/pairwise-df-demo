@@ -66,7 +66,7 @@ const LoadedModalContent: React.FC<LoadedModalContentProps> = (
             </p>
           </div>
           <button
-            className="w-full rounded-lg bg-primary px-5 py-2.5 text-white"
+            className="w-full rounded-lg bg-primary px-5 py-2.5 text-white hover:bg-main-title focus:bg-primary"
             onClick={onSuccess}
           >
             <p className="p-0.5">Ok</p>

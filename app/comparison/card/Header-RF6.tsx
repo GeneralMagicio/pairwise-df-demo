@@ -158,7 +158,7 @@ const HeaderRF6: FC<HeaderProps> = ({
           </div>
         )}
         {showBackButton && (
-          <button onClick={() => router.push('/allocation')} className="my-auto flex h-fit flex-row justify-center gap-1.5 rounded-lg border border-[#D0D5DD] px-4 py-2.5">
+          <button onClick={() => router.push('/allocation')} className="focus:shadow-wite-focus-shadow my-auto flex h-fit flex-row justify-center gap-1.5 rounded-lg border border-[#D0D5DD] bg-white px-4 py-2.5 hover:bg-wite-hover focus:bg-white">
             <ArrowLeft2Icon color="#344054" />
             <span className="text-base font-semibold text-[#344054]">Back</span>
           </button>

@@ -20,12 +20,12 @@ const WipCategory = ({
     <div className="flex w-full flex-col items-center justify-center gap-4">
       <button
         onClick={onScore}
-        className="flex w-full items-center justify-center gap-2 rounded-md border-2 bg-white py-3  font-semibold text-[#344054]"
+        className="focus:shadow-wite-focus-shadow flex w-full items-center justify-center gap-2 rounded-md border-2 bg-white py-3 font-semibold text-[#344054]  hover:bg-wite-hover focus:bg-white"
       >
         {`Round ${roundNumber(votedPairs)} of ${totalRounds}`}
       </button>
 
-      <a className="text-sm font-semibold text-main-title" href={`/evaluation?projectIds=${id}`}>
+      <a className="text-sm font-semibold text-main-title hover:text-main-hover" href={`/evaluation?projectIds=${id}`}>
         My Evaluations
       </a>
     </div>
