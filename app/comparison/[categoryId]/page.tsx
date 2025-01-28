@@ -138,7 +138,8 @@ export default function Home() {
 
   useEffect(() => {
     if (roundCompleteModalCanBeSet && data?.votedPairs
-      && data.votedPairs < MaximumRepoComparisons && data.votedPairs % RoundSize === 0) {
+      && data.votedPairs < Math.min(MaximumRepoComparisons, data.totalPairsBeforeThreshold)
+      && data.votedPairs % RoundSize === 0) {
       setRoundComplete(true);
     }
   }, [data]);
@@ -310,6 +311,11 @@ export default function Home() {
     setRevertingBack(true);
     await undo();
     setRevertingBack(false);
+  };
+
+  const handleRefresh = (p1Id: number, p2Id: number) => async () => {
+    setRoundCompleteModalCanBeSet(false);
+    await excludePair({ p1Id, p2Id });
   };
 
   function updateGetStarted({
@@ -574,7 +580,7 @@ export default function Home() {
                       onClick={handleUndo}
                     />
                     <RefreshButton
-                      onClick={() => { excludePair({ p1Id: project1.id, p2Id: project2.id }); }}
+                      onClick={handleRefresh(project1.id, project2.id)}
                     />
                     <button
                       className="xxsl: wfit w-36 rounded-lg bg-primary px-4 py-2.5 text-white hover:bg-main-title focus:bg-primary"
