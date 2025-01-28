@@ -407,6 +407,7 @@ export default function Home() {
         )}
         {repoComplete && (
           <RepoComplete
+            totalComparisons={Math.min(data.totalPairsBeforeThreshold, MaximumRepoComparisons)}
             isOpen={repoComplete}
             onFinishVoting={onFinishVoting}
           />

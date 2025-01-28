@@ -3,9 +3,10 @@ import React from 'react';
 interface Props {
   isOpen: boolean
   onFinishVoting: () => void
+  totalComparisons: number
 }
 
-const RepoComplete: React.FC<Props> = ({ isOpen, onFinishVoting }) => {
+const RepoComplete: React.FC<Props> = ({ isOpen, onFinishVoting, totalComparisons }) => {
   if (!isOpen) return null;
 
   return (
@@ -38,7 +39,9 @@ const RepoComplete: React.FC<Props> = ({ isOpen, onFinishVoting }) => {
 
         {/* Message */}
         <p className="mb-6 text-start text-deep-250">
-          You voted on all 30 comparisons of this repo. Get back to the repositories page and start voting for others.
+          {`You voted on all
+          ${totalComparisons}
+          comparisons of this repo. Get back to the repositories page and start voting for others.`}
         </p>
 
         {/* Buttons */}
