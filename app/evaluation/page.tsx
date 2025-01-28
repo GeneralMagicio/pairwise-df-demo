@@ -7,14 +7,13 @@ import HeaderRF6 from '../comparison/card/Header-RF6';
 import DateRangePicker from '../components/DateRangePicker';
 import { Search } from '@/public/assets/icon-components/Search';
 import { XCloseIcon } from '@/public/assets/icon-components/XClose';
-import { IRationaleQuery, IReturnRationaleQuery, useGetProjectRationales, useGetProjects } from './useProjects';
+import { IRationaleQuery, useGetProjectRationales, useGetProjects } from './useProjects';
 import { RationaleBox } from '../comparison/[categoryId]/RationaleBox';
 import Spinner from '../components/Spinner';
 import { ArrowRightIcon as ArrowRight } from '@/public/assets/icon-components/ArrowRight';
 import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { SliderBox } from './SliderRationaleBox';
 import { useUpdateRationaleVote } from '../comparison/utils/data-fetching/vote';
-import SmallSpinner from '../components/SmallSpinner';
 import { getCategory } from '@/app/comparison/utils/data-fetching/category';
 import type React from 'react';
 enum Tab {
@@ -267,7 +266,6 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   );
 };
 
-const limit = 10;
 const formatTime = (date: Date | null): string => {
   if (!date) return '';
   return date.toISOString();
@@ -298,17 +296,11 @@ const EvaluationPage: React.FC = () => {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [searchQueries, setSearchQueries] = useState<ISearchQuery[]>([]);
   const [showFilterBox, setShowFilterBox] = useState(false);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [accumulatedData, setAccumulatedData] = useState<IReturnRationaleQuery['data']>([]);
-  const [isLoadingRationales, setIsLoadingRationales] = useState(false);
   const boxRef = useRef(null as HTMLDivElement | null);
   const [selectedRationale, setSelectedRationale] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
   const router = useRouter();
   const { data: rationaleData, isLoading } = useGetProjectRationales(
-    page,
-    limit,
     startDate?.toISOString() ?? '',
     endDate?.toISOString() ?? '',
     searchQueries.map(search => search.id),
@@ -320,8 +312,6 @@ const EvaluationPage: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const { mutateAsync: vote } = useUpdateRationaleVote({
-    page,
-    limit,
     createdAtGte: formatTime(startDate),
     createdAtLte: formatTime(endDate),
     projectIds: searchQueries.map(search => search.id),
@@ -384,36 +374,9 @@ const EvaluationPage: React.FC = () => {
     setEndDate(createdAtLte ? new Date(createdAtLte) : null);
     setInitSearchRepoParams();
   }, [params]);
-  useEffect(() => {
-    if (rationaleData) {
-      setTotalPages(rationaleData.meta.totalPages);
-      if (page === 1)
-        setAccumulatedData(rationaleData.data);
-      else {
-        setAccumulatedData(prevData => [...prevData, ...(rationaleData.data)]);
-        setIsLoadingRationales(false);
-      }
-    }
-  }, [rationaleData, page]);
   const filterBoxRef = useRef<HTMLDivElement>(null);
   const fliterButtonRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleScroll = async () => {
-      if (!isLoadingRationales
-        && page < totalPages
-        && boxRef.current
-        && boxRef.current.clientHeight + boxRef.current.scrollTop + 20 > boxRef.current.scrollHeight) {
-        setIsLoadingRationales(true);
-        await queryClient.refetchQueries({ queryKey: ['project-rationale-evaluation'] });
-        setPage(page + 1);
-      }
-    };
-    if (boxRef.current) {
-      boxRef.current.addEventListener('scroll', handleScroll);
-      return () => boxRef.current?.removeEventListener('scroll', handleScroll);
-    }
-  });
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (filterBoxRef.current
@@ -429,7 +392,7 @@ const EvaluationPage: React.FC = () => {
     };
   }, []);
   if ((!rationaleData || isLoading || !isLoaded
-  ) && page === 1) {
+  )) {
     return <Spinner />;
   }
 
@@ -492,8 +455,8 @@ const EvaluationPage: React.FC = () => {
                 </div>
               )}
               <div className="flex grow flex-col gap-4">
-                {accumulatedData && accumulatedData.length > 0
-                  ? accumulatedData.map(
+                {rationaleData && rationaleData.data.length > 0
+                  ? rationaleData.data.map(
                       ({ id, pickedId, project1: p1, project2: p2, rationale, ratio: multiplier, parent }, index) => {
                         return (
                           <div key={id} onClick={() => setSelectedRationale(index + 1)} className="cursor-pointer">
@@ -517,18 +480,10 @@ const EvaluationPage: React.FC = () => {
                       </div>
                     )}
               </div>
-              {isLoadingRationales && (
-                <div className="pt-4">
-                  <div className="flex flex-col gap-4">
-                    <SmallSpinner />
-                    <div className="text-center text-sm text-[#344054]">Loading more evaluations ...</div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
-        {accumulatedData.length > 0 && (
+        {rationaleData && rationaleData.data.length > 0 && (
           <div className="flex min-w-[500px] grow flex-col gap-6 pr-10">
             <div className="grow rounded-2xl border border-gray-300 p-5">
               <div className="h-full overflow-auto pr-4">
@@ -539,40 +494,40 @@ const EvaluationPage: React.FC = () => {
                         <Image
                           width={36}
                           height={36}
-                          src={accumulatedData[selectedRationale - 1].project1.image || '/placeholder.svg'}
-                          alt={accumulatedData[selectedRationale - 1].project1.name}
+                          src={rationaleData.data[selectedRationale - 1].project1.image || '/placeholder.svg'}
+                          alt={rationaleData.data[selectedRationale - 1].project1.name}
                         />
                       </div>
-                      <div className="max-w-24">{accumulatedData[selectedRationale - 1].project1.name}</div>
+                      <div className="max-w-24">{rationaleData.data[selectedRationale - 1].project1.name}</div>
                     </div>
                     <div className="flex w-fit flex-col justify-center gap-2">
                       <div className="flex w-full justify-center">
                         <Image
                           width={36}
                           height={36}
-                          src={accumulatedData[selectedRationale - 1].project2.image || '/placeholder.svg'}
-                          alt={accumulatedData[selectedRationale - 1].project2.name}
+                          src={rationaleData.data[selectedRationale - 1].project2.image || '/placeholder.svg'}
+                          alt={rationaleData.data[selectedRationale - 1].project2.name}
                         />
                       </div>
-                      <div className="max-w-24">{accumulatedData[selectedRationale - 1].project2.name}</div>
+                      <div className="max-w-24">{rationaleData.data[selectedRationale - 1].project2.name}</div>
                     </div>
                   </div>
                   <div className="h-max w-full">
                     <SliderBox
                       shownValue={
-                        (accumulatedData[selectedRationale - 1].ratio
-                          ? Number(accumulatedData[selectedRationale - 1].ratio)
+                        (rationaleData.data[selectedRationale - 1].ratio
+                          ? Number(rationaleData.data[selectedRationale - 1].ratio)
                           : 1)
-                        * (accumulatedData[selectedRationale - 1].pickedId
-                          === accumulatedData[selectedRationale - 1].project1.id
+                        * (rationaleData.data[selectedRationale - 1].pickedId
+                          === rationaleData.data[selectedRationale - 1].project1.id
                           ? -1
                           : 1)
                       }
                       handleVote={handleVote}
                       canBeEditable={tab === Tab.MyEvaluation}
-                      rationale={accumulatedData[selectedRationale - 1].rationale}
-                      project1={accumulatedData[selectedRationale - 1].project1}
-                      project2={accumulatedData[selectedRationale - 1].project2}
+                      rationale={rationaleData.data[selectedRationale - 1].rationale}
+                      project1={rationaleData.data[selectedRationale - 1].project1}
+                      project2={rationaleData.data[selectedRationale - 1].project2}
                     />
                   </div>
                 </div>
@@ -589,7 +544,7 @@ const EvaluationPage: React.FC = () => {
                 Previous
               </button>
               <button
-                disabled={selectedRationale === accumulatedData.length}
+                disabled={selectedRationale === rationaleData.data.length}
                 onClick={() => setSelectedRationale(selectedRationale + 1)}
                 className="focus:shadow-wite-focus-shadow flex flex-row justify-center rounded-md border border-[#D0D5DD] bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-wite-hover focus:bg-white"
               >

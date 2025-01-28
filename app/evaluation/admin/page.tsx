@@ -261,7 +261,6 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   );
 };
 
-const limit = 10;
 const formatTime = (date: Date | null): string => {
   if (!date) return '';
   return date.toISOString();
@@ -271,13 +270,9 @@ const EvaluationPage: React.FC = () => {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [searchQueries, setSearchQueries] = useState<ISearchQuery[]>([]);
   const [showFilterBox, setShowFilterBox] = useState(false);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [selectedRationale, setSelectedRationale] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.Newest);
   const { data: rationaleData, isLoading } = useGetProjectRationalesAdmin(
-    page,
-    limit,
     startDate?.toISOString() ?? '',
     endDate?.toISOString() ?? '',
     searchQueries.map(search => search.id),
@@ -288,8 +283,6 @@ const EvaluationPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync: vote } = useUpdateRationaleVote({
-    page,
-    limit,
     createdAtGte: formatTime(endDate),
     createdAtLte: formatTime(startDate),
     projectIds: searchQueries.map(search => search.id),
@@ -317,14 +310,8 @@ const EvaluationPage: React.FC = () => {
     }
   };
   useEffect(() => {
-    setPage(1);
     setSelectedRationale(1);
   }, [searchQueries, startDate, endDate]);
-  useEffect(() => {
-    if (rationaleData) {
-      setTotalPages(rationaleData.meta.totalPages);
-    }
-  }, [rationaleData]);
   const filterBoxRef = useRef<HTMLDivElement>(null);
   const fliterButtonRef = useRef<HTMLDivElement>(null);
 
@@ -431,33 +418,6 @@ const EvaluationPage: React.FC = () => {
                   },
                 )}
               </div>
-            </div>
-            <div className="sticky bottom-0 mt-4 flex items-center justify-between bg-[#F9FAFB]">
-              <button
-                onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-                disabled={page === 1}
-                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
-              >
-                <ArrowLeft2Icon size={20} />
-                Previous Page
-              </button>
-              <span className="text-sm text-gray-700">
-                Page
-                {' '}
-                {page}
-                {' '}
-                of
-                {' '}
-                {totalPages}
-              </span>
-              <button
-                onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={page === totalPages}
-                className="flex flex-row justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-[#344054] hover:bg-gray-50"
-              >
-                Next Page
-                <ArrowRight size={20} color="#344054" />
-              </button>
             </div>
           </div>
         </div>
