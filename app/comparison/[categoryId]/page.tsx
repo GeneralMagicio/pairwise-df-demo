@@ -11,6 +11,7 @@ import UndoButton from '../card/UndoButton';
 // import Modals from '@/app/utils/wallet/Modals';
 import {
   IPairwisePairsResponse,
+  ProjectRationaleData,
   useGetPairwisePairs,
 } from '../utils/data-fetching/pair';
 import {
@@ -46,6 +47,23 @@ enum Types {
 }
 
 const InitRatioValue = { value: 0, type: 'slider' } as { value: number, type: 'slider' | 'input' };
+
+const rationaleFilterByProject = (rationales: ProjectRationaleData[], projectIds: number[]) => {
+  if (projectIds.length === 1) {
+    const result = rationales.filter(({ project1Id, project2Id }) => {
+      return projectIds[0] === project1Id
+        || projectIds[0] === project2Id;
+    });
+    return result;
+  }
+  else if (projectIds.length === 2) {
+    const result = rationales.filter(({ project1Id, project2Id }) => {
+      return projectIds.every(id => id === project1Id || id === project2Id);
+    });
+    return result;
+  }
+  else throw new Error ('Max projectIds length is 2');
+};
 
 export default function Home() {
   const { categoryId } = useParams() ?? {};
@@ -177,7 +195,7 @@ export default function Home() {
   useEffect(() => {
     if (project1 && project2) {
       const tabstext = {
-        [Types.Both]: 'All',
+        [Types.Both]: 'Both',
         [Types.Project1]: project1.name,
         [Types.Project2]: project2.name,
       };
@@ -389,6 +407,21 @@ export default function Home() {
   const shownValue = ratio.type === 'slider'
     ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase)
     : ratio.value;
+
+  const getRationales = () => {
+    if (!comments) return [];
+
+    switch (tab) {
+      case Types.Project1:
+        return rationaleFilterByProject(comments, [project1.id]);
+      case Types.Project2:
+        return rationaleFilterByProject(comments, [project2.id]);
+      case Types.Both:
+        return rationaleFilterByProject(comments, [project1.id, project2.id]);
+      default:
+        return comments;
+    }
+  };
 
   return (
     <div className="flex h-screen flex-col">
@@ -614,22 +647,18 @@ export default function Home() {
             </div>
             <div className="flex grow flex-col gap-4">
               <div>
-                {showComments && comments.filter(({ project1: p1, project2: p2 }) => {
-                  return (tab === Types.Project2 || (p1.id === project1.id || p2.id === project1.id))
-                    && (tab === Types.Project1 || (p1.id === project2.id || p2.id === project2.id));
-                }).map(({ pickedId, project1: p1, project2: p2, rationale, multiplier }
-                  , index) => {
-                  return (
+                {getRationales()
+                  .map(({ project1: p1, project2: p2, pickedId, rationale, multiplier, updatedAt }) => (
                     <RationaleBox
-                      key={index}
+                      key={`${p1.id}${p2.id}${updatedAt}`}
                       pickedId={pickedId}
                       project1={p1}
                       project2={p2}
                       rationale={rationale}
                       multiplier={multiplier}
                     />
-                  );
-                })}
+                  ))}
+
               </div>
             </div>
             <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
