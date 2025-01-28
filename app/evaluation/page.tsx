@@ -342,6 +342,16 @@ const EvaluationPage: React.FC = () => {
           rationale: rationale,
         },
       });
+      setAccumulatedData((prevData) => {
+        const newData = [...prevData]
+        newData[selectedRationale - 1] = {
+          ...newData[selectedRationale - 1],
+          pickedId: chosenId,
+          rationale: rationale,
+          ratio: String(Math.abs(shownValue)),
+        }
+        return newData
+      })
       await queryClient.refetchQueries({ queryKey: ['project-rationale-evaluation'] });
     }
     catch (e) {
