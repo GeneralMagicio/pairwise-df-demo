@@ -474,6 +474,7 @@ export default function Home() {
           total={data.totalPairs}
           votes={data.votedPairs}
           category={data.name}
+          showRoundData={!repoComplete}
           projImage={categoryResp?.collection.image}
           isFirstSelection={false}
           showBackButton
