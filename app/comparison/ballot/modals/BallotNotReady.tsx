@@ -33,8 +33,8 @@ const BallotNotReady: React.FC<Props> = ({ onClick, categoryName }) => {
         </p>
         <button
           onClick={onClick}
-          className="mt-4 flex w-full items-center justify-center rounded-lg bg-primary px-4
-          py-3 font-semibold text-white transition duration-300 ease-in-out"
+          className="mt-4 flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 font-semibold
+          text-white transition duration-300 ease-in-out hover:bg-main-title focus:bg-primary"
         >
           Ok
         </button>

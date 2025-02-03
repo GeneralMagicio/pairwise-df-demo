@@ -131,14 +131,14 @@ export function SliderBox({
           <textarea
             value={isEditing ? editedRationale : rationale}
             onChange={e => setEditedRationale(e.target.value)}
-            onClick={() => setRationaleError(null)}
+            // onClick={() => setRationaleError(null)}
             disabled={!isEditing}
             cols={10}
-            className={`min-h-48 w-full resize-none rounded-md border ${rationaleError ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none`}
+            className={`min-h-48 w-full resize-none rounded-md border ${rationaleError && (rationale?.length ?? 0) < 70 ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none`}
             placeholder="Enter your rationale..."
           />
 
-          <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-red-500">
+          <span className={`absolute bottom-0 translate-y-full py-1 text-sm ${((rationale?.length ?? 0) < 70) ? 'text-red-500' : 'text-deep-250'}`}>
             {' '}
             {rationaleError ? rationaleError : ''}
             {' '}
@@ -183,7 +183,7 @@ export function SliderBox({
         : (
             canBeEditable && (
               <button
-                className="absolute -bottom-20 right-4 flex flex-row gap-1.5 rounded-lg bg-primary px-4 py-2.5"
+                className="absolute -bottom-20 right-4 flex flex-row gap-1.5 rounded-lg bg-primary px-4 py-2.5 hover:bg-main-title focus:bg-primary"
                 onClick={() => setIsEditing(true)}
               >
                 <Image src="/assets/images/pencil.svg" alt="pencil" width={16} height={16} />

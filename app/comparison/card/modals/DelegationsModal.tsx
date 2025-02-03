@@ -80,7 +80,7 @@ const DelegationsModal = ({
       </div>
       <button
         onClick={onClose}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-primary p-4 font-semibold text-white"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-primary p-4 font-semibold text-white hover:bg-main-title focus:bg-primary"
       >
         Got it
       </button>

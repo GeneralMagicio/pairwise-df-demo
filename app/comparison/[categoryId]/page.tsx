@@ -5,16 +5,17 @@ import { useParams, useRouter } from 'next/navigation';
 // import { useQueryClient } from '@tanstack/react-query';
 // import { useAccount } from 'wagmi';
 import { usePostHog } from 'posthog-js/react';
-import Image from 'next/image';
 import { ProjectCard } from '../card/ProjectCard';
 import HeaderRF6, { MaximumRepoComparisons, RoundSize } from '../card/Header-RF6';
 import UndoButton from '../card/UndoButton';
 // import Modals from '@/app/utils/wallet/Modals';
 import {
   IPairwisePairsResponse,
+  ProjectRationaleData,
   useGetPairwisePairs,
 } from '../utils/data-fetching/pair';
 import {
+  useCreatePairExclusion,
   useUpdateProjectUndo,
   useUpdateProjectVote,
 } from '../utils/data-fetching/vote';
@@ -29,9 +30,7 @@ import StorageLabel from '@/app/lib/localStorage';
 import NotFoundComponent from '@/app/components/404';
 import { NumberBox } from './NumberBox';
 import { useAuth } from '@/app/utils/wallet/AuthProvider';
-import { ArrowRightIcon } from '@/public/assets/icon-components/ArrowRightIcon';
 import { RationaleBox } from './RationaleBox';
-import { ArrowLeft2Icon } from '@/public/assets/icon-components/ArrowLeft2';
 import { useCategory } from '../utils/data-fetching/category';
 import PostVotingModal from '../ballot/modals/PostVotingModal';
 import { shortenText } from '../utils/helpers';
@@ -39,6 +38,8 @@ import { SliderBase, SliderMax } from './constant';
 import { CustomSlider, sliderScaleFunction } from './SliderComponent';
 import RoundComplete from '@/app/allocation/components/RoundCompleteModal';
 import RepoComplete from '@/app/allocation/components/RepoCompleteModal';
+import RefreshButton from '../card/RefreshButton';
+import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
 enum Types {
   Both,
   Project1,
@@ -46,6 +47,23 @@ enum Types {
 }
 
 const InitRatioValue = { value: 0, type: 'slider' } as { value: number, type: 'slider' | 'input' };
+
+const rationaleFilterByProject = (rationales: ProjectRationaleData[], projectIds: number[]) => {
+  if (projectIds.length === 1) {
+    const result = rationales.filter(({ project1Id, project2Id }) => {
+      return projectIds[0] === project1Id
+        || projectIds[0] === project2Id;
+    });
+    return result;
+  }
+  else if (projectIds.length === 2) {
+    const result = rationales.filter(({ project1Id, project2Id }) => {
+      return projectIds.every(id => id === project1Id || id === project2Id);
+    });
+    return result;
+  }
+  else throw new Error ('Max projectIds length is 2');
+};
 
 export default function Home() {
   const { categoryId } = useParams() ?? {};
@@ -103,6 +121,7 @@ export default function Home() {
   const { data: categoryResp } = useCategory(cid);
   // const { mutateAsync: markProjectCoI } = useMarkCoi();
   const { mutateAsync: vote } = useUpdateProjectVote({ categoryId: cid });
+  const { mutateAsync: excludePair } = useCreatePairExclusion({ categoryId: cid });
   const { mutateAsync: undo } = useUpdateProjectUndo({
     categoryId: cid,
     onSuccess: () => {
@@ -137,13 +156,15 @@ export default function Home() {
 
   useEffect(() => {
     if (roundCompleteModalCanBeSet && data?.votedPairs
-      && data.votedPairs < MaximumRepoComparisons && data.votedPairs % RoundSize === 0) {
+      && data.votedPairs < Math.min(MaximumRepoComparisons, data.totalPairsBeforeThreshold)
+      && data.votedPairs % RoundSize === 0) {
       setRoundComplete(true);
     }
   }, [data]);
 
   useEffect(() => {
-    if (data?.votedPairs && data.votedPairs >= MaximumRepoComparisons) {
+    if (data?.votedPairs
+      && data.votedPairs >= Math.min(data.totalPairsBeforeThreshold, MaximumRepoComparisons)) {
       setRepoComplete(true);
     }
   }, [data]);
@@ -310,6 +331,11 @@ export default function Home() {
     setRevertingBack(false);
   };
 
+  const handleRefresh = (p1Id: number, p2Id: number) => async () => {
+    setRoundCompleteModalCanBeSet(false);
+    await excludePair({ p1Id, p2Id });
+  };
+
   function updateGetStarted({
     goodRating,
     lowRate,
@@ -382,6 +408,21 @@ export default function Home() {
     ? Math.sign(ratio.value) * sliderScaleFunction(ratio.value, SliderBase)
     : ratio.value;
 
+  const getRationales = () => {
+    if (!comments) return [];
+
+    switch (tab) {
+      case Types.Project1:
+        return rationaleFilterByProject(comments, [project1.id]);
+      case Types.Project2:
+        return rationaleFilterByProject(comments, [project2.id]);
+      case Types.Both:
+        return rationaleFilterByProject(comments, [project1.id, project2.id]);
+      default:
+        return comments;
+    }
+  };
+
   return (
     <div className="flex h-screen flex-col">
 
@@ -405,6 +446,7 @@ export default function Home() {
         )}
         {repoComplete && (
           <RepoComplete
+            totalComparisons={Math.min(data.totalPairsBeforeThreshold, MaximumRepoComparisons)}
             isOpen={repoComplete}
             onFinishVoting={onFinishVoting}
           />
@@ -432,24 +474,26 @@ export default function Home() {
           total={data.totalPairs}
           votes={data.votedPairs}
           category={data.name}
+          showRoundData={!repoComplete}
           projImage={categoryResp?.collection.image}
           isFirstSelection={false}
           showBackButton
         />
       </div>
+      <div className="mt-6 text-center text-2xl font-semibold xsl:mt-4 xsl:text-lg">
+        Which dependency gets more credit for
+        {' '}
+        <span className="font-bold">
+          {categoryResp?.collection.name}
+        </span>
+        {' '}
+        success?
+      </div>
       <div className="relative flex h-full grow">
+
         <div className="relative grow">
           <div className="glex flex w-full flex-col">
 
-            <div className="mt-6 text-center text-2xl font-semibold xsl:mt-4 xsl:text-lg">
-              Which dependency gets more credit for
-              {' '}
-              <span className="font-bold">
-                {categoryResp?.collection.name}
-              </span>
-              {' '}
-              success?
-            </div>
             <div className="relative flex grow items-center justify-between gap-8 px-8">
               <div className="relative w-[49%]">
                 <ProjectCard
@@ -542,17 +586,17 @@ export default function Home() {
               <div className={`flex w-full flex-row ${shownValue ? 'justify-end' : 'justify-center'} px-10`}>
                 <div className="w-full">
                   <div className="relative flex grow justify-start">
-                    <div className="flex w-4/5 flex-col justify-around gap-2 pl-10">
+                    <div className="flex w-[90%] flex-col justify-around gap-2 pl-10">
                       <div className="font-bold">Rationale</div>
                       <textarea
                         value={rationale ?? ''}
-                        onClick={() => setRationaleError(null)}
+                        // onClick={() => setRationaleError(null)}
                         onChange={e => setRationale(e.target.value)}
                         rows={2}
-                        className={`w-full resize-none rounded-md border ${rationaleError ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none focus:ring-2`}
+                        className={`w-full resize-none rounded-md border ${rationaleError && (rationale?.length ?? 0) < 70 ? 'border-red-500' : 'border-[#D0D5DD]'} p-2 shadow-sm focus:outline-none`}
                         placeholder={shownValue === 0 ? 'Why do you think these 2 are equally important?' : `Why did you select ${shownValue > 0 ? project2.name : project1.name}?`}
                       />
-                      <span className="mt absolute bottom-0 translate-y-full py-1 text-sm text-red-500">
+                      <span className={`absolute bottom-0 translate-y-full py-1 text-sm ${((rationale?.length ?? 0) < 70) ? 'text-red-500' : 'text-deep-250'}`}>
                         {' '}
                         {rationaleError ? rationaleError : ''}
                         {' '}
@@ -569,8 +613,11 @@ export default function Home() {
                       disabled={data?.votedPairs === 0 || isAnyModalOpen()}
                       onClick={handleUndo}
                     />
+                    <RefreshButton
+                      onClick={handleRefresh(project1.id, project2.id)}
+                    />
                     <button
-                      className="xxsl: wfit w-36 rounded-lg bg-primary px-4 py-2.5 text-white"
+                      className="xxsl: wfit w-36 rounded-lg bg-primary px-4 py-2.5 text-white hover:bg-main-title focus:bg-primary"
                       onClick={() => { handleVote(shownValue === 0 ? null : shownValue > 0 ? project2.id : project1.id); }}
                     >
                       Next
@@ -581,63 +628,52 @@ export default function Home() {
             </div>
           </footer>
         </div>
-        {comments && comments.length && (
-          showComments
-            ? (
-                <div className="mt-6 flex w-96 flex-col gap-4 overflow-scroll rounded-xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
-                  <button onClick={() => { setShowComments(false); }} className="flex w-full items-center justify-between gap-2 rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5 font-medium text-gray-400 hover:text-gray-600 focus:outline-none">
-                    <Image width={20} height={20} src="/assets/images/smile.svg" alt="people" />
-                    <span>Evaluation Samples</span>
-                    <ArrowRightIcon color="#344054" size={20} />
-                  </button>
-                  <div
-                    className="border-b border-gray-border"
-                  >
-                    {tabs && (
-                      <div className="flex h-full flex-row items-center gap-3">
-                        {Object.entries(tabs).map(([t, text]) => {
-                          return <button key={t} className={`h-full max-w-32 text-wrap break-words px-1 pb-3 text-base font-semibold ${tab === parseInt(t) ? 'border-b border-primary text-main-title' : 'text-gray-placeholder'}`} onClick={() => setTab(parseInt(t))}>{shortenText(text, 14)}</button>;
-                        })}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex grow flex-col gap-4">
-                    {comments.filter(({ project1: p1, project2: p2 }) => {
-                      return (tab === Types.Project2 || (p1.id === project1.id || p2.id === project1.id))
-                        && (tab === Types.Project1 || (p1.id === project2.id || p2.id === project2.id));
-                    }).map(({ pickedId, project1: p1, project2: p2, rationale, multiplier }
-                      , index) => {
-                      return (
-                        <RationaleBox
-                          key={index}
-                          pickedId={pickedId}
-                          project1={p1}
-                          project2={p2}
-                          rationale={rationale}
-                          multiplier={multiplier}
-                        />
-                      );
-                    })}
-                  </div>
-                  <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
-                    <button
-                      onClick={() => {
-                        router.push(`/evaluation?projectIds=${cid}`);
-                      }}
-                      className="w-full rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5
-                    text-sm font-semibold text-[#344054]"
-                    >
-                      My Evaluations
-                    </button>
-                  </div>
+        {comments && (
+          <div className="mt-4 flex h-full w-96 flex-col gap-4 overflow-scroll rounded-xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
+            <button onClick={() => { setShowComments(!showComments); }} className="flex w-full items-center justify-center gap-0.5 rounded-md px-3.5 py-2.5 text-sm font-semibold text-deep-250 hover:text-gray-600 focus:outline-none">
+
+              <span>Evaluations</span>
+              <div className={showComments ? 'rotate-180' : 'rotate-0'}><ArrowDownIcon width={20} height={20} color="#475467" /></div>
+            </button>
+            <div
+              className="border-b border-gray-border"
+            >
+              {tabs && (
+                <div className="flex h-full flex-row items-center gap-3">
+                  {Object.entries(tabs).map(([t, text]) => {
+                    return <button key={t} className={`h-full max-w-32 text-wrap break-words px-1 pb-3 text-base font-semibold ${tab === parseInt(t) ? 'border-b border-primary text-main-title' : 'text-gray-placeholder'}`} onClick={() => setTab(parseInt(t))}>{shortenText(text, 14)}</button>;
+                  })}
                 </div>
-              )
-            : (
-                <button onClick={() => setShowComments(true)} className="z-1 absolute right-0 top-10  flex flex-row gap-3 rounded-md border border-gray-200 bg-white p-3">
-                  <Image width={20} height={20} src="/assets/images/smile.svg" alt="people" />
-                  <ArrowLeft2Icon color="#344054" size={20} />
-                </button>
-              )
+              )}
+            </div>
+            <div className="flex grow flex-col gap-4">
+              <div>
+                {getRationales()
+                  .map(({ project1: p1, project2: p2, pickedId, rationale, multiplier, updatedAt }) => (
+                    <RationaleBox
+                      key={`${p1.id}${p2.id}${updatedAt}`}
+                      pickedId={pickedId}
+                      project1={p1}
+                      project2={p2}
+                      rationale={rationale}
+                      multiplier={multiplier}
+                    />
+                  ))}
+
+              </div>
+            </div>
+            <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
+              <button
+                onClick={() => {
+                  router.push(`/evaluation?projectIds=${cid}`);
+                }}
+                className="w-full rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5
+                    text-sm font-semibold text-[#344054]"
+              >
+                My Evaluations
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

@@ -2,8 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '@/app/utils/axiosInstance';
 import { ICategory, IProject } from '../comparison/utils/types';
 export interface IRationaleQuery {
-  page: number
-  limit: number
   createdAtGte: string
   createdAtLte: string
   projectIds: number[]
@@ -37,9 +35,6 @@ export interface IReturnRationaleQuery {
   }[]
   meta: {
     total: number
-    page: number
-    limit: number
-    totalPages: number
   }
 }
 
@@ -61,9 +56,6 @@ export interface IReturnAdminRationaleQuery {
   }[]
   meta: {
     total: number
-    page: number
-    limit: number
-    totalPages: number
   }
 }
 export const formattedQuery = (rationaleQuery: Partial<IRationaleQuery>) =>
@@ -174,18 +166,15 @@ export const useGetProjectPairCategory = (id1: number, id2: number) => {
     queryFn: () => getProjectPairCategory(id1, id2),
   });
 };
-export const useGetProjectRationales = (page: number,
-  limit: number,
+export const useGetProjectRationales = (
   createdAtGte: string,
   createdAtLte: string,
   projectIds: number[],
   myEvaluation: boolean,
   orderBy: string) => {
   return useQuery({
-    queryKey: ['project-rationale-evaluation', page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation, orderBy],
+    queryKey: ['project-rationale-evaluation', createdAtGte, createdAtLte, projectIds, myEvaluation, orderBy],
     queryFn: () => getProjectRationales({
-      page,
-      limit,
       createdAtGte,
       createdAtLte,
       projectIds,
@@ -195,18 +184,15 @@ export const useGetProjectRationales = (page: number,
   });
 };
 
-export const useGetProjectRationalesAdmin = (page: number,
-  limit: number,
+export const useGetProjectRationalesAdmin = (
   createdAtGte: string,
   createdAtLte: string,
   projectIds: number[],
   myEvaluation: boolean,
   orderBy: string) => {
   return useQuery({
-    queryKey: ['project-rationale-evaluation-admin', page, limit, createdAtGte, createdAtLte, projectIds, myEvaluation, orderBy],
+    queryKey: ['project-rationale-evaluation-admin', createdAtGte, createdAtLte, projectIds, myEvaluation, orderBy],
     queryFn: () => getProjectRationalesAdmin({
-      page,
-      limit,
       createdAtGte,
       createdAtLte,
       projectIds,

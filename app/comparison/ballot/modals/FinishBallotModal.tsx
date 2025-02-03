@@ -26,7 +26,7 @@ const FinishBallot: FC<UnlockBallotProps> = ({
         </p>
         <button
           onClick={onUnlock}
-          className="flex w-full items-center justify-center gap-x-2 rounded-lg bg-primary px-4 py-3 text-white transition duration-300 ease-in-out hover:bg-purple-600"
+          className="flex w-full items-center justify-center gap-x-2 rounded-lg bg-primary px-4 py-3 text-white transition duration-300 ease-in-out hover:bg-main-title focus:bg-primary"
         >
           <UnlockIcon size={20} color="#fff" />
           Unlock Ballot

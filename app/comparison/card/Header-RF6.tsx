@@ -22,6 +22,7 @@ interface HeaderProps {
   isFirstSelection?: boolean
   showBackButton?: boolean
   myEvaluation?: boolean
+  showRoundData?: boolean
   votes?: number
   total?: number
 }
@@ -37,6 +38,7 @@ const HeaderRF6: FC<HeaderProps> = ({
   category,
   showBackButton,
   projImage,
+  showRoundData,
   // question,
   myEvaluation,
   isFirstSelection = false,
@@ -151,48 +153,53 @@ const HeaderRF6: FC<HeaderProps> = ({
         )}
       </Modal>
 
-      <div className="relative z-40 flex w-full flex-row justify-between gap-6 border-b bg-white px-10 py-6">
-        {!myEvaluation && !category && !isFirstSelection && (
-          <div onClick={() => router.push('/allocation')} className="m-3 flex cursor-pointer items-center">
-            <PwLogo />
-          </div>
-        )}
-        {showBackButton && (
-          <button onClick={() => router.push('/allocation')} className="my-auto flex h-fit flex-row justify-center gap-1.5 rounded-lg border border-[#D0D5DD] px-4 py-2.5">
-            <ArrowLeft2Icon color="#344054" />
-            <span className="text-base font-semibold text-[#344054]">Back</span>
-          </button>
-        )}
+      <div className="relative z-40 flex w-full justify-between border-b bg-white px-10 py-6">
+        <div className="flex gap-6">
 
-        {myEvaluation && (
-          <span className="my-auto h-fit text-xl font-bold">
-            My Evaluations
-          </span>
-        )}
-
-        {
-          projImage && category && (
-            <div className="flex items-center gap-2">
-              <img src={projImage} alt={category} width={25} height={25} className="rounded-full" />
-              <h4 className="font-bold">
-                {category}
-              </h4>
+          {!myEvaluation && !category && !isFirstSelection && (
+            <div onClick={() => router.push('/allocation')} className="m-3 flex cursor-pointer items-center">
+              <PwLogo />
             </div>
-          )
-        }
-        <div className="flex grow items-center justify-start">
-          {typeof votes === 'number' && (
-            <div className="flex flex-row items-center justify-center gap-8 text-dark-600">
-              <span className="text-lg font-bold">
-                Voting Round
-                {` ${roundNumber(votes)}`}
-              </span>
-              <span>
-                {`${comparisonsFromCompletion(votes)} `}
-                out of
-                {` ${RoundSize} `}
-                comparisons
-              </span>
+          )}
+          {showBackButton && (
+            <button onClick={() => router.push('/allocation')} className="focus:shadow-wite-focus-shadow my-auto flex h-fit flex-row justify-center gap-1.5 rounded-lg border border-[#D0D5DD] bg-white px-4 py-2.5 hover:bg-wite-hover focus:bg-white">
+              <ArrowLeft2Icon color="#344054" />
+              <span className="text-base font-semibold text-[#344054]">Back</span>
+            </button>
+          )}
+
+          {myEvaluation && (
+            <span className="my-auto h-fit text-xl font-bold">
+              My Evaluations
+            </span>
+          )}
+
+          {
+            projImage && category && (
+              <div className="flex items-center gap-2">
+                <img src={projImage} alt={category} width={25} height={25} className="rounded-full" />
+                <h4 className="font-bold">
+                  {category}
+                </h4>
+              </div>
+            )
+          }
+          {showRoundData && (
+            <div className="flex grow items-center justify-start">
+              {typeof votes === 'number' && (
+                <div className="flex flex-row items-center justify-center gap-8 text-dark-600">
+                  <span className="text-lg font-bold">
+                    Voting Round
+                    {` ${roundNumber(votes)}`}
+                  </span>
+                  <span>
+                    {`${comparisonsFromCompletion(votes)} `}
+                    out of
+                    {` ${RoundSize} `}
+                    comparisons
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
