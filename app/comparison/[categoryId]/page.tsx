@@ -297,7 +297,7 @@ export default function Home() {
   // };
   const handleVote = async (chosenId: number | null) => {
     if (rationale === null || rationale.trim().length < 70) {
-      setRationaleError('Min 70 characters required');
+      setRationaleError('Min 70 characters required.');
       return;
     }
     try {
@@ -518,7 +518,7 @@ export default function Home() {
           <footer className="w-full gap-8 rounded-xl px-8">
             <div className="relative bottom-0 z-50 flex grow flex-col items-center justify-around gap-4 bg-white py-8 shadow-inner xxsl:gap-1 sl:py-2">
               <div className="flex w-3/4 flex-col items-center justify-center gap-4 rounded-xl lg:flex-row xl:gap-8 xxsl:gap-1">
-                <div className="mr-3 w-1/5 text-ellipsis">{project1.name}</div>
+                <div className="mr-3 w-1/5 text-ellipsis text-base font-semibold text-black">{project1.name}</div>
                 {/* <div>{sliderScaleFunction(SliderMax, SliderBase)}</div> */}
                 <div className="gap- relative mt-5 flex w-1/2 flex-col items-center justify-center xxsl:mt-2">
                   <div className="absolute left-[(calc50%-1px)] top-0 h-9 w-0 border-2 border-dashed border-primary" />
@@ -538,7 +538,7 @@ export default function Home() {
 
                 </div>
                 {/* <div>{sliderScaleFunction(SliderMax, SliderBase)}</div> */}
-                <div className="ml-3 w-1/5 text-ellipsis">{project2.name}</div>
+                <div className="ml-3 w-1/5 text-ellipsis text-base font-semibold text-black">{project2.name}</div>
               </div>
               <NumberBox
                 value={shownValue === 0 ? 1 : shownValue}
@@ -586,8 +586,8 @@ export default function Home() {
               <div className={`flex w-full flex-row ${shownValue ? 'justify-end' : 'justify-center'} px-10`}>
                 <div className="w-full">
                   <div className="relative flex grow justify-start">
-                    <div className="flex w-[90%] flex-col justify-around gap-2 pl-10">
-                      <div className="font-bold">Rationale</div>
+                    <div className="flex w-[90%] flex-col justify-around gap-1.5 pl-10">
+                      <div className="text-xs font-semibold text-[#344054]">Rationale</div>
                       <textarea
                         value={rationale ?? ''}
                         // onClick={() => setRationaleError(null)}
@@ -617,7 +617,7 @@ export default function Home() {
                       onClick={handleRefresh(project1.id, project2.id)}
                     />
                     <button
-                      className="xxsl: wfit w-36 rounded-lg bg-primary px-4 py-2.5 text-white hover:bg-main-title focus:bg-primary"
+                      className="h-fit w-36 rounded-lg bg-primary px-4 py-2.5 text-base font-semibold text-white hover:bg-main-title focus:bg-primary"
                       onClick={() => { handleVote(shownValue === 0 ? null : shownValue > 0 ? project2.id : project1.id); }}
                     >
                       Next
@@ -629,52 +629,62 @@ export default function Home() {
           </footer>
         </div>
         {comments && (
-          <div className="mt-4 flex h-full w-96 flex-col gap-4 overflow-scroll rounded-xl border border-gray-border bg-[#F9FAFB] px-3 py-4">
-            <button onClick={() => { setShowComments(!showComments); }} className="flex w-full items-center justify-center gap-0.5 rounded-md px-3.5 py-2.5 text-sm font-semibold text-deep-250 hover:text-gray-600 focus:outline-none">
-
+          <div className={`mt-4 flex ${showComments ? 'h-full' : 'h-fit'} w-96 flex-col gap-4 overflow-auto rounded-xl border border-gray-border bg-[#F9FAFB] px-3 py-4`}>
+            <button onClick={() => { setShowComments(!showComments); }} className="flex w-full items-center justify-center gap-0.5 rounded-md px-3.5 py-2.5 text-sm font-semibold text-deep-250 focus:outline-none">
               <span>Evaluations</span>
               <div className={showComments ? 'rotate-180' : 'rotate-0'}><ArrowDownIcon width={20} height={20} color="#475467" /></div>
             </button>
-            <div
-              className="border-b border-gray-border"
-            >
-              {tabs && (
-                <div className="flex h-full flex-row items-center gap-3">
-                  {Object.entries(tabs).map(([t, text]) => {
-                    return <button key={t} className={`h-full max-w-32 text-wrap break-words px-1 pb-3 text-base font-semibold ${tab === parseInt(t) ? 'border-b border-primary text-main-title' : 'text-gray-placeholder'}`} onClick={() => setTab(parseInt(t))}>{shortenText(text, 14)}</button>;
-                  })}
-                </div>
-              )}
-            </div>
-            <div className="flex grow flex-col gap-4">
-              <div>
-                {getRationales()
-                  .map(({ project1: p1, project2: p2, pickedId, rationale, multiplier, updatedAt }) => (
-                    <RationaleBox
-                      key={`${p1.id}${p2.id}${updatedAt}`}
-                      pickedId={pickedId}
-                      project1={p1}
-                      project2={p2}
-                      rationale={rationale}
-                      multiplier={multiplier}
-                    />
-                  ))}
 
-              </div>
-            </div>
-            <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
-              <button
-                onClick={() => {
-                  router.push(`/evaluation?projectIds=${cid}`);
-                }}
-                className="w-full rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5
-                    text-sm font-semibold text-[#344054]"
-              >
-                My Evaluations
-              </button>
-            </div>
+            {showComments && (
+              <>
+                <div
+                  className="border-b border-gray-border"
+                >
+                  {tabs && (
+                    <div className="flex h-full flex-row items-center gap-3">
+                      {Object.entries(tabs).map(([t, text]) => {
+                        return (
+                          <div key={t} className="group relative h-full">
+                            <button className={`h-full max-w-32 text-wrap break-words px-1 pb-3 text-base ${tab === parseInt(t) ? 'border-b border-primary font-bold text-main-title' : 'font-normal text-dark-600'}`} onClick={() => setTab(parseInt(t))}>{shortenText(text, 14)}</button>
+                            <span className="absolute left-0 top-10 scale-0 rounded bg-gray-50 p-2 text-xs text-[#344054] group-hover:scale-100">{text}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+                <div className="flex grow flex-col gap-4">
+                  <div>
+                    {getRationales()
+                      .map(({ project1: p1, project2: p2, pickedId, rationale, multiplier, updatedAt }) => (
+                        <RationaleBox
+                          key={`${p1.id}${p2.id}${updatedAt}`}
+                          pickedId={pickedId}
+                          project1={p1}
+                          project2={p2}
+                          rationale={rationale}
+                          multiplier={multiplier}
+                        />
+                      ))}
+
+                  </div>
+                </div>
+                <div className="flex flex-col justify-start gap-2 text-xs font-semibold text-[#475467]">
+                  <button
+                    onClick={() => {
+                      router.push(`/evaluation?projectIds=${cid}`);
+                    }}
+                    className="w-full rounded-md border border-[#D0D5DD] bg-white px-3.5 py-2.5 text-sm font-semibold
+                    text-[#344054] hover:bg-wite-hover focus:bg-white"
+                  >
+                    My evaluations
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
+
       </div>
     </div>
   );
