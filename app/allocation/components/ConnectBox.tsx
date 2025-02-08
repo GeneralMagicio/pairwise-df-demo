@@ -16,12 +16,12 @@ const ConnectBox: React.FC = () => {
           We encourage you to take up to 3-5 minutes per comparison,
           especially on quantifying the weights between dependencies.
           Quality is more important than quantity! In Deep Funding,
-          votes are used to identify AI or metrics based models best aligned with your preferences,
-          which then get its weights applied across all dependencies.
+          votes are used to identify AI or metrics based models best aligned with your preferences.
+          These models then allocate weights across all dependencies based on which funding is distributed.
         </span>
         <span>
-          You can click “Next” if you want to skip a comparison.
-          We encourage at least 30 comparisons.
+          If you are unfamiliar with the 2 dependencies displayed on your screen, click on “Refresh” to see a new pair.
+          We encourage you to vote on at least 30 comparisons. Don't worry, you can take breaks & get back to where you were.
           Reach out to
           <span className="mx-1 text-primary">
             @TheDevanshMehta
