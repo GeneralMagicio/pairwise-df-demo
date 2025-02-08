@@ -1,5 +1,4 @@
-import { FC, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { FC, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowDownIcon } from '@/public/assets/icon-components/ArrowDown';
 import { ArrowUpIcon } from '@/public/assets/icon-components/ArrowUp';
@@ -25,11 +24,26 @@ const LogoutButton: FC<Pick<Props, 'onLogout'>> = ({ onLogout }) => {
 
 const ConnectedButton: FC<Props> = ({ username, onLogout }) => {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+  const logoutRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (logoutRef.current
+        && !logoutRef.current.contains(event.target as Node)
+        && buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   return (
     <div className="relative">
       <button
+        ref={buttonRef}
         onClick={() => setOpen(!open)}
         className="flex h-fit w-44 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white py-2 font-semibold"
       >
@@ -40,17 +54,20 @@ const ConnectedButton: FC<Props> = ({ username, onLogout }) => {
         {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
       </button>
       {open && (
-        <div className="focus:shadow-wite-focus-shadow absolute right-0 w-56 rounded-lg border border-[#D0D5DD] bg-white shadow-md hover:bg-wite-hover focus:bg-white">
-          {pathname === '/allocation' && (
-            <Link
-              href="/evaluation"
-              className="flex w-full items-center justify-start gap-2 p-2.5 py-2"
-            >
-              <EditIcon size="16" />
-              <span className="text-sm text-[#344054]"> My Evaluation </span>
-            </Link>
-          )}
-          <LogoutButton onLogout={onLogout} />
+        <div
+          ref={logoutRef}
+          className="focus:shadow-wite-focus-shadow absolute right-0 w-56 rounded-lg border border-[#D0D5DD] bg-white shadow-md"
+        >
+          <Link
+            href="/evaluation"
+            className="flex w-full items-center justify-start gap-2 border-b border-gray-border p-2.5 py-2 hover:bg-wite-hover focus:bg-white"
+          >
+            <EditIcon size="16" />
+            <span className="text-sm text-[#344054]"> My Evaluation </span>
+          </Link>
+          <div className="hover:bg-wite-hover focus:bg-white">
+            <LogoutButton onLogout={onLogout} />
+          </div>
         </div>
       )}
     </div>
